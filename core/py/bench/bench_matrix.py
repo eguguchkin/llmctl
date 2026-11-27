@@ -90,18 +90,18 @@ def main(argv):
     # (типичный сеанс матрицы) — это одно сравнение, а не «разнобой дат»;
     # полные ISO-штампы остаются в meta каждого .json
     dates = sorted({d[:10] for d, _ in combos.values()})
-    out = ["# bench matrix — последние прогоны каждой комбинации", "",
-           "- дата(ы) снапшотов: %s" % (", ".join(dates) if dates else "-")]
+    out = ["# bench matrix — the latest run of every combination", "",
+           "- snapshot dates: %s" % (", ".join(dates) if dates else "-")]
     if len(dates) > 1:
-        out.append("- ВНИМАНИЕ: даты прогонов различаются — межсеансовое "
-                   "сравнение условно (кэш/тепло железа)")
-    out += ["- методика и оговорки: bench/README.md", ""]
+        out.append("- WARNING: snapshot dates span several days — a cross-session "
+                   "comparison is conditional (cache/warm hardware)")
+    out += ["- methodology and caveats: bench/README.md", ""]
     for prof in sorted({p for _, p in combos}):
         keys = sorted(k for k in combos if k[1] == prof)
         par_ns = sorted({n for _, d in (combos[k] for k in keys)
                          for n in metrics(d)["par"]})
-        head = (["движок", "соло tok/s", "проза tok/s", "сессия 15, с",
-                 "префилл 25k (miss), с → tok/s"] +
+        head = (["engine", "solo tok/s", "prose tok/s", "session 15, s",
+                 "25k prefill (miss), s → tok/s"] +
                 ["par-%d tok/s" % n for n in par_ns])
         rows = []
         for eng, _ in keys:
@@ -112,20 +112,22 @@ def main(argv):
                          br.f2(m["solo"]), br.f2(m["prose"]), br.f2(m["session"]),
                          prefill_cell(m)] +
                         [br.f2(m["par"].get(n)) for n in par_ns])
-        out += ["## профиль %s" % prof, "", br.md_table(head, rows), ""]
+        out += ["## profile %s" % prof, "", br.md_table(head, rows), ""]
     # чтение цифр — постоянные оговорки рядом с таблицами (детерминированный
     # футер; методика — bench/README.md)
-    out += ["## Как читать", "",
-            "- сессия 15 — **тёплый кэш** (документ сессии не nonce'ится): "
-            "сравнивай сессии только внутри одного сеанса матрицы; "
-            "префилл-колонка не затронута (nonce = гарантированный miss)",
-            "- multi-slot-профили не бьют соло на par-2 — выигрыш multi-slot "
-            "появляется на par-4",
-            "- движки без reuse-маркера («-») измерены честно — nonce "
-            "гарантирует miss без маркера; «live» на turn 2 дополнительно "
-            "подтверждает живой кэш движка",
-            "- префилл: с → tok/s = prompt_tokens/wall turn 1 (гарантированный "
-            "cache miss); методика и ловушка кэша — bench/README.md", ""]
+    out += ["## How to read", "",
+            "- the 15-turn session is **warm-cache** (the session document is "
+            "not nonce'd): compare sessions within one matrix session "
+            "only; the prefill column is not affected (the nonce = a "
+            "guaranteed miss)",
+            "- multi-slot profiles do not beat the solo profiles at parallel-2 — "
+            "the multi-slot win appears at parallel-4",
+            "- engines that emit no reuse marker (\"-\") are still measured "
+            "honestly — the nonce guarantees the miss without the marker; "
+            "a \"live\" on turn 2 additionally confirms the live cache",
+            "- prefill: s → tok/s = prompt_tokens/wall of turn 1 (a guaranteed "
+            "cache miss); the methodology and the cache trap — "
+            "bench/README.md", ""]
     sys.stdout.write("\n".join(out) + "\n")
     for name in skipped:
         sys.stderr.write("bench_matrix: %s — не-JSON/битый, пропущен\n" % name)

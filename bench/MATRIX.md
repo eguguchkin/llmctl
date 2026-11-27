@@ -1,34 +1,34 @@
-# bench matrix — последние прогоны каждой комбинации
+# bench matrix — the latest run of every combination
 
-- дата(ы) снапшотов: 2026-11-27
-- методика и оговорки: bench/README.md
+- snapshot dates: 2026-11-27
+- methodology and caveats: bench/README.md
 
-## профиль 27b
+## profile 27b
 
-| движок | соло tok/s | проза tok/s | сессия 15, с | префилл 25k (miss), с → tok/s | par-2 tok/s | par-4 tok/s |
+| engine | solo tok/s | prose tok/s | session 15, s | 25k prefill (miss), s → tok/s | par-2 tok/s | par-4 tok/s |
 |---|---|---|---|---|---|---|
 | gufo 0.36 | 71.44 | 20.54 | 14.63 | 50.65 → 495 tok/s | 27.83 | 28.01 |
 | hipfire 0.4.7 | 100.47 | 19.65 | 20.67 | 26.93 → 932 tok/s | 26.86 | 26.80 |
 
-## профиль 27b-parallel
+## profile 27b-parallel
 
-| движок | соло tok/s | проза tok/s | сессия 15, с | префилл 25k (miss), с → tok/s | par-2 tok/s | par-4 tok/s |
+| engine | solo tok/s | prose tok/s | session 15, s | 25k prefill (miss), s → tok/s | par-2 tok/s | par-4 tok/s |
 |---|---|---|---|---|---|---|
 | gufo 0.36 | 69.56 | 20.46 | 14.48 | 50.55 → 496 tok/s | 29.14 | 43.14 |
 | hipfire 0.4.7 | 92.90 | 15.40 | 30.04 | 34.60 → 725 tok/s | 19.96 | 28.16 |
 
-## профиль flash
+## profile flash
 
-| движок | соло tok/s | проза tok/s | сессия 15, с | префилл 25k (miss), с → tok/s | par-2 tok/s | par-4 tok/s |
+| engine | solo tok/s | prose tok/s | session 15, s | 25k prefill (miss), s → tok/s | par-2 tok/s | par-4 tok/s |
 |---|---|---|---|---|---|---|
 | gufo 0.36 | 80.95 | 41.57 | 8.66 | 17.25 → 1 455 tok/s | 54.38 | 93.11 |
 | halogen 0.20.7 | 125.12 | 69.09 | 6.60 | 12.10 → 2 074 tok/s | 87.18 | 118.94 |
 | hipfire 0.4.7 | 74.75 | 45.79 | 13.38 | 13.20 → 1 901 tok/s | 53.78 | 56.77 |
 
-## Как читать
+## How to read
 
-- сессия 15 — **тёплый кэш** (документ сессии не nonce'ится): сравнивай сессии только внутри одного сеанса матрицы; префилл-колонка не затронута (nonce = гарантированный miss)
-- multi-slot-профили не бьют соло на par-2 — выигрыш multi-slot появляется на par-4
-- движки без reuse-маркера («-») измерены честно — nonce гарантирует miss без маркера; «live» на turn 2 дополнительно подтверждает живой кэш движка
-- префилл: с → tok/s = prompt_tokens/wall turn 1 (гарантированный cache miss); методика и ловушка кэша — bench/README.md
+- the 15-turn session is **warm-cache** (the session document is not nonce'd): compare sessions within one matrix session only; the prefill column is not affected (the nonce = a guaranteed miss)
+- multi-slot profiles do not beat the solo profiles at parallel-2 — the multi-slot win appears at parallel-4
+- engines that emit no reuse marker ("-") are still measured honestly — the nonce guarantees the miss without the marker; a "live" on turn 2 additionally confirms the live cache
+- prefill: s → tok/s = prompt_tokens/wall of turn 1 (a guaranteed cache miss); the methodology and the cache trap — bench/README.md
 

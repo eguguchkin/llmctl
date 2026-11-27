@@ -1904,10 +1904,10 @@ scen_b_matrix() {
   python3 "$ROOT/core/py/bench/bench_matrix.py" "$TMP/mx" > "$TMP/mx1.md" 2> "$TMP/mx1.err" || return 1
   grep -q '111.11' "$TMP/mx1.md" || return 1                 # latest by date won
   grep -q 'engine-a 0.9\|99.99' "$TMP/mx1.md" && return 1    # the stale snapshot lost
-  grep -q 'префилл 25k (miss), с → tok/s' "$TMP/mx1.md" || return 1
+  grep -q '25k prefill (miss), s → tok/s' "$TMP/mx1.md" || return 1
   grep -q '10.00 → 2 500 tok/s' "$TMP/mx1.md" || return 1    # prompt_tokens/wall of follow-up turn 1
   grep -q '| 42.00 |' "$TMP/mx1.md" || return 1              # the par-2 column
-  grep -q 'даты прогонов различаются' "$TMP/mx1.md" || return 1
+  grep -q 'snapshot dates span several days' "$TMP/mx1.md" || return 1
   grep -q 'broken.json — не-JSON/битый, пропущен' "$TMP/mx1.err" || return 1
   python3 "$ROOT/core/py/bench/bench_matrix.py" "$TMP/mx" > "$TMP/mx2.md" 2>/dev/null || return 1
   cmp -s "$TMP/mx1.md" "$TMP/mx2.md" || return 1             # determinism
@@ -1927,7 +1927,7 @@ if scen_b_version_guard; then ok "B3: ENGINE_VERSION вне ^[A-Za-z0-9._-]+$ �
 if scen_b_deadline; then ok "B4: LCTL_BENCH_MAX_S=0 → rc 0, отчёт с «ПРОГОН ОБОРВАН», секции «не выполнен», замеров нет"; else bad "B4 дедлайн"; fi
 if scen_b_golden_snapshot; then ok "B5: golden-снапшот bench_report.py — байт-в-байт (дата из env — детерминизм)"; else bad "B5 golden-снапшот"; fi
 if scen_b_json_snapshot; then ok "B6: bench_report argv[1] → .json-снапшот (meta=env, строки verbatim, extras)"; else bad "B6 json-снапшот"; fi
-if scen_b_matrix; then ok "B6: bench_matrix — latest-по-дате (stale проигрывает), префилл/пар-колонки, разнобой дат помечен, битый файл → warn, рендер детерминирован"; else bad "B6 матрица"; fi
+if scen_b_matrix; then ok "B6: bench_matrix — latest-по-дате (stale проигрывает), английский генерат (префилл/пар-колонки), разнобой дней помечен, битый файл → warn, рендер детерминирован"; else bad "B6 матрица"; fi
 if scen_b_r6_hygiene; then ok "B5: R6-гигиена — core/bench.sh + core/py/bench без gufo|hipfire|tau|/metrics и без хоста"; else bad "B5 R6-гигиена"; fi
 
 echo "== B7. bench-мутации (маркеры core/bench.sh → соответствующий B-сценарий падает)"
