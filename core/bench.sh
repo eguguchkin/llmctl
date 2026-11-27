@@ -3,9 +3,11 @@
 # The core owns the orchestration: flags → gates (.env, engine version, live
 # health) → context (profile/model/fixture md5) → running the 4 scenarios by
 # the runner (core/tpl/python/bench/bench_run.py, JSONL in a mktemp dir) →
-# the adapter's extras hook → report render (bench_report.py) → writing
+# the adapter's extras hook → report render (bench_report.py) + a JSON
+# snapshot (<combo>.json) → the matrix render (bench_matrix.py from the
+# latest snapshots of ALL local combinations → bench/MATRIX.md) → writing
 # bench/reports/ (the same engine-version-profile combination OVERWRITES the
-# file; the run history is the lab's git, the machine does not commit). The
+# files; the run history is the lab's git, the machine does not commit). The
 # bench raises/switches nothing: the only effects are HTTP requests, log
 # reading by the adapter and the report file. The core knows no engine
 # specifics (R6): the version — ENGINE_VERSION, the model — the
@@ -64,7 +66,9 @@ bench_abort() {
 #   adapter dialect, the core does not interpret them).
 #   Files: the BENCH_RUNS mktemp dir (measurement JSONL + extras.json,
 #   trap rm -rf EXIT); OVERWRITE of
-#   bench/reports/<engine>-<version>-<profile>.md. INT/TERM — bench_abort:
+#   bench/reports/<engine>-<version>-<profile>.md + the same-named .json
+#   (the machine-readable snapshot) and of bench/MATRIX.md (the comparative
+#   matrix of the latest local snapshots). INT/TERM — bench_abort:
 #   a partial run is not saved.
 #
 # Limitations/assumptions: the stack is installed (.env) and healthy (the
@@ -104,6 +108,7 @@ cmd_bench() {
         echo "  бенч живого движка (read-only): соло-декод на канон-фикстуре (прогрев"
         echo "  + $runs замеров по умолчанию), проза, сессия 15 ходов + follow-up,"
         echo "  параллельная нагрузка. Отчёт: bench/reports/<engine>-<version>-<profile>.md"
+        echo "  (+ .json-снапшот; сводная матрица последних прогонов — bench/MATRIX.md)."
         echo "  Дедлайн прогона: LCTL_BENCH_MAX_S (сек, дефолт 3600)."
         return 0 ;;
       *) die "неизвестный флаг bench: $1 (доступны: --runs --parallel --help)" ;;
@@ -165,16 +170,19 @@ cmd_bench() {
   fi
 
   # report: a render from the JSONL + env headers (the date from env —
-  # determinism), the write
-  local report_dir="$STACK_DIR/bench/reports" report ts_iso
+  # determinism) + a JSON snapshot for bench_matrix; the write
+  local report_dir="$STACK_DIR/bench/reports" report matrix ts_iso
   mkdir -p "$report_dir"   # fix:bench-overwrite — the report dir; the same engine-version-profile combination is overwritten ('>'), no timestamp copies (the run history is the lab's git)
   report="$report_dir/$ENGINE-$ENGINE_VERSION-$prof.md"
+  matrix="$STACK_DIR/bench/MATRIX.md"
   ts_iso=$(date +%Y-%m-%dT%H:%M:%S%z)
   B_TS="$ts_iso" B_ENGINE="$ENGINE" B_VERSION="$ENGINE_VERSION" \
   B_PROFILE="$prof" B_MODEL="$model" B_MD5="$md5_real" \
   B_PARAMS="runs=$runs, parallel=$par_list" LCTL_BENCH_MAX_S="${LCTL_BENCH_MAX_S:-3600}" \
-    python3 "$CORE_TPL/python/bench/bench_report.py" "$BENCH_RUNS" > "$report"   # fix:bench-report — a markdown render; the short summary is the runner's stderr
+    python3 "$CORE_TPL/python/bench/bench_report.py" "$BENCH_RUNS" "${report%.md}.json" > "$report"   # fix:bench-report — a markdown render + a <combo>.json snapshot; the short summary is the runner's stderr
+  python3 "$CORE_TPL/python/bench/bench_matrix.py" "$report_dir" > "$matrix" 2>/dev/null || warn "матрица не отрендерилась — bench/MATRIX.md остался прежним (битые .json-снапшоты?)"   # fix:bench-matrix — the derived artifact: a failure does not cancel the run
   log "bench завершён$([ -n "$truncated" ] && echo ' (ОБОРВАН по лимиту LCTL_BENCH_MAX_S — цифры частичные)')"
   echo "отчёт: $report"
+  echo "матрица: $matrix"
   return 0
 }

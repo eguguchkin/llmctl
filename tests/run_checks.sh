@@ -1772,7 +1772,12 @@ scen_b_e2e_overwrite() {
   [ "$rc" = 0 ] || return 1
   [ "$(grep -c '^# bench ' "$report")" = 1 ] || return 1
   [ "$(grep -c '^- дата: ' "$report")" = 1 ] || return 1
-  [ "$(ls -1 "$LCTL_TEST_STACK/bench/reports")" = "hipfire-0.4.7-27b.md" ] || return 1
+  [ "$(ls -1 "$LCTL_TEST_STACK/bench/reports" | wc -l)" = 2 ] || return 1   # .md + .json-снапшот
+  [ -f "${report%.md}.json" ] || return 1
+  printf '%s' "$out" | grep -q 'матрица: ' || return 1
+  grep -q '^# bench matrix' "$LCTL_TEST_STACK/bench/MATRIX.md" || return 1
+  grep -q '^| hipfire 0.4.7 ' "$LCTL_TEST_STACK/bench/MATRIX.md" || return 1   # комбинация в матрице
+  [ "$(grep -c '^# bench matrix' "$LCTL_TEST_STACK/bench/MATRIX.md")" = 1 ] || return 1
   return 0
 }
 
@@ -1871,18 +1876,55 @@ scen_b_r6_hygiene() {
   return 0
 }
 
+# B the JSON snapshot: bench_report.py argv[1] → a valid <combo>.json
+#     (meta = the B_* env, the scenario rows verbatim, extras) — the
+#     machine-readable artifact for bench_matrix.py
+scen_b_json_snapshot() {
+  B_TS=2026-11-22T00:00:00+00 B_ENGINE=engine-x B_VERSION=1.0 B_PROFILE=prof-x \
+  B_MODEL=model-x B_MD5=253c7ac50857fe6d0e10fb0d2c5e35c0 \
+  B_PARAMS="runs=2, parallel=2,4" LCTL_BENCH_MAX_S=3600 \
+    python3 "$ROOT/core/tpl/python/bench/bench_report.py" "$ROOT/tests/fixtures/bench_runs" \
+    "$TMP/snap.json" >/dev/null 2>&1 || return 1
+  python3 "$ROOT/tests/shims/bench_json_check.py" "$TMP/snap.json" >/dev/null
+}
+
+# B the matrix: bench_matrix.py takes the LATEST snapshot per combination
+#     (max meta.date — the stale one loses), renders the prefill/par
+#     columns, marks a date mismatch, warns on a broken file, and is
+#     deterministic (two renders byte-identical)
+scen_b_matrix() {
+  mkdir -p "$TMP/mx"
+  printf '%s\n' '{"meta": {"date": "2026-11-26T00:00:00+00", "engine": "engine-a", "version": "0.9", "profile": "prof-x", "model": "m", "fixture_md5": "x", "params": "p", "truncated": false}, "solo": [{"run": 1, "wall_s": 1.0, "prompt_tokens": 140, "completion_tokens": 40, "tok_s": 99.99, "timings": null, "error": null}], "prose": [], "session": [], "followup": [], "parallel": [], "extras": null}' > "$TMP/mx/engine-a-0.9-prof-x.json"
+  printf '%s\n' '{"meta": {"date": "2026-11-27T10:00:00+00", "engine": "engine-a", "version": "1.0", "profile": "prof-x", "model": "m", "fixture_md5": "x", "params": "p", "truncated": false}, "solo": [{"run": 1, "wall_s": 1.0, "prompt_tokens": 140, "completion_tokens": 40, "tok_s": 111.11, "timings": null, "error": null}], "prose": [], "session": [], "followup": [{"turn": 1, "wall_s": 10.0, "prompt_tokens": 25000, "completion_tokens": 128, "tok_s": 5.12, "timings": null, "error": null}], "parallel": [{"n": 2, "wall_s": 4.0, "agg_tok_s": 42.0, "error": null}], "extras": null}' > "$TMP/mx/engine-a-1.0-prof-x.json"
+  printf '%s\n' '{"meta": {"date": "2026-11-26T09:00:00+00", "engine": "engine-b", "version": "2.0", "profile": "prof-x", "model": "m", "fixture_md5": "x", "params": "p", "truncated": false}, "solo": [{"run": 1, "wall_s": 1.0, "prompt_tokens": 140, "completion_tokens": 40, "tok_s": 55.0, "timings": null, "error": null}], "prose": [], "session": [], "followup": [], "parallel": [], "extras": null}' > "$TMP/mx/engine-b-2.0-prof-x.json"
+  printf 'not json\n' > "$TMP/mx/broken.json"
+  python3 "$ROOT/core/tpl/python/bench/bench_matrix.py" "$TMP/mx" > "$TMP/mx1.md" 2> "$TMP/mx1.err" || return 1
+  grep -q '111.11' "$TMP/mx1.md" || return 1                 # latest by date won
+  grep -q 'engine-a 0.9\|99.99' "$TMP/mx1.md" && return 1    # the stale snapshot lost
+  grep -q 'префилл 25k (miss), с → tok/s' "$TMP/mx1.md" || return 1
+  grep -q '10.00 → 2 500 tok/s' "$TMP/mx1.md" || return 1    # prompt_tokens/wall of follow-up turn 1
+  grep -q '| 42.00 |' "$TMP/mx1.md" || return 1              # the par-2 column
+  grep -q 'даты прогонов различаются' "$TMP/mx1.md" || return 1
+  grep -q 'broken.json — не-JSON/битый, пропущен' "$TMP/mx1.err" || return 1
+  python3 "$ROOT/core/tpl/python/bench/bench_matrix.py" "$TMP/mx" > "$TMP/mx2.md" 2>/dev/null || return 1
+  cmp -s "$TMP/mx1.md" "$TMP/mx2.md" || return 1             # determinism
+  return 0
+}
+
 echo "== B. bench (этап 7.1): роутер/флаги/гейты/e2e+перепись/md5/модель/версия/дедлайн/golden/R6"
 if scen_b_router_usage; then ok "B0: bench в usage/case/arm/source диспетчера; пустой клон → rc!=0 «движок не определён … lctl start»"; else bad "B0 роутер"; fi
 if scen_b_flags; then ok "B0: флаги — --runs abc/0/21, --parallel 9/2,x, неизвестный → die; --help → rc 0"; else bad "B0 флаги"; fi
 if scen_b_gate_noenv; then ok "B1: .env нет → die «стек не установлен — сначала 'lctl start'»"; else bad "B1 гейт no-env"; fi
 if scen_b_gate_dead; then ok "B1: health-отказ → die «стек не поднят…», ноль запросов генерации"; else bad "B1 гейт dead"; fi
 if scen_b_gate_loading; then ok "B1: loading_model → die «модель ещё грузится» (БЕЗ ожидания — bench не виснет молча)"; else bad "B1 гейт loading"; fi
-if scen_b_e2e_overwrite; then ok "B2: e2e на faux — отчёт hipfire-0.4.7-27b.md (шапка/4 секции/extras/гигиена-без-хоста, модель=канон), повторный прогон ПЕРЕЗАПИСЫВАЕТ (один заголовок, без копий)"; else bad "B2 e2e+перепись"; fi
+if scen_b_e2e_overwrite; then ok "B2: e2e на faux — отчёт hipfire-0.4.7-27b.md (+ .json-снапшот + bench/MATRIX.md с комбинацией), шапка/4 секции/extras/гигиена-без-хоста, модель=канон, повторный прогон ПЕРЕЗАПИСЫВАЕТ"; else bad "B2 e2e+перепись"; fi
 if scen_b_md5_warn; then ok "B3: битая фикстура (копия дерева) → WARN «сравнимость под вопросом», прогон дошёл до отчёта"; else bad "B3 md5-гейт"; fi
 if scen_b_model_hook; then ok "B3: gufo-хуки — запросы с именем из load_completed (НЕ gguf), extras gen_avg/route_spec в отчёте gufo-0.36-27b.md"; else bad "B3 bench-хуки gufo"; fi
 if scen_b_version_guard; then ok "B3: ENGINE_VERSION вне ^[A-Za-z0-9._-]+$ → die (версия идёт в имя отчёта)"; else bad "B3 версия-гвард"; fi
 if scen_b_deadline; then ok "B4: LCTL_BENCH_MAX_S=0 → rc 0, отчёт с «ПРОГОН ОБОРВАН», секции «не выполнен», замеров нет"; else bad "B4 дедлайн"; fi
 if scen_b_golden_snapshot; then ok "B5: golden-снапшот bench_report.py — байт-в-байт (дата из env — детерминизм)"; else bad "B5 golden-снапшот"; fi
+if scen_b_json_snapshot; then ok "B6: bench_report argv[1] → .json-снапшот (meta=env, строки verbatim, extras)"; else bad "B6 json-снапшот"; fi
+if scen_b_matrix; then ok "B6: bench_matrix — latest-по-дате (stale проигрывает), префилл/пар-колонки, разнобой дат помечен, битый файл → warn, рендер детерминирован"; else bad "B6 матрица"; fi
 if scen_b_r6_hygiene; then ok "B5: R6-гигиена — core/bench.sh + core/tpl/python/bench без gufo|hipfire|tau|/metrics и без хоста"; else bad "B5 R6-гигиена"; fi
 
 echo "== B7. bench-мутации (маркеры core/bench.sh → соответствующий B-сценарий падает)"
@@ -1892,6 +1934,7 @@ check_mutation "bench-md5"       "$(mutant_marker bench-md5 bench-md5)"         
 check_mutation "bench-model"     "$(mutant_marker bench-model bench-model)"        scen_b_model_hook
 check_mutation "bench-report"    "$(mutant_marker bench-report bench-report)"      scen_b_e2e_overwrite
 check_mutation "bench-overwrite" "$(mutant_marker bench-overwrite bench-overwrite)" scen_b_e2e_overwrite
+check_mutation "bench-matrix"    "$(mutant_marker bench-matrix bench-matrix)"      scen_b_e2e_overwrite
 
 # ── SR (task 3.2): the gufo/flash smoke race — the parse_route poll in engine_smoke ─
 # The live window defect (2026-11-23): HEALTHY after 95 s, then a FATAL

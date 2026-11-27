@@ -138,23 +138,28 @@ Cross-engine comparisons are valid only within the same scenario and the
 same fixture md5.
 
 The latest recorded matrix (a 128 GB Strix Halo, `lctl bench --runs 1`,
-one session, 2026-11-27; medians — decode/aggregates in tok/s, walls in
-seconds; `runs=1` is an orientation point, not an acceptance run):
+the nonce run, 2026-11-27; medians — decode/aggregates in tok/s, walls in
+seconds; `runs=1` is an orientation point, not an acceptance run; the
+25k prefill column — a guaranteed cache miss for every engine, honest
+from ~500 tok/s on the 27B quant up to ~2 060 on flash — lives in
+[bench/README.md](bench/README.md)):
 
 | engine / profile | solo, tok/s | prose, tok/s | session 15, s | parallel-2, tok/s | parallel-4, tok/s |
 |---|---|---|---|---|---|
-| **halogen / flash** | **112.92** | **67.58** | **6.76** | **86.92** | **121.70** |
-| gufo / flash (MTP) | 81.44 | 41.60 | 8.62 | 53.21 | 71.66 |
-| gufo / 27b | 65.18 | 20.34 | 25.89 | 27.30 | 27.88 |
-| gufo / 27b-parallel | 64.93 | 20.32 | 26.00 | 29.05 | 43.20 |
-| hipfire / 27b | 100.63 | 19.67 | 20.65 | 26.84 | 26.84 |
-| hipfire / 27b-parallel | 92.95 | 15.40 | 30.05 | 20.04 | 28.14 |
-| hipfire / flash | 75.88 | 45.88 | 13.38 | 41.90 | 56.43 |
+| **halogen / flash** | **112.87** | **67.80** | **6.74** | **87.57** | **119.23** |
+| gufo / flash (MTP) | 81.57 | 41.04 | 8.96 | 54.34 | 65.16 |
+| gufo / 27b | 67.83 | 20.53 | 14.73 | 26.27 | 27.98 |
+| gufo / 27b-parallel | 67.46 | 20.49 | 14.62 | 29.10 | 41.64 |
+| hipfire / 27b | 100.48 | 19.66 | 20.68 | 26.86 | 26.81 |
+| hipfire / 27b-parallel | 93.00 | 15.40 | 30.04 | 20.04 | 27.13 |
+| hipfire / flash | 76.01 | 45.41 | 13.36 | 42.00 | 60.69 |
 
 All seven combinations came up healthy in the same session; the full
-reports are in [`bench/reports/`](bench/reports/). **The scenario
-methodology, the prefill figures (warm prefill tok/s and the cold 25k
-wall) and the extended matrix — [bench/README.md](bench/README.md)**.
+reports plus the machine-readable `.json` snapshots are in
+[`bench/reports/`](bench/reports/), and `bench/MATRIX.md` is generated
+from the latest snapshots after every `lctl bench` run. **The scenario
+methodology, the honest-prefill rules (cache misses only) and the
+extended per-profile matrix — [bench/README.md](bench/README.md)**.
 
 ## Development
 

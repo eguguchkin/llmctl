@@ -9,8 +9,10 @@
 #   адаптер/человек). Отсутствующий JSONL сценария → «не выполнен» (частичный
 #   прогон честен); truncation-маркер → пометка обрыва.
 #
-# Побочные эффекты: нет (чтение файлов/env; печать: отчёт — stdout, одна
-#   строка «кратко: …» — stderr как итоговая таблица-кратко для терминала).
+# Побочные эффекты: печать (отчёт — stdout, одна строка «кратко: …» — stderr
+#   как итоговая таблица-кратко для терминала); argv[1] задан → JSON-снапшот
+#   замеров рядом с отчётом (<combo>.json для bench_matrix.py: meta из env +
+#   строки сценариев verbatim + extras).
 #
 # Ограничения/допущения: stdlib only; env B_TS/B_ENGINE/B_VERSION/B_PROFILE/
 #   B_MODEL/B_MD5/B_PARAMS задаёт cmd_bench (пустые рендерятся как «?» —
@@ -21,6 +23,8 @@
 #
 # @param 1: string      # каталог замеров (solo.jsonl, prose.jsonl, …,
 #                        parallel-*.jsonl, extras.json)
+# @param 2: string      # OPTIONAL путь JSON-снапшота (нет → не пишется;
+#                        golden-пин зовёт с одним аргументом)
 # @stdout string       # markdown-отчёт
 # @stderr string       # строка «кратко: …»
 # @returns integer     # 0
@@ -223,14 +227,9 @@ def scen_extras(runs_dir):
     # Секция «Движковые метрики (адаптер)»: extras.json одной JSON-строки
     # → «ключ: значение» по порядку; нет хука/файла → честная пометка.
     head = "## Движковые метрики (адаптер)\n"
-    path = os.path.join(runs_dir, "extras.json")
-    if not os.path.exists(path):
+    if not os.path.exists(os.path.join(runs_dir, "extras.json")):
         return head + "\n- не предусмотрено адаптером\n"
-    try:
-        with open(path, encoding="utf-8") as fh:
-            data = json.load(fh)
-    except (OSError, ValueError):
-        return head + "\n- адаптер вернул не-JSON (пропущено)\n"
+    data = extras_data(runs_dir)
     if not isinstance(data, dict):
         return head + "\n- адаптер вернул не-JSON (пропущено)\n"
     lines = []
@@ -239,9 +238,45 @@ def scen_extras(runs_dir):
     return head + "\n" + ("\n".join(lines) if lines else "- нет данных") + "\n"
 
 
+def extras_data(runs_dir):
+    # @returns dict|None  # extras.json: dict → verbatim; нет/не-JSON → None
+    path = os.path.join(runs_dir, "extras.json")
+    if not os.path.exists(path):
+        return None
+    try:
+        with open(path, encoding="utf-8") as fh:
+            data = json.load(fh)
+    except (OSError, ValueError):
+        return None
+    return data if isinstance(data, dict) else None
+
+
+def snapshot(runs_dir, path):
+    # JSON-снапшот замеров для bench_matrix.py: строки сценариев verbatim
+    # (никаких пересчётов — рендер чисел живет в bench_matrix), meta — из
+    # env. Детерминирован теми же входами, что и отчёт.
+    # @param 1: string  # каталог замеров
+    # @param 2: string  # путь записи (<combo>.json)
+    data = {
+        "meta": {"date": env("B_TS"), "engine": env("B_ENGINE"),
+                 "version": env("B_VERSION"), "profile": env("B_PROFILE"),
+                 "model": env("B_MODEL"), "fixture_md5": env("B_MD5"),
+                 "params": env("B_PARAMS"), "truncated": truncated_any(runs_dir)},
+        "solo": load("solo", runs_dir),
+        "prose": load("prose", runs_dir),
+        "session": load("session", runs_dir),
+        "followup": load("followup", runs_dir),
+        "parallel": load("parallel*", runs_dir),
+        "extras": extras_data(runs_dir),
+    }
+    with open(path, "w", encoding="utf-8") as fh:
+        json.dump(data, fh, ensure_ascii=False, indent=1, sort_keys=True)
+        fh.write("\n")
+
+
 def main(argv):
     if len(argv) < 1:
-        print("usage: bench_report.py <runs_dir>", file=sys.stderr)
+        print("usage: bench_report.py <runs_dir> [out.json]", file=sys.stderr)
         return 2
     runs_dir = argv[0]
     solo_rows, _ = run_rows(load("solo", runs_dir))
@@ -267,6 +302,8 @@ def main(argv):
               "",
               "> (заполняется человеком после прогона)"]
     sys.stdout.write("\n".join(parts) + "\n")
+    if len(argv) > 1:
+        snapshot(runs_dir, argv[1])   # <combo>.json для bench_matrix.py
     if brief:
         sys.stderr.write("кратко: " + " | ".join(brief) + "\n")
     return 0

@@ -9,6 +9,30 @@ the same combination. The header carries the date, engine, engine version,
 profile, model, the fixture md5 and the run parameters — and deliberately
 no host information.
 
+## Machine-readable artifacts (since 2026-11-27)
+
+Every `lctl bench` run now writes, next to the `.md` report:
+
+- `reports/<combo>.json` — the raw measurements snapshot: `meta` (date,
+  engine, version, profile, model, fixture md5, params, truncated) plus
+  the scenario rows **verbatim** (solo/prose/session/followup/parallel +
+  the adapter extras). The rows are the runner's own lines, no
+  recomputation — the single source for every derived number.
+- `bench/MATRIX.md` — generated after EVERY bench run by
+  `core/tpl/python/bench/bench_matrix.py` from the **latest snapshot per
+  engine+profile combination** (max `meta.date`; a stale version of the
+  same combination silently loses). It renders the per-profile tables
+  (solo / prose / session / prefill / parallel columns, the columns' metric
+  definitions = the report's), marks a date mismatch between the
+  combinations («межсеансовое сравнение условно») and honestly shows `-`
+  for a scenario a snapshot lacks. The file is deterministic — same
+  snapshots, same bytes.
+
+Going forward `bench/MATRIX.md` is the source of truth for the comparison
+tables; the hand-written matrix below is the historical 2026-11-27 record
+(taken right before the snapshot mechanic landed — its numbers are the
+same nonce run, just transcribed by hand).
+
 ## The scenarios
 
 Every run executes the same four scenarios, in this order. Cross-engine
