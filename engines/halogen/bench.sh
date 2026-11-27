@@ -20,7 +20,7 @@
 # @stdout string    # qwen3.8-flash-next
 # @returns integer  # always 0
 engine_bench_model() {
-  printf '%s' "$HALOGEN_MODEL_CANON"
+  model_id_canon
 }
 
 # Purpose: the engine_bench_extras <runs_dir> hook — one JSON line with the

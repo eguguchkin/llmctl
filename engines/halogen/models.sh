@@ -12,11 +12,27 @@
 #   v2.hgn 66.7G (the trunk) + ngram.hgn 51.2G (an FP8 n-gram lookup —
 #   required beside the checkpoint) + drafter-r2-ht4.hgn 1.39G (the 0.20.7
 #   draft head) + vision.hgn 0.84G (an mmproj analog, HALOGEN_VISION_TOWER=1)
-#   + tokenizer/ 6 files ~25.9M. We do NOT set HALOGEN_DOWNLOAD (the
-#   container has no outbound): the delivery — download_file (curl -C - +
-#   a sha-verify), identical to gufo.
+#   + tokenizer/ 6 files ~25.9M.
+# The halogen-27b set (halogen-qwen3.8-27b-ht4, the 0.21.0+ checkpoint —
+# the server picks the engine from the checkpoint, the repo README):
+#   27b-ht4.hgn 13.8G (the 4-bit trunk — the draft head is INSIDE the
+#   checkpoint: no separate draft/ngram file for this set) + vision.hgn
+#   0.92G (BF16 tower, optional — HALOGEN_VISION_TOWER=1 when on disk) +
+#   tokenizer/ 6 files ~25.9M (the base model's, byte-identical to
+#   Flash-Next's per the repo README — the pins reused). Total 14.7 GB.
+# We do NOT set HALOGEN_DOWNLOAD (the container has no outbound): the
+# delivery — download_file (curl -C - + a sha-verify), identical to gufo.
 #
-# @typedef weight_set: 'halogen_flash'
+# @typedef weight_set: 'halogen_flash' | 'halogen_27b'
+
+set_halogen_27b="qwen38-27b-ht4.hgn|13786218048|cd2570dc985174ecbea82b65b2ed5c3125d56512fdf88ddd43f7b17c37cd5eff|https://huggingface.co/peonist-ai/halogen-qwen3.8-27b-ht4/resolve/main/qwen38-27b-ht4.hgn|main
+qwen38-27b-vision.hgn|921514496|869fa7d2347c67f2a74a7cbb18fe271e73e4d8e359ced8e2548397343f001829|https://huggingface.co/peonist-ai/halogen-qwen3.8-27b-ht4/resolve/main/qwen38-27b-vision.hgn|mmproj
+tokenizer/chat_template.jinja|8952|c3cf9e34abf4f9e36c2d72165aa9c132d3e2a725b6c2586aaa3a8af9d7a81041|https://huggingface.co/peonist-ai/halogen-qwen3.8-27b-ht4/resolve/main/tokenizer/chat_template.jinja|tokenizer
+tokenizer/generation_config.json|202|e70c136c1b78ddc1fb0905bac8e733a4dc448d4f852a5dd75143fffc70be550e|https://huggingface.co/peonist-ai/halogen-qwen3.8-27b-ht4/resolve/main/tokenizer/generation_config.json|tokenizer
+tokenizer/merges.txt|3353259|a9d356d7bdf1ef4949e3e748e95b8e10ad9d4e2e838eddc38a0a7b6b94d1db8d|https://huggingface.co/peonist-ai/halogen-qwen3.8-27b-ht4/resolve/main/tokenizer/merges.txt|tokenizer
+tokenizer/tokenizer.json|12809320|0997f410c57a1f4e53b09e4be8f4a172d90edd9564368fb0847030937229b9f3|https://huggingface.co/peonist-ai/halogen-qwen3.8-27b-ht4/resolve/main/tokenizer/tokenizer.json|tokenizer
+tokenizer/tokenizer_config.json|17928|b11349aafa7cdc6a320767cf7ceb29ed82f7eda5d65e8e0819e76f0ce947bf27|https://huggingface.co/peonist-ai/halogen-qwen3.8-27b-ht4/resolve/main/tokenizer/tokenizer_config.json|tokenizer
+tokenizer/vocab.json|6722759|ce99b4cb2983d118806ce0a8b777a35b093e2000a503ebde25853284c9dfa003|https://huggingface.co/peonist-ai/halogen-qwen3.8-27b-ht4/resolve/main/tokenizer/vocab.json|tokenizer"
 
 set_halogen_flash="qwen38-flash-next-v2.hgn|66687678432|71246c6ab3fc1de2cf06326f18e275fe9c2a18366d646ed3357d194c884fc687|https://huggingface.co/peonist-ai/halogen-qwen3.8-flash-next/resolve/main/qwen38-flash-next-v2.hgn|main
 qwen38-flash-next-ngram.hgn|51200246144|3450acada94e19aabad88bd49b45eb70304820949c2240fc178067b20ae5dffe|https://huggingface.co/peonist-ai/halogen-qwen3.8-flash-next/resolve/main/qwen38-flash-next-ngram.hgn|ngram

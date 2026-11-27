@@ -53,8 +53,29 @@ HALOGEN_MODEL_CANON="qwen3.8-flash-next"
 #   weights_for).
 #
 # @param 1: string        # the profile id (unknown → the halogen_flash set)
-# @stdout 'halogen_flash' # the subdir name under $MODELS_BASE
-engine_model_set() { echo halogen_flash; }
+# @stdout weight_set      # the subdir name under $MODELS_BASE
+engine_model_set() {
+  case "$1" in
+    27b) echo halogen_27b ;;
+    *)   echo halogen_flash ;;
+  esac
+}
+
+# Purpose: the API model canon of a profile (HALOGEN_MODEL_ID in the
+#   compose render, the smoke's model argument, engine_bench_model, the
+#   route-line default): P_MODEL_ID from the profile file (the adapter
+#   dialect field, 10+), the flash fallback = HALOGEN_MODEL_CANON (the
+#   pre-27b constant; flash.env does not duplicate it).
+#
+# @param 1: string    # the profile id (optional; default — cur_profile,
+#                     # outside a stack — flash)
+# @stdout string      # the model id the engine serves/echoes
+# @returns integer    # always 0
+model_id_canon() {
+  local prof="${1:-$(cur_profile 2>/dev/null || echo flash)}" c=""
+  c=$( { profile_src "$prof" 2>/dev/null; printf '%s' "${P_MODEL_ID:-}"; } ) || true
+  printf '%s' "${c:-$HALOGEN_MODEL_CANON}"
+}
 
 source "$ADAPTER_DIR/profiles.sh"      # the 9-field table + aliases + ref_get + ladders
 source "$ADAPTER_DIR/models.sh"        # the pin tables + download_file + engine_pull_model

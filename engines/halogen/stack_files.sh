@@ -53,7 +53,7 @@ halogen_render_compose() {
     CHECKPOINT="/models/$(set_file_role "$(engine_model_set "$prof")" main)" \
     VISION_TOWER="$tower" \
     KV_SLOTS="$(profile_field "$prof" 6)" \
-    MODEL_ID="$HALOGEN_MODEL_CANON"
+    MODEL_ID="$(model_id_canon "$prof")"
 }
 
 # Purpose: the engine_write_compose hook (contract §2.3; called by the core

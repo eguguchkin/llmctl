@@ -21,7 +21,7 @@
 # @returns integer          # always 0
 parse_route() {
   local body
-  ROUTE_SPEC=""; ROUTE_SESSIONS="?"; ROUTE_CTX="?"; ROUTE_MODEL="$HALOGEN_MODEL_CANON"
+  ROUTE_SPEC=""; ROUTE_SESSIONS="?"; ROUTE_CTX="?"; ROUTE_MODEL="$(model_id_canon)"
   body=$(cat)
   [ -n "$body" ] || return 0
   ROUTE_SPEC=$(printf '%s' "$body" | python3 "$ADAPTER_DIR/py/route_parse.py" spec-health) || true
@@ -37,7 +37,7 @@ parse_route() {
 # @returns integer          # 0 — the route assembled; 1 — the server not answering
 halogen_route_info() {
   local h models slots vision mods
-  ROUTE_SPEC="halogen ?"; ROUTE_SESSIONS="?"; ROUTE_CTX="?"; ROUTE_MODEL="$HALOGEN_MODEL_CANON"
+  ROUTE_SPEC="halogen ?"; ROUTE_SESSIONS="?"; ROUTE_CTX="?"; ROUTE_MODEL="$(model_id_canon)"
   h=$(curl -fsS -m 5 "http://127.0.0.1:$PORT/health" 2>/dev/null) || return 1
   ROUTE_SPEC=$(printf '%s' "$h" | python3 "$ADAPTER_DIR/py/route_parse.py" spec 2>/dev/null) || ROUTE_SPEC="halogen ?"
   vision=$(printf '%s' "$h" | python3 "$ADAPTER_DIR/py/route_parse.py" vision 2>/dev/null) || vision="?"
@@ -91,7 +91,7 @@ engine_smoke() {
     vision=1
   fi
   halogen_route_info || warn "роут-инфо недоступен (/health не ответил) — продолжаю смоук"
-  core_smoke "$HALOGEN_MODEL_CANON" "$vision"
+  core_smoke "$(model_id_canon)" "$vision"
 }
 
 # Purpose: the engine_check_route hook (contract §2.3) — the profile's

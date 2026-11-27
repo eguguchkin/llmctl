@@ -1,16 +1,18 @@
 # shellcheck shell=bash
 # ── halogen: the profile registry (the format is the core contract, core/profiles.sh) ──
 # Format v2 — ONE FILE per profile: profiles/<id>.env, sourced into P_*.
-# ONE profile: halogen can only do Flash-Next (the user's 2026-11-25
-# decision — no 27b). This file keeps only the registry's skeleton: the
+# Two profiles: flash (Flash-Next, the 0.20.7+ lineage) and 27b (the ht4
+# 4-bit checkpoint — halogen 0.21.0+ serves it; the 2026-11-25 «no 27b»
+# decision reversed by the owner on 2026-11-28 when the 27b-ht4 weights
+# landed). This file keeps only the registry's skeleton: the
 # list, the default, the alias normalization and the P_*-file readers
 # (ref_get / profile_ladder). The values and their «why» comments live in
 # the profile file itself.
 #
-# @typedef profile_id: 'flash'
-# @typedef weight_set: 'halogen_flash'
+# @typedef profile_id: 'flash' | '27b'
+# @typedef weight_set: 'halogen_flash' | 'halogen_27b'
 
-PROFILE_LIST="flash"
+PROFILE_LIST="flash 27b"
 # @type profile_id PROFILE_DEFAULT=flash
 PROFILE_DEFAULT=flash
 
@@ -53,6 +55,7 @@ profile_ladder() {
 resolve_profile() {
   case "$1" in
     flash|flash-single|solo) echo flash ;;
+    27b) echo 27b ;;
     *) return 1 ;;
   esac
 }

@@ -22,7 +22,21 @@ scen_h1_registry() {
   [ "$out" = "flash/flash/flash" ] || return 1
   LCTL_TEST_ENGINE=halogen hf 'resolve_profile nope' >/dev/null 2>&1 && return 1   # неизвестный — rc 1
   out=$(LCTL_TEST_ENGINE=halogen hf 'echo "$PROFILE_DEFAULT|$PROFILE_LIST"') || return 1
-  [ "$out" = "flash|flash" ] || return 1
+  [ "$out" = "flash|flash 27b" ] || return 1   # 27b добавлен 2026-11-28 (27b-ht4)
+  # 27b: алиас, поля 1–9 (draft '-', gate 85 — оценка до первой калибровки),
+  # сет halogen_27b (8 файлов, 14 730 644 964 B), roles (main ht4, mmproj
+  # vision, draft НЕ существует), модель-канон из P_MODEL_ID
+  LCTL_TEST_ENGINE=halogen hf 'resolve_profile nope2' >/dev/null 2>&1 && return 1
+  out=$(LCTL_TEST_ENGINE=halogen hf 'echo "$(resolve_profile 27b)|$(profile_field 27b 1)|$(profile_field 27b 3)|$(profile_field 27b 4)|$(profile_field 27b 6)|$(profile_field 27b 7)|$(profile_field 27b 9)"') || return 1
+  [ "$out" = "27b|qwen38-27b-ht4.hgn|-|85|4|262144|-" ] || return 1
+  out=$(LCTL_TEST_ENGINE=halogen hf 'echo "$(profile_field 27b 2 | wc -w)|$(profile_ladder 27b)|$(ref_get 27b session)|$(engine_model_set 27b)"') || return 1
+  [ "$out" = "8|-||halogen_27b" ] || return 1   # ref не снят — пусто (WARN в agent-check честен)
+  out=$(LCTL_TEST_ENGINE=halogen hf 'weights_for halogen_27b | awk -F"|" "{s+=\$2} END{printf \"%.0f\", s+0}"') || return 1
+  [ "$out" = "14730644964" ] || return 1
+  out=$(LCTL_TEST_ENGINE=halogen hf 'echo "$(set_file_role halogen_27b main)|$(set_file_role halogen_27b draft 2>/dev/null)|$(set_file_role halogen_27b mmproj)"') || return 1
+  [ "$out" = "qwen38-27b-ht4.hgn||qwen38-27b-vision.hgn" ] || return 1
+  out=$(LCTL_TEST_ENGINE=halogen hf 'echo "$(model_id_canon 27b)|$(model_id_canon flash)"') || return 1
+  [ "$out" = "halogen-qwen3.8-27b|qwen3.8-flash-next" ] || return 1
   # the registry fields: 1 main, 4 the 110 gate, 6 sessions=KV_SLOTS, 7 ctx, 8 the cache tiers, 9 '-' (an env config)
   out=$(LCTL_TEST_ENGINE=halogen hf 'echo "$(profile_field flash 1)|$(profile_field flash 3)|$(profile_field flash 4)|$(profile_field flash 6)|$(profile_field flash 7)|$(profile_field flash 8)|$(profile_field flash 9)"') || return 1
   [ "$out" = "qwen38-flash-next-v2.hgn|qwen38-flash-next-drafter-r2-ht4.hgn|110|4|262144|0/68719476736|-" ] || return 1
@@ -392,7 +406,7 @@ ADAPTER_FUNCS+=" halogen_scenarios"
 halogen_scenarios() {
   # on LCTL_HDBG=1 a failed scenario is re-run with an output tail (stderr)
   local _d=${LCTL_HDBG:-}
-  if scen_h1_registry; then ok "H1: реестр halogen — профиль один (flash), алиасы, поля 1-9 (гейт 110, KV_SLOTS 4, ctx 262144, поле 9 '-'), 10 файлов поля 2, канон qwen3.8-flash-next, пины (сумма 120297030276), пин образа = 0.21.0"; else bad "H1 реестр/пины"; [ -n "$_d" ] && scen_h1_registry 2>&1 | tail -20 >&2; fi
+  if scen_h1_registry; then ok "H1: реестр halogen — профили flash+27b (алиасы, поля 1-9 обоих, гейты 110/85, сеты 120297030276/14730644964, roles, model_id_canon flash/27b), пин образа = 0.21.0"; else bad "H1 реестр/пины"; [ -n "$_d" ] && scen_h1_registry 2>&1 | tail -20 >&2; fi
   if scen_h2_pins_download; then ok "H2: доставка — file:// PASS sha, SKIP по размеру, tokenizer/ dirname pre-flight'ом, SHA-MISMATCH с удалением, pull по имени (unknown → die)"; else bad "H2 доставка"; [ -n "$_d" ] && scen_h2_pins_download 2>&1 | tail -15 >&2; fi
   if scen_h3_compose; then ok "H3: compose-золотой — name: halogen, env-литералы (CHECKPOINT/MODEL_ID/KV_SLOTS), порт 11435:11435, /models:ro, vision off→пусто/on→\"1\" (файл на диске), детерминизм, target-каталог (этап 8)"; else bad "H3 compose-рендер"; [ -n "$_d" ] && scen_h3_compose 2>&1 | tail -15 >&2; fi
   if scen_h4_env; then ok "H4: env-рендер — LCTL_* канон + HALOGEN_* display (MODELS/IMAGE)"; else bad "H4 env"; fi
