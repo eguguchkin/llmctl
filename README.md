@@ -22,23 +22,25 @@ limits are prepared automatically.
 
 ## Profiles
 
-A profile is a fixed, named recipe: the weights set, the draft/sidecar
-model, the session count, the context, the cache budgets and the RAM gate
-(one file per profile: `engines/<engine>/profiles/<id>.env`; the gate
-refuses a profile before any download if the machine has less memory).
+A profile is a fixed, named recipe — the model, the context, the number of
+concurrent contexts (sessions) and the parallel-load behavior it is tuned
+for. Profiles are engine-agnostic: `lctl start <engine> <profile>` takes
+any engine with the same profile name. One file per profile:
+`engines/<engine>/profiles/<id>.env`; the gate refuses a profile before
+any download if the machine has less memory.
 
-| engine / profile | weights (quant) | draft / sidecar | sessions | context | RAM gate | notes |
-|---|---|---|---|---|---|---|
-| gufo / `27b` | Qwen3.8-27B IQ4_XS-pure + mmproj BF16 | DFlash2-Q4_K_M | 1 | 262144 (no probe) | 56 GiB | max solo decode speed |
-| gufo / `27b-parallel` | same set | DFlash2-Q4_K_M | 2 | 210000; fallback steps 196608 / 163840 / 131072 | 56 GiB | multi-client |
-| gufo / `flash` | Flash-Next UD-Q4_K_XL, 4 shards + mmproj | MTP shared Q8_0 | 2 | 131072 base; probe ladder tops at 262144 | 110 GiB | speculative MTP |
-| halogen / `flash` | Flash-Next v2 .hgn + ngram lookup + drafter-r2-ht4 + vision sidecar | drafter-r2-ht4 | 4 (KV_SLOTS) | 262144 (no probe — the pool fits itself) | 110 GiB | vision on; disk cache 64 GiB, RAM tier n/a |
-| hipfire / `27b` | Qwen3.8 27b-mq4-xts | 27b-draft-mq4 | singleton | engine config | 58 GiB | max solo decode speed |
-| hipfire / `27b-parallel` | same | same | 2 × 262144 slots | engine config | 58 GiB | HOL-isolated multi-slot |
-| hipfire / `flash` | Flash-Next mq4-xts | — | engine config | engine config | 80 GiB | VMM fn-lanes |
+| profile | model | context | sessions | parallel load |
+|---|---|---|---|---|
+| `flash` | Qwen3.8 Flash-Next | 262144 | 2–4 | 2–4 clients |
+| `27b` | Qwen3.8 27B | 262144 | 1 | solo |
+| `27b-parallel` | Qwen3.8 27B | 210000+ | 2 | 2–4 clients |
 
-A profile that would not fit the machine's memory pool is refused before
-any download; `--force` bypasses with a warning.
+The `27b` profiles are calibrated for a **64 GB** machine; the `flash`
+profile expects **128 GB**. A profile that would not fit the machine's
+memory pool is refused before any download; `--force` bypasses with a
+warning. Sessions vary slightly per engine (2–4) and the exact weights,
+draft models, cache budgets and probe ladders live in the profile files
+(`engines/<engine>/profiles/<id>.env`).
 
 ## Why
 
