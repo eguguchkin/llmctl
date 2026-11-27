@@ -45,7 +45,7 @@
 * из timings движка; «-» — движок timings не прислал
 итого сессия: 15 ход(ов), wall суммарный 42.00с
 
-follow-up 25k: turn1=25.00с turn2=2.00с reuse=disk
+follow-up 25k (turn 1 = a guaranteed cache miss, the per-run nonce prefix): turn1=25.00с turn2=2.00с reuse=disk
 
 ## 4. Параллельная нагрузка
 

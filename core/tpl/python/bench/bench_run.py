@@ -267,9 +267,16 @@ def scen_session(port, model, deadline, out):
 def scen_followup(port, model, deadline, out):
     jl = Journal(out)
     doc = UNIT * (25 * 40)   # ~25k ток: единица × 40 × 25 (порт agent_check)
+    # A per-run nonce as the FIRST bytes of the prompt — guarantees the
+    # turn-1 cache miss: the disk cache tier remembers byte-identical
+    # documents across runs/restarts, and a unique prefix invalidates the
+    # whole prompt's prefix cache. The length stays constant (noise) and
+    # the bytes are unique per run — the cross-engine comparison is by
+    # tok/s, not by bytes.
+    nonce = "прогон lctl-bench %d" % time.time_ns()
     base = [{"role": "system", "content": SESSION_DOC_SYS},
             {"role": "user", "content":
-             "%s\n[маркер %s]\n%s" % (doc, FOLLOWUP_MARKER, FOLLOWUP_Q1)}]
+             "%s\n%s\n[маркер %s]\n%s" % (nonce, doc, FOLLOWUP_MARKER, FOLLOWUP_Q1)}]
     if deadline_hit(deadline, jl):
         return
     ok1, ans = measure_line(port, model, base, 128, TIMEOUTS["followup"], jl,

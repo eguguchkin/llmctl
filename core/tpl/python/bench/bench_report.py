@@ -188,9 +188,10 @@ def scen_session(runs_dir, brief_parts):
     elif fu1 is None:
         fu = "follow-up 25k: не выполнен (нет успешных прогонов)\n"
     else:
-        fu = "follow-up 25k: turn1=%sс turn2=%sс reuse=%s\n" % (
+        fu = ("follow-up 25k (turn 1 = a guaranteed cache miss, the "
+              "per-run nonce prefix): turn1=%sс turn2=%sс reuse=%s\n" % (
             f2(fu1.get("wall_s")), f2(fu2.get("wall_s")) if fu2 else "-",
-            reuse_of(fu2.get("timings")) if fu2 else "-")
+            reuse_of(fu2.get("timings")) if fu2 else "-"))
     return head + "\n" + body + "\n" + fu
 
 

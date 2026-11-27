@@ -42,6 +42,12 @@ decode tok/s and — when the engine supplies timings — `prompt_ms`, the
 engine's own prompt-processing time. The aggregate session wall is the
 headline; the follow-up turn 1 is the prefill data source (see Prefill).
 
+**The follow-up turn 1 is a guaranteed cache miss**: since 2026-11-27 the
+runner prefixes the document with a per-run nonce (`time_ns`), invalidating
+the whole prompt's prefix cache — the disk tier can no longer remember the
+byte-identical document from a previous run. The length stays constant, so
+cross-engine comparison is by tok/s.
+
 ### 4. Parallel load
 
 `--parallel N[,M…]` (default `2,4`, 1..8 possible): N concurrent clients
@@ -68,9 +74,11 @@ populated the cache:
 - warm (the identical prompt, immediately repeated): `prompt_ms` = **122 ms**.
 
 Dividing the full 25k prompt length by the warm 122 ms gives the absurd
-"200 000 tok/s" — that is the cache talking, not the engine. The engine's
-honest prefill rate on this profile is ~2 100 tok/s (a 25k document costs
-~12 s of prefill on a miss).
+"200 000 tok/s" — that is the cache talking, not the engine. The honest
+prefill rate on this profile is ~2 100 tok/s (a 25k document costs ~12 s
+of prefill on a miss). This probe is now the permanent behavior: the
+follow-up turn 1 always carries a per-run nonce (see scenario 3) — every
+future `lctl bench` reports a guaranteed-cold prefill.
 
 Per-combination prefill figures in the matrices below are marked:
 `honest` — a proven cache miss; `cache hit` — the wall is real but the
@@ -109,12 +117,11 @@ document turn 1, and the engine's own `prefill_avg` counter: 47.25 s /
 
 halogen does not ship a 27b profile (the owner's 2026-11-25 decision).
 
-## Missing honest numbers — how to fill them
+## Missing honest numbers
 
-An honest cold prefill needs a **guaranteed cache miss**. Two ways:
-a unique prompt prefix (the cold probe demonstrated above — no engine
-restart needed, read-only load over the live port), or wiping the engine's
-disk cache tier (needs a maintenance window and the owner's GO). Not yet
-measured honestly: gufo/flash (its follow-up turn 1 was a `reuse=live`
-cache hit), halogen's full `lctl bench` pass (the probe above covers the
-25k point), hipfire confirmations.
+The 2026-11-27 matrix was taken with the pre-nonce runner: its follow-up
+turn 1s for halogen/flash and gufo/flash were cache hits (marked above);
+the nonce fix guarantees honesty for every FUTURE run. To back-fill the
+honest prefill for those two combinations: re-run `lctl bench` for them
+(the nonce makes turn 1 a guaranteed miss — a read-only pass over the
+live engine, no restart needed; gufo/flash requires the engine window).
