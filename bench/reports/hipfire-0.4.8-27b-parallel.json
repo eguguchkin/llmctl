@@ -44,10 +44,10 @@
    },
    "tok_s": 0.49,
    "turn": 1,
-   "wall_s": 34.599
+   "wall_s": 34.553
   },
   {
-   "completion_tokens": 43,
+   "completion_tokens": 21,
    "error": null,
    "k": 25,
    "prompt_tokens": 25136,
@@ -83,24 +83,24 @@
     "tau": null,
     "ttft_ms": null
    },
-   "tok_s": 6.96,
+   "tok_s": 7.0,
    "turn": 2,
-   "wall_s": 6.175
+   "wall_s": 2.999
   }
  ],
  "meta": {
-  "date": "2026-11-27T20:55:08+0300",
+  "date": "2026-11-28T00:52:32+0300",
   "engine": "hipfire",
   "fixture_md5": "253c7ac50857fe6d0e10fb0d2c5e35c0",
   "model": "qwen3.8:27b-mq4-xts",
   "params": "runs=1, parallel=2,4",
   "profile": "27b-parallel",
   "truncated": false,
-  "version": "0.4.7"
+  "version": "0.4.8"
  },
  "parallel": [
   {
-   "agg_tok_s": 19.96,
+   "agg_tok_s": 20.02,
    "completion_tokens": 455,
    "error": null,
    "fails": 0,
@@ -110,14 +110,14 @@
    "sum_completion_tokens": 455,
    "timings": null,
    "tok_s": null,
-   "wall_s": 22.795,
+   "wall_s": 22.729,
    "walls_s": [
-    22.79,
-    5.58
+    22.73,
+    5.52
    ]
   },
   {
-   "agg_tok_s": 28.16,
+   "agg_tok_s": 26.32,
    "completion_tokens": 910,
    "error": null,
    "fails": 0,
@@ -127,12 +127,12 @@
    "sum_completion_tokens": 910,
    "timings": null,
    "tok_s": null,
-   "wall_s": 32.313,
+   "wall_s": 34.579,
    "walls_s": [
-    32.31,
-    3.37,
-    32.31,
-    3.38
+    32.7,
+    6.77,
+    34.58,
+    3.45
    ]
   }
  ],
@@ -174,8 +174,8 @@
     "tau": null,
     "ttft_ms": null
    },
-   "tok_s": 15.4,
-   "wall_s": 25.978
+   "tok_s": 15.41,
+   "wall_s": 25.949
   }
  ],
  "session": [
@@ -217,7 +217,7 @@
    },
    "tok_s": 3.51,
    "turn": 1,
-   "wall_s": 9.118
+   "wall_s": 9.122
   },
   {
    "completion_tokens": 17,
@@ -255,9 +255,9 @@
     "tau": null,
     "ttft_ms": null
    },
-   "tok_s": 11.17,
+   "tok_s": 11.2,
    "turn": 2,
-   "wall_s": 1.523
+   "wall_s": 1.518
   },
   {
    "completion_tokens": 19,
@@ -295,9 +295,9 @@
     "tau": null,
     "ttft_ms": null
    },
-   "tok_s": 18.11,
+   "tok_s": 18.13,
    "turn": 3,
-   "wall_s": 1.049
+   "wall_s": 1.048
   },
   {
    "completion_tokens": 35,
@@ -335,9 +335,9 @@
     "tau": null,
     "ttft_ms": null
    },
-   "tok_s": 17.5,
+   "tok_s": 17.52,
    "turn": 4,
-   "wall_s": 2.0
+   "wall_s": 1.998
   },
   {
    "completion_tokens": 30,
@@ -375,9 +375,9 @@
     "tau": null,
     "ttft_ms": null
    },
-   "tok_s": 16.93,
+   "tok_s": 16.95,
    "turn": 5,
-   "wall_s": 1.772
+   "wall_s": 1.77
   },
   {
    "completion_tokens": 27,
@@ -415,9 +415,9 @@
     "tau": null,
     "ttft_ms": null
    },
-   "tok_s": 15.93,
+   "tok_s": 15.95,
    "turn": 6,
-   "wall_s": 1.695
+   "wall_s": 1.693
   },
   {
    "completion_tokens": 35,
@@ -455,9 +455,9 @@
     "tau": null,
     "ttft_ms": null
    },
-   "tok_s": 16.64,
+   "tok_s": 16.65,
    "turn": 7,
-   "wall_s": 2.104
+   "wall_s": 2.102
   },
   {
    "completion_tokens": 12,
@@ -495,9 +495,9 @@
     "tau": null,
     "ttft_ms": null
    },
-   "tok_s": 11.24,
+   "tok_s": 11.23,
    "turn": 8,
-   "wall_s": 1.067
+   "wall_s": 1.069
   },
   {
    "completion_tokens": 28,
@@ -535,9 +535,9 @@
     "tau": null,
     "ttft_ms": null
    },
-   "tok_s": 20.15,
+   "tok_s": 20.18,
    "turn": 9,
-   "wall_s": 1.389
+   "wall_s": 1.388
   },
   {
    "completion_tokens": 20,
@@ -575,9 +575,9 @@
     "tau": null,
     "ttft_ms": null
    },
-   "tok_s": 19.2,
+   "tok_s": 19.24,
    "turn": 10,
-   "wall_s": 1.042
+   "wall_s": 1.04
   },
   {
    "completion_tokens": 27,
@@ -615,9 +615,9 @@
     "tau": null,
     "ttft_ms": null
    },
-   "tok_s": 15.71,
+   "tok_s": 15.74,
    "turn": 11,
-   "wall_s": 1.719
+   "wall_s": 1.716
   },
   {
    "completion_tokens": 29,
@@ -655,9 +655,9 @@
     "tau": null,
     "ttft_ms": null
    },
-   "tok_s": 23.32,
+   "tok_s": 23.36,
    "turn": 12,
-   "wall_s": 1.244
+   "wall_s": 1.241
   },
   {
    "completion_tokens": 30,
@@ -697,7 +697,7 @@
    },
    "tok_s": 24.03,
    "turn": 13,
-   "wall_s": 1.249
+   "wall_s": 1.248
   },
   {
    "completion_tokens": 31,
@@ -735,9 +735,9 @@
     "tau": null,
     "ttft_ms": null
    },
-   "tok_s": 21.94,
+   "tok_s": 21.93,
    "turn": 14,
-   "wall_s": 1.413
+   "wall_s": 1.414
   },
   {
    "completion_tokens": 28,
@@ -775,9 +775,9 @@
     "tau": null,
     "ttft_ms": null
    },
-   "tok_s": 16.87,
+   "tok_s": 16.9,
    "turn": 15,
-   "wall_s": 1.659
+   "wall_s": 1.657
   }
  ],
  "solo": [
@@ -818,8 +818,8 @@
     "tau": null,
     "ttft_ms": null
    },
-   "tok_s": 92.9,
-   "wall_s": 1.668
+   "tok_s": 92.86,
+   "wall_s": 1.669
   }
  ]
 }

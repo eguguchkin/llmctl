@@ -2,11 +2,11 @@
  "extras": {
   "route_spec": "spec: qwen4 native mtp ",
   "tau_note": "последняя строка tau= в логах контейнера (не кумулятивная)",
-  "tau_s": 1.27
+  "tau_s": 0.82
  },
  "followup": [
   {
-   "completion_tokens": 18,
+   "completion_tokens": 128,
    "error": null,
    "k": 25,
    "prompt_tokens": 25094,
@@ -14,8 +14,8 @@
    "timings": {
     "ar_tokens": null,
     "ar_windows": 0,
-    "cycles": 7,
-    "decode_tok_s": 45.3,
+    "cycles": 82,
+    "decode_tok_s": 53.2,
     "dflash": null,
     "latency_ms": null,
     "mtp": true,
@@ -30,33 +30,33 @@
     "mtp_ngram": true,
     "mtp_retired": false,
     "mtp_window_timings": null,
-    "mtp_windows": 7,
-    "ngram_mod_accept_rate": 0.0,
-    "ngram_mod_accepted": 0,
-    "ngram_mod_drafts": 0,
-    "ngram_mod_windows": 0,
-    "prefill_ms": 12720.7,
-    "prefill_tok_s": 1972.7,
+    "mtp_windows": 37,
+    "ngram_mod_accept_rate": 0.542,
+    "ngram_mod_accepted": 13,
+    "ngram_mod_drafts": 24,
+    "ngram_mod_windows": 4,
+    "prefill_ms": 12704.0,
+    "prefill_tok_s": 1975.3,
     "spec_retired": null,
     "spec_retired_at": null,
-    "tau": 1.57,
-    "ttft_ms": 12720.7
+    "tau": 1.05,
+    "ttft_ms": 12704.0
    },
-   "tok_s": 1.36,
+   "tok_s": 8.43,
    "turn": 1,
-   "wall_s": 13.2
+   "wall_s": 15.192
   },
   {
-   "completion_tokens": 35,
+   "completion_tokens": 46,
    "error": null,
    "k": 25,
-   "prompt_tokens": 25134,
+   "prompt_tokens": 25245,
    "scenario": "followup",
    "timings": {
     "ar_tokens": null,
     "ar_windows": 0,
-    "cycles": 15,
-    "decode_tok_s": 44.2,
+    "cycles": 34,
+    "decode_tok_s": 47.1,
     "dflash": null,
     "latency_ms": null,
     "mtp": true,
@@ -71,36 +71,36 @@
     "mtp_ngram": true,
     "mtp_retired": false,
     "mtp_window_timings": null,
-    "mtp_windows": 15,
+    "mtp_windows": 16,
     "ngram_mod_accept_rate": 0.0,
     "ngram_mod_accepted": 0,
-    "ngram_mod_drafts": 0,
-    "ngram_mod_windows": 0,
-    "prefill_ms": 150.1,
-    "prefill_tok_s": 146.5,
+    "ngram_mod_drafts": 4,
+    "ngram_mod_windows": 1,
+    "prefill_ms": 153.1,
+    "prefill_tok_s": 150.3,
     "spec_retired": null,
     "spec_retired_at": null,
-    "tau": 1.27,
-    "ttft_ms": 150.1
+    "tau": 0.82,
+    "ttft_ms": 153.1
    },
-   "tok_s": 33.23,
+   "tok_s": 37.03,
    "turn": 2,
-   "wall_s": 1.053
+   "wall_s": 1.242
   }
  ],
  "meta": {
-  "date": "2026-11-27T20:58:15+0300",
+  "date": "2026-11-28T00:55:41+0300",
   "engine": "hipfire",
   "fixture_md5": "253c7ac50857fe6d0e10fb0d2c5e35c0",
   "model": "qwen3.8:flash-next-mq4-xts",
   "params": "runs=1, parallel=2,4",
   "profile": "flash",
   "truncated": false,
-  "version": "0.4.7"
+  "version": "0.4.8"
  },
  "parallel": [
   {
-   "agg_tok_s": 53.78,
+   "agg_tok_s": 53.8,
    "completion_tokens": 456,
    "error": null,
    "fails": 0,
@@ -110,14 +110,14 @@
    "sum_completion_tokens": 456,
    "timings": null,
    "tok_s": null,
-   "wall_s": 8.479,
+   "wall_s": 8.475,
    "walls_s": [
-    8.48,
+    8.47,
     3.5
    ]
   },
   {
-   "agg_tok_s": 56.77,
+   "agg_tok_s": 56.86,
    "completion_tokens": 912,
    "error": null,
    "fails": 0,
@@ -127,12 +127,12 @@
    "sum_completion_tokens": 912,
    "timings": null,
    "tok_s": null,
-   "wall_s": 16.066,
+   "wall_s": 16.041,
    "walls_s": [
-    16.06,
-    5.41,
-    16.0,
-    5.41
+    15.98,
+    5.4,
+    16.04,
+    5.4
    ]
   }
  ],
@@ -146,8 +146,8 @@
    "timings": {
     "ar_tokens": null,
     "ar_windows": 0,
-    "cycles": 176,
-    "decode_tok_s": 46.7,
+    "cycles": 356,
+    "decode_tok_s": 46.3,
     "dflash": null,
     "latency_ms": null,
     "mtp": true,
@@ -162,20 +162,20 @@
     "mtp_ngram": true,
     "mtp_retired": false,
     "mtp_window_timings": null,
-    "mtp_windows": 176,
+    "mtp_windows": 178,
     "ngram_mod_accept_rate": 0.0,
     "ngram_mod_accepted": 0,
     "ngram_mod_drafts": 0,
     "ngram_mod_windows": 0,
-    "prefill_ms": 153.4,
-    "prefill_tok_s": 162.9,
+    "prefill_ms": 156.3,
+    "prefill_tok_s": 160.0,
     "spec_retired": null,
     "spec_retired_at": null,
-    "tau": 1.27,
-    "ttft_ms": 153.4
+    "tau": 0.62,
+    "ttft_ms": 156.3
    },
-   "tok_s": 45.79,
-   "wall_s": 8.736
+   "tok_s": 45.41,
+   "wall_s": 8.808
   }
  ],
  "session": [
@@ -187,7 +187,7 @@
    "timings": {
     "ar_tokens": null,
     "ar_windows": 0,
-    "cycles": 8,
+    "cycles": 16,
     "decode_tok_s": 63.7,
     "dflash": null,
     "latency_ms": null,
@@ -208,16 +208,16 @@
     "ngram_mod_accepted": 0,
     "ngram_mod_drafts": 0,
     "ngram_mod_windows": 0,
-    "prefill_ms": 3207.8,
-    "prefill_tok_s": 2001.1,
+    "prefill_ms": 3208.0,
+    "prefill_tok_s": 2000.9,
     "spec_retired": null,
     "spec_retired_at": null,
-    "tau": 3.13,
-    "ttft_ms": 3207.8
+    "tau": 1.56,
+    "ttft_ms": 3208.0
    },
    "tok_s": 8.79,
    "turn": 1,
-   "wall_s": 3.753
+   "wall_s": 3.754
   },
   {
    "completion_tokens": 22,
@@ -227,8 +227,8 @@
    "timings": {
     "ar_tokens": null,
     "ar_windows": 0,
-    "cycles": 9,
-    "decode_tok_s": 46.5,
+    "cycles": 18,
+    "decode_tok_s": 46.1,
     "dflash": null,
     "latency_ms": null,
     "mtp": true,
@@ -248,16 +248,16 @@
     "ngram_mod_accepted": 0,
     "ngram_mod_drafts": 0,
     "ngram_mod_windows": 0,
-    "prefill_ms": 170.1,
-    "prefill_tok_s": 158.7,
+    "prefill_ms": 172.7,
+    "prefill_tok_s": 156.4,
     "spec_retired": null,
     "spec_retired_at": null,
-    "tau": 1.44,
-    "ttft_ms": 170.1
+    "tau": 0.72,
+    "ttft_ms": 172.7
    },
-   "tok_s": 32.62,
+   "tok_s": 32.26,
    "turn": 2,
-   "wall_s": 0.675
+   "wall_s": 0.682
   },
   {
    "completion_tokens": 28,
@@ -267,8 +267,8 @@
    "timings": {
     "ar_tokens": null,
     "ar_windows": 0,
-    "cycles": 7,
-    "decode_tok_s": 56.6,
+    "cycles": 14,
+    "decode_tok_s": 57.0,
     "dflash": null,
     "latency_ms": null,
     "mtp": true,
@@ -288,16 +288,16 @@
     "ngram_mod_accepted": 0,
     "ngram_mod_drafts": 0,
     "ngram_mod_windows": 0,
-    "prefill_ms": 150.6,
-    "prefill_tok_s": 146.1,
+    "prefill_ms": 154.7,
+    "prefill_tok_s": 142.2,
     "spec_retired": null,
     "spec_retired_at": null,
-    "tau": 3.0,
-    "ttft_ms": 150.6
+    "tau": 1.5,
+    "ttft_ms": 154.7
    },
-   "tok_s": 41.23,
+   "tok_s": 41.27,
    "turn": 3,
-   "wall_s": 0.679
+   "wall_s": 0.678
   },
   {
    "completion_tokens": 37,
@@ -307,8 +307,8 @@
    "timings": {
     "ar_tokens": null,
     "ar_windows": 0,
-    "cycles": 8,
-    "decode_tok_s": 68.9,
+    "cycles": 16,
+    "decode_tok_s": 69.0,
     "dflash": null,
     "latency_ms": null,
     "mtp": true,
@@ -328,16 +328,16 @@
     "ngram_mod_accepted": 0,
     "ngram_mod_drafts": 0,
     "ngram_mod_windows": 0,
-    "prefill_ms": 180.1,
-    "prefill_tok_s": 161.1,
+    "prefill_ms": 184.0,
+    "prefill_tok_s": 157.6,
     "spec_retired": null,
     "spec_retired_at": null,
-    "tau": 3.63,
-    "ttft_ms": 180.1
+    "tau": 1.81,
+    "ttft_ms": 184.0
    },
-   "tok_s": 49.29,
+   "tok_s": 49.09,
    "turn": 4,
-   "wall_s": 0.751
+   "wall_s": 0.754
   },
   {
    "completion_tokens": 37,
@@ -347,7 +347,7 @@
    "timings": {
     "ar_tokens": null,
     "ar_windows": 0,
-    "cycles": 10,
+    "cycles": 20,
     "decode_tok_s": 60.8,
     "dflash": null,
     "latency_ms": null,
@@ -368,16 +368,16 @@
     "ngram_mod_accepted": 0,
     "ngram_mod_drafts": 0,
     "ngram_mod_windows": 0,
-    "prefill_ms": 188.5,
-    "prefill_tok_s": 164.5,
+    "prefill_ms": 191.4,
+    "prefill_tok_s": 162.0,
     "spec_retired": null,
     "spec_retired_at": null,
-    "tau": 2.6,
-    "ttft_ms": 188.5
+    "tau": 1.3,
+    "ttft_ms": 191.4
    },
-   "tok_s": 44.55,
+   "tok_s": 44.38,
    "turn": 5,
-   "wall_s": 0.831
+   "wall_s": 0.834
   },
   {
    "completion_tokens": 30,
@@ -387,7 +387,7 @@
    "timings": {
     "ar_tokens": null,
     "ar_windows": 0,
-    "cycles": 7,
+    "cycles": 14,
     "decode_tok_s": 63.8,
     "dflash": null,
     "latency_ms": null,
@@ -408,16 +408,16 @@
     "ngram_mod_accepted": 0,
     "ngram_mod_drafts": 0,
     "ngram_mod_windows": 0,
-    "prefill_ms": 164.4,
-    "prefill_tok_s": 152.1,
+    "prefill_ms": 168.7,
+    "prefill_tok_s": 148.2,
     "spec_retired": null,
     "spec_retired_at": null,
-    "tau": 3.29,
-    "ttft_ms": 164.4
+    "tau": 1.64,
+    "ttft_ms": 168.7
    },
-   "tok_s": 44.9,
+   "tok_s": 44.59,
    "turn": 6,
-   "wall_s": 0.668
+   "wall_s": 0.673
   },
   {
    "completion_tokens": 36,
@@ -427,8 +427,8 @@
    "timings": {
     "ar_tokens": null,
     "ar_windows": 0,
-    "cycles": 8,
-    "decode_tok_s": 64.8,
+    "cycles": 16,
+    "decode_tok_s": 64.4,
     "dflash": null,
     "latency_ms": null,
     "mtp": true,
@@ -448,16 +448,16 @@
     "ngram_mod_accepted": 0,
     "ngram_mod_drafts": 0,
     "ngram_mod_windows": 0,
-    "prefill_ms": 201.3,
-    "prefill_tok_s": 163.9,
+    "prefill_ms": 205.9,
+    "prefill_tok_s": 160.3,
     "spec_retired": null,
     "spec_retired_at": null,
-    "tau": 3.5,
-    "ttft_ms": 201.3
+    "tau": 1.75,
+    "ttft_ms": 205.9
    },
-   "tok_s": 45.46,
+   "tok_s": 44.99,
    "turn": 7,
-   "wall_s": 0.792
+   "wall_s": 0.8
   },
   {
    "completion_tokens": 17,
@@ -467,7 +467,7 @@
    "timings": {
     "ar_tokens": null,
     "ar_windows": 0,
-    "cycles": 4,
+    "cycles": 8,
     "decode_tok_s": 63.7,
     "dflash": null,
     "latency_ms": null,
@@ -488,16 +488,16 @@
     "ngram_mod_accepted": 0,
     "ngram_mod_drafts": 0,
     "ngram_mod_windows": 0,
-    "prefill_ms": 160.3,
-    "prefill_tok_s": 149.8,
+    "prefill_ms": 163.3,
+    "prefill_tok_s": 146.9,
     "spec_retired": null,
     "spec_retired_at": null,
-    "tau": 3.25,
-    "ttft_ms": 160.3
+    "tau": 1.63,
+    "ttft_ms": 163.3
    },
-   "tok_s": 36.85,
+   "tok_s": 36.43,
    "turn": 8,
-   "wall_s": 0.461
+   "wall_s": 0.467
   },
   {
    "completion_tokens": 29,
@@ -507,8 +507,8 @@
    "timings": {
     "ar_tokens": null,
     "ar_windows": 0,
-    "cycles": 7,
-    "decode_tok_s": 63.7,
+    "cycles": 14,
+    "decode_tok_s": 63.8,
     "dflash": null,
     "latency_ms": null,
     "mtp": true,
@@ -528,16 +528,16 @@
     "ngram_mod_accepted": 0,
     "ngram_mod_drafts": 0,
     "ngram_mod_windows": 0,
-    "prefill_ms": 163.2,
-    "prefill_tok_s": 153.2,
+    "prefill_ms": 167.1,
+    "prefill_tok_s": 149.6,
     "spec_retired": null,
     "spec_retired_at": null,
-    "tau": 3.14,
-    "ttft_ms": 163.2
+    "tau": 1.57,
+    "ttft_ms": 167.1
    },
-   "tok_s": 44.23,
+   "tok_s": 44.17,
    "turn": 9,
-   "wall_s": 0.656
+   "wall_s": 0.657
   },
   {
    "completion_tokens": 19,
@@ -547,8 +547,8 @@
    "timings": {
     "ar_tokens": null,
     "ar_windows": 0,
-    "cycles": 7,
-    "decode_tok_s": 47.6,
+    "cycles": 14,
+    "decode_tok_s": 47.3,
     "dflash": null,
     "latency_ms": null,
     "mtp": true,
@@ -568,16 +568,16 @@
     "ngram_mod_accepted": 0,
     "ngram_mod_drafts": 0,
     "ngram_mod_windows": 0,
-    "prefill_ms": 175.5,
-    "prefill_tok_s": 159.6,
+    "prefill_ms": 178.2,
+    "prefill_tok_s": 157.1,
     "spec_retired": null,
     "spec_retired_at": null,
-    "tau": 1.71,
-    "ttft_ms": 175.5
+    "tau": 0.86,
+    "ttft_ms": 178.2
    },
-   "tok_s": 31.09,
+   "tok_s": 30.88,
    "turn": 10,
-   "wall_s": 0.611
+   "wall_s": 0.615
   },
   {
    "completion_tokens": 29,
@@ -587,8 +587,8 @@
    "timings": {
     "ar_tokens": null,
     "ar_windows": 0,
-    "cycles": 7,
-    "decode_tok_s": 65.3,
+    "cycles": 14,
+    "decode_tok_s": 65.5,
     "dflash": null,
     "latency_ms": null,
     "mtp": true,
@@ -608,16 +608,16 @@
     "ngram_mod_accepted": 0,
     "ngram_mod_drafts": 0,
     "ngram_mod_windows": 0,
-    "prefill_ms": 172.6,
-    "prefill_tok_s": 156.5,
+    "prefill_ms": 176.4,
+    "prefill_tok_s": 153.1,
     "spec_retired": null,
     "spec_retired_at": null,
-    "tau": 3.14,
-    "ttft_ms": 172.6
+    "tau": 1.57,
+    "ttft_ms": 176.4
    },
-   "tok_s": 44.37,
+   "tok_s": 44.13,
    "turn": 11,
-   "wall_s": 0.654
+   "wall_s": 0.657
   },
   {
    "completion_tokens": 32,
@@ -627,7 +627,7 @@
    "timings": {
     "ar_tokens": null,
     "ar_windows": 0,
-    "cycles": 6,
+    "cycles": 12,
     "decode_tok_s": 75.5,
     "dflash": null,
     "latency_ms": null,
@@ -648,16 +648,16 @@
     "ngram_mod_accepted": 0,
     "ngram_mod_drafts": 0,
     "ngram_mod_windows": 0,
-    "prefill_ms": 177.7,
-    "prefill_tok_s": 157.6,
+    "prefill_ms": 182.6,
+    "prefill_tok_s": 153.3,
     "spec_retired": null,
     "spec_retired_at": null,
-    "tau": 4.33,
-    "ttft_ms": 177.7
+    "tau": 2.17,
+    "ttft_ms": 182.6
    },
-   "tok_s": 50.0,
+   "tok_s": 49.68,
    "turn": 12,
-   "wall_s": 0.64
+   "wall_s": 0.644
   },
   {
    "completion_tokens": 32,
@@ -667,8 +667,8 @@
    "timings": {
     "ar_tokens": null,
     "ar_windows": 0,
-    "cycles": 9,
-    "decode_tok_s": 51.8,
+    "cycles": 18,
+    "decode_tok_s": 52.0,
     "dflash": null,
     "latency_ms": null,
     "mtp": true,
@@ -688,16 +688,16 @@
     "ngram_mod_accepted": 0,
     "ngram_mod_drafts": 0,
     "ngram_mod_windows": 0,
-    "prefill_ms": 182.7,
-    "prefill_tok_s": 158.7,
+    "prefill_ms": 185.5,
+    "prefill_tok_s": 156.4,
     "spec_retired": null,
     "spec_retired_at": null,
-    "tau": 2.56,
-    "ttft_ms": 182.7
+    "tau": 1.28,
+    "ttft_ms": 185.5
    },
-   "tok_s": 38.16,
+   "tok_s": 38.12,
    "turn": 13,
-   "wall_s": 0.839
+   "wall_s": 0.84
   },
   {
    "completion_tokens": 34,
@@ -707,8 +707,8 @@
    "timings": {
     "ar_tokens": null,
     "ar_windows": 0,
-    "cycles": 6,
-    "decode_tok_s": 78.6,
+    "cycles": 12,
+    "decode_tok_s": 78.9,
     "dflash": null,
     "latency_ms": null,
     "mtp": true,
@@ -728,16 +728,16 @@
     "ngram_mod_accepted": 0,
     "ngram_mod_drafts": 0,
     "ngram_mod_windows": 0,
-    "prefill_ms": 176.8,
-    "prefill_tok_s": 158.4,
+    "prefill_ms": 181.4,
+    "prefill_tok_s": 154.3,
     "spec_retired": null,
     "spec_retired_at": null,
-    "tau": 4.5,
-    "ttft_ms": 176.8
+    "tau": 2.25,
+    "ttft_ms": 181.4
    },
-   "tok_s": 52.33,
+   "tok_s": 52.26,
    "turn": 14,
-   "wall_s": 0.65
+   "wall_s": 0.651
   },
   {
    "completion_tokens": 31,
@@ -747,7 +747,7 @@
    "timings": {
     "ar_tokens": null,
     "ar_windows": 0,
-    "cycles": 7,
+    "cycles": 14,
     "decode_tok_s": 62.4,
     "dflash": null,
     "latency_ms": null,
@@ -768,16 +768,16 @@
     "ngram_mod_accepted": 0,
     "ngram_mod_drafts": 0,
     "ngram_mod_windows": 0,
-    "prefill_ms": 183.8,
-    "prefill_tok_s": 163.2,
+    "prefill_ms": 187.8,
+    "prefill_tok_s": 159.8,
     "spec_retired": null,
     "spec_retired_at": null,
-    "tau": 3.43,
-    "ttft_ms": 183.8
+    "tau": 1.71,
+    "ttft_ms": 187.8
    },
-   "tok_s": 43.06,
+   "tok_s": 42.85,
    "turn": 15,
-   "wall_s": 0.72
+   "wall_s": 0.723
   }
  ],
  "solo": [
@@ -790,8 +790,8 @@
    "timings": {
     "ar_tokens": null,
     "ar_windows": 0,
-    "cycles": 27,
-    "decode_tok_s": 83.6,
+    "cycles": 52,
+    "decode_tok_s": 85.1,
     "dflash": null,
     "latency_ms": null,
     "mtp": true,
@@ -806,20 +806,20 @@
     "mtp_ngram": true,
     "mtp_retired": false,
     "mtp_window_timings": null,
-    "mtp_windows": 27,
+    "mtp_windows": 26,
     "ngram_mod_accept_rate": 0.0,
     "ngram_mod_accepted": 0,
     "ngram_mod_drafts": 0,
     "ngram_mod_windows": 0,
-    "prefill_ms": 208.6,
-    "prefill_tok_s": 182.1,
+    "prefill_ms": 210.6,
+    "prefill_tok_s": 180.4,
     "spec_retired": null,
     "spec_retired_at": null,
-    "tau": 4.78,
-    "ttft_ms": 208.6
+    "tau": 2.5,
+    "ttft_ms": 210.6
    },
-   "tok_s": 74.75,
-   "wall_s": 2.087
+   "tok_s": 75.91,
+   "wall_s": 2.055
   }
  ]
 }

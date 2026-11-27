@@ -1,29 +1,29 @@
 # bench matrix — the latest run of every combination
 
-- snapshot dates: 2026-11-27
+- snapshot dates: 2026-11-28
 - methodology and caveats: bench/README.md
 
 ## profile 27b
 
 | engine | solo tok/s | prose tok/s | session 15, s | 25k prefill (miss), s → tok/s | par-2 tok/s | par-4 tok/s |
 |---|---|---|---|---|---|---|
-| gufo 0.36 | 71.44 | 20.54 | 14.63 | 50.65 → 495 tok/s | 27.83 | 28.01 |
-| hipfire 0.4.7 | 100.47 | 19.65 | 20.67 | 26.93 → 932 tok/s | 26.86 | 26.80 |
+| gufo 0.37 | 71.04 | 20.49 | 14.56 | 50.77 → 494 tok/s | 27.74 | 27.98 |
+| hipfire 0.4.8 | 100.61 | 19.65 | 20.67 | 26.98 → 930 tok/s | 26.89 | 26.83 |
 
 ## profile 27b-parallel
 
 | engine | solo tok/s | prose tok/s | session 15, s | 25k prefill (miss), s → tok/s | par-2 tok/s | par-4 tok/s |
 |---|---|---|---|---|---|---|
-| gufo 0.36 | 69.56 | 20.46 | 14.48 | 50.55 → 496 tok/s | 29.14 | 43.14 |
-| hipfire 0.4.7 | 92.90 | 15.40 | 30.04 | 34.60 → 725 tok/s | 19.96 | 28.16 |
+| gufo 0.37 | 68.76 | 20.44 | 14.83 | 50.88 → 493 tok/s | 29.02 | 43.07 |
+| hipfire 0.4.8 | 92.86 | 15.41 | 30.02 | 34.55 → 726 tok/s | 20.02 | 26.32 |
 
 ## profile flash
 
 | engine | solo tok/s | prose tok/s | session 15, s | 25k prefill (miss), s → tok/s | par-2 tok/s | par-4 tok/s |
 |---|---|---|---|---|---|---|
-| gufo 0.36 | 80.95 | 41.57 | 8.66 | 17.25 → 1 455 tok/s | 54.38 | 93.11 |
-| halogen 0.20.7 | 125.12 | 69.09 | 6.60 | 12.10 → 2 074 tok/s | 87.18 | 118.94 |
-| hipfire 0.4.7 | 74.75 | 45.79 | 13.38 | 13.20 → 1 901 tok/s | 53.78 | 56.77 |
+| gufo 0.37 | 81.72 | 41.58 | 8.62 | 14.54 → 1 726 tok/s | 54.34 | 93.55 |
+| halogen 0.21.0 | 112.99 | 67.52 | 6.77 | 12.18 → 2 061 tok/s | 86.44 | 118.95 |
+| hipfire 0.4.8 | 75.91 | 45.41 | 13.43 | 15.19 → 1 652 tok/s | 53.80 | 56.86 |
 
 ## How to read
 
