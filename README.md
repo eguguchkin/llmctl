@@ -20,6 +20,26 @@ All engines target the same hardware class: an AMD Strix Halo APU
 27B minimum, 128 GiB is comfortable for every profile; ROCm/KFD memlock
 limits are prepared automatically.
 
+## Profiles
+
+A profile is a fixed, named recipe: the weights set, the draft/sidecar
+model, the session count, the context, the cache budgets and the RAM gate
+(one file per profile: `engines/<engine>/profiles/<id>.env`; the gate
+refuses a profile before any download if the machine has less memory).
+
+| engine / profile | weights (quant) | draft / sidecar | sessions | context | RAM gate | notes |
+|---|---|---|---|---|---|---|
+| gufo / `27b` | Qwen3.8-27B IQ4_XS-pure + mmproj BF16 | DFlash2-Q4_K_M | 1 | 262144 (no probe) | 56 GiB | max solo decode speed |
+| gufo / `27b-parallel` | same set | DFlash2-Q4_K_M | 2 | 210000; fallback steps 196608 / 163840 / 131072 | 56 GiB | multi-client |
+| gufo / `flash` | Flash-Next UD-Q4_K_XL, 4 shards + mmproj | MTP shared Q8_0 | 2 | 131072 base; probe ladder tops at 262144 | 110 GiB | speculative MTP |
+| halogen / `flash` | Flash-Next v2 .hgn + ngram lookup + drafter-r2-ht4 + vision sidecar | drafter-r2-ht4 | 4 (KV_SLOTS) | 262144 (no probe — the pool fits itself) | 110 GiB | vision on; disk cache 64 GiB, RAM tier n/a |
+| hipfire / `27b` | Qwen3.8 27b-mq4-xts | 27b-draft-mq4 | singleton | engine config | 58 GiB | max solo decode speed |
+| hipfire / `27b-parallel` | same | same | 2 × 262144 slots | engine config | 58 GiB | HOL-isolated multi-slot |
+| hipfire / `flash` | Flash-Next mq4-xts | — | engine config | engine config | 80 GiB | VMM fn-lanes |
+
+A profile that would not fit the machine's memory pool is refused before
+any download; `--force` bypasses with a warning.
+
 ## Why
 
 - **Effective parameters, fixed per workload** — a profile pins the
@@ -116,21 +136,23 @@ Cross-engine comparisons are valid only within the same scenario and the
 same fixture md5.
 
 The latest recorded matrix (a 128 GB Strix Halo, `lctl bench --runs 1`,
-one session, 2026-11-27; medians in tok/s, the agent session is wall time;
-`runs=1` is an orientation point, not an acceptance):
+one session, 2026-11-27; medians — decode/aggregates in tok/s, walls in
+seconds; `runs=1` is an orientation point, not an acceptance run):
 
-| engine / profile | solo | prose | session 15 | parallel-2 | parallel-4 |
+| engine / profile | solo, tok/s | prose, tok/s | session 15, s | parallel-2, tok/s | parallel-4, tok/s |
 |---|---|---|---|---|---|
-| **halogen / flash** | **112.92** | **67.58** | **6.76 s** | **86.92** | **121.70** |
-| gufo / flash (MTP) | 81.44 | 41.60 | 8.62 s | 53.21 | 71.66 |
-| gufo / 27b (solo DFlash) | 65.18 | 20.34 | 25.89 s | 27.30 | 27.88 |
-| gufo / 27b-parallel | 64.93 | 20.32 | 26.00 s | 29.05 | 43.20 |
-| hipfire / 27b | 100.63 | 19.67 | 20.65 s | 26.84 | 26.84 |
-| hipfire / 27b-parallel | 92.95 | 15.40 | 30.05 s | 20.04 | 28.14 |
-| hipfire / flash | 75.88 | 45.88 | 13.38 s | 41.90 | 56.43 |
+| **halogen / flash** | **112.92** | **67.58** | **6.76** | **86.92** | **121.70** |
+| gufo / flash (MTP) | 81.44 | 41.60 | 8.62 | 53.21 | 71.66 |
+| gufo / 27b | 65.18 | 20.34 | 25.89 | 27.30 | 27.88 |
+| gufo / 27b-parallel | 64.93 | 20.32 | 26.00 | 29.05 | 43.20 |
+| hipfire / 27b | 100.63 | 19.67 | 20.65 | 26.84 | 26.84 |
+| hipfire / 27b-parallel | 92.95 | 15.40 | 30.05 | 20.04 | 28.14 |
+| hipfire / flash | 75.88 | 45.88 | 13.38 | 41.90 | 56.43 |
 
 All seven combinations came up healthy in the same session; the full
-reports are in [`bench/reports/`](bench/reports/).
+reports are in [`bench/reports/`](bench/reports/). **The scenario
+methodology, the prefill figures (warm prefill tok/s and the cold 25k
+wall) and the extended matrix — [bench/README.md](bench/README.md)**.
 
 ## Development
 
