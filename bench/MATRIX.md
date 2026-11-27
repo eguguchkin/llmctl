@@ -8,6 +8,7 @@
 | engine | solo tok/s | prose tok/s | session 15, s | 25k prefill (miss), s → tok/s | par-2 tok/s | par-4 tok/s |
 |---|---|---|---|---|---|---|
 | gufo 0.37 | 71.04 | 20.49 | 14.56 | 50.77 → 494 tok/s | 27.74 | 27.98 |
+| halogen 0.21.0 | 71.11 | 30.92 | 19.39 | 40.17 → 625 tok/s | 44.04 | 65.86 |
 | hipfire 0.4.8 | 100.61 | 19.65 | 20.67 | 26.98 → 930 tok/s | 26.89 | 26.83 |
 
 ## profile 27b-parallel

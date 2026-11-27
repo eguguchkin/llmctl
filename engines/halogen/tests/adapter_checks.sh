@@ -28,7 +28,7 @@ scen_h1_registry() {
   # vision, draft НЕ существует), модель-канон из P_MODEL_ID
   LCTL_TEST_ENGINE=halogen hf 'resolve_profile nope2' >/dev/null 2>&1 && return 1
   out=$(LCTL_TEST_ENGINE=halogen hf 'echo "$(resolve_profile 27b)|$(profile_field 27b 1)|$(profile_field 27b 3)|$(profile_field 27b 4)|$(profile_field 27b 6)|$(profile_field 27b 7)|$(profile_field 27b 9)"') || return 1
-  [ "$out" = "27b|qwen38-27b-ht4.hgn|-|85|4|262144|-" ] || return 1
+  [ "$out" = "27b|qwen38-27b-ht4.hgn|-|90|4|262144|-" ] || return 1
   out=$(LCTL_TEST_ENGINE=halogen hf 'echo "$(profile_field 27b 2 | wc -w)|$(profile_ladder 27b)|$(ref_get 27b session)|$(engine_model_set 27b)"') || return 1
   [ "$out" = "8|-||halogen_27b" ] || return 1   # ref не снят — пусто (WARN в agent-check честен)
   out=$(LCTL_TEST_ENGINE=halogen hf 'weights_for halogen_27b | awk -F"|" "{s+=\$2} END{printf \"%.0f\", s+0}"') || return 1
@@ -410,7 +410,7 @@ ADAPTER_FUNCS+=" halogen_scenarios"
 halogen_scenarios() {
   # on LCTL_HDBG=1 a failed scenario is re-run with an output tail (stderr)
   local _d=${LCTL_HDBG:-}
-  if scen_h1_registry; then ok "H1: реестр halogen — профили flash+27b (алиасы, поля 1-9 обоих, гейты 110/85, сеты 120297030276/14730644964, roles, model_id_canon flash/27b), пин образа = 0.21.0"; else bad "H1 реестр/пины"; [ -n "$_d" ] && scen_h1_registry 2>&1 | tail -20 >&2; fi
+  if scen_h1_registry; then ok "H1: реестр halogen — профили flash+27b (алиасы, поля 1-9 обоих, гейты 110/90, сеты 120297030276/14730644964, roles, model_id_canon flash/27b), пин образа = 0.21.0"; else bad "H1 реестр/пины"; [ -n "$_d" ] && scen_h1_registry 2>&1 | tail -20 >&2; fi
   if scen_h2_pins_download; then ok "H2: доставка — file:// PASS sha, SKIP по размеру, tokenizer/ dirname pre-flight'ом, SHA-MISMATCH с удалением, pull по имени (unknown → die)"; else bad "H2 доставка"; [ -n "$_d" ] && scen_h2_pins_download 2>&1 | tail -15 >&2; fi
   if scen_h3_compose; then ok "H3: compose-золотой — name: halogen, env-литералы (CHECKPOINT/MODEL_ID/KV_SLOTS), порт 11435:11435, /models:ro, vision off→пусто/on→\"1\" (файл на диске), детерминизм, target-каталог (этап 8)"; else bad "H3 compose-рендер"; [ -n "$_d" ] && scen_h3_compose 2>&1 | tail -15 >&2; fi
   if scen_h4_env; then ok "H4: env-рендер — LCTL_* канон + HALOGEN_* display (MODELS/IMAGE)"; else bad "H4 env"; fi
