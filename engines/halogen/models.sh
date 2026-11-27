@@ -178,11 +178,18 @@ download_file() {
 # @returns integer   # 0 — the file in place (or fetched with sha OK); else
 #   download_file's rc; an unknown name — die
 engine_pull_model() {
-  local f="$1" set_name pf size sha url role found=""
+  local f="$1" set_name pf size sha url role found="" try
   set_name=$(engine_model_set "$(cur_profile)" 2>/dev/null) || set_name=halogen-flash
-  while IFS='|' read -r pf size sha url role; do
-    if [ "$pf" = "$f" ]; then found=1; break; fi
-  done < <(weights_for "$set_name") || true
+  # файл может жить в другом сете халогена (кросс-профильный pull: `lctl
+  # pull halogen 27b` при активном flash): канон-сет первым, затем остальные;
+  # имена файлов между сетами не пересекаются (токенайзер — одни байты)
+  for try in "$set_name" halogen_flash halogen_27b; do
+    [ -n "$found" ] && break
+    while IFS='|' read -r pf size sha url role; do
+      if [ "$pf" = "$f" ]; then found=1; break; fi
+    done < <(weights_for "$try" 2>/dev/null) || true
+    [ -n "$found" ] && set_name="$try"
+  done
   [ -n "$found" ] || die "engine_pull_model: файл '$f' не найден в таблице пинов halogen ($set_name)"
   log "тяну модель $f (сет $set_name)"
   download_file "$url" "$MODELS_DIR/$f" "$size" "$sha"

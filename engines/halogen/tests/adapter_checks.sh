@@ -37,6 +37,10 @@ scen_h1_registry() {
   [ "$out" = "qwen38-27b-ht4.hgn||qwen38-27b-vision.hgn" ] || return 1
   out=$(LCTL_TEST_ENGINE=halogen hf 'echo "$(model_id_canon 27b)|$(model_id_canon flash)"') || return 1
   [ "$out" = "halogen-qwen3.8-27b|qwen3.8-flash-next" ] || return 1
+  # the sets are disjoint by file name — the cross-profile pull
+  # (engine_pull_model scans halogen_flash + halogen_27b) relies on it
+  out=$(LCTL_TEST_ENGINE=halogen hf 'echo "$(weights_for halogen_flash | grep -c "^qwen38-27b-ht4")|$(weights_for halogen_27b | grep -c "^qwen38-flash-next-v2")"') || return 1
+  [ "$out" = "0|0" ] || return 1
   # the registry fields: 1 main, 4 the 110 gate, 6 sessions=KV_SLOTS, 7 ctx, 8 the cache tiers, 9 '-' (an env config)
   out=$(LCTL_TEST_ENGINE=halogen hf 'echo "$(profile_field flash 1)|$(profile_field flash 3)|$(profile_field flash 4)|$(profile_field flash 6)|$(profile_field flash 7)|$(profile_field flash 8)|$(profile_field flash 9)"') || return 1
   [ "$out" = "qwen38-flash-next-v2.hgn|qwen38-flash-next-drafter-r2-ht4.hgn|110|4|262144|0/68719476736|-" ] || return 1
