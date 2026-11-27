@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+case "${1:-}" in
+  -u)  echo 1000 ;;
+  -nG) echo "${LCTL_FAUX_GROUPS:-tester render video}" ;;
+  *)   echo "uid=1000(tester) gid=1000(tester)" ;;
+esac

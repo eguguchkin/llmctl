@@ -1,0 +1,92 @@
+#!/usr/bin/env bash
+set -u
+L="${LCTL_FAUX_LOG:?}"
+printf 'podman%s\n' "${*:+ $*}" >> "$L"
+printf 'env CONTAINERS_CONF=%s\n' "${CONTAINERS_CONF-UNSET}" >> "$L"
+CNT="${LCTL_FAUX_CNT:?}"
+case "$1" in
+  compose)
+    shift; sub=""; skip=0
+    for a in "$@"; do
+      [ "$skip" = 1 ] && { skip=0; continue; }
+      case "$a" in
+        -f|--in-pod) skip=1 ;;   # опция со значением (fix-r1: глобалы адаптера до -f)
+        -*) ;;                   # прочие флаги без значения — игнор
+        *) [ -z "$sub" ] && sub="$a" ;;
+      esac
+    done
+    case "$sub" in
+      up)
+        n=$(cat "$CNT.up" 2>/dev/null || echo 0); n=$((n + 1)); echo "$n" > "$CNT.up"
+        case "${LCTL_FAUX_UP:-ok}" in
+          ok) : ;;
+          orphan-once) [ "$n" = 1 ] || { echo "pretend up ok"; k=$(cat "$CNT.upok" 2>/dev/null || echo 0); echo "$((k + 1))" > "$CNT.upok"; exit 0; } ;;
+          orphan-always) : ;;
+        esac
+        if [ "${LCTL_FAUX_UP:-ok}" != ok ] && { [ "${LCTL_FAUX_UP}" = orphan-always ] || [ "$n" = 1 ]; }; then
+          printf 'Error: creating container storage: the container name "hipfire_hipfire-init_1" is already in use by %s … external entity\n' "${LCTL_FAUX_ORPHAN_ID:?}"
+          exit 1
+        fi
+        k=$(cat "$CNT.upok" 2>/dev/null || echo 0); echo "$((k + 1))" > "$CNT.upok"
+        echo "pretend up ok"; exit 0 ;;
+      stop)
+        if [ "${LCTL_FAUX_STOPFAIL:-0}" = 1 ]; then
+          echo "Error: fake compose stop failure (pasta: permission denied, signal to init container)"; exit 1
+        fi
+        echo "pretend stop ok"; exit 0 ;;
+      *) exit 0 ;;
+    esac ;;
+  inspect)
+    t=""; for a in "$@"; do t="$a"; done   # последний аргумент — цель inspect
+    case "$t" in
+      *hipfire_*|*gufo_*|*halogen_*)
+        # the project container: running after the first successful up
+        [ "$(cat "$CNT.upok" 2>/dev/null || echo 0)" -gt 0 ] && { echo running; exit 0; }
+        exit 1 ;;
+      *)
+        # a hex-ID (the orphan guard): libpod «sees» it / does not
+        [ "${LCTL_FAUX_INSPECT_ID:-missing}" = running ] && { echo running; exit 0; }
+        exit 1 ;;
+    esac ;;
+  pod)
+    case "${2:-}" in
+      inspect)
+        case "${LCTL_FAUX_POD_INFRA:-absent}" in
+          empty) printf ''; exit 0 ;;
+          full)  printf '%s\n' "${LCTL_FAUX_ORPHAN_ID:?}"; exit 0 ;;
+          *)     exit 1 ;;
+        esac ;;
+      rm) exit 0 ;;
+      *) exit 0 ;;
+    esac ;;
+  ps) exit 0 ;;
+  rm) exit 0 ;;
+  stop) exit 0 ;;
+  logs)
+    # (wave G) the container logs: a mapping by the up counter (the probe
+    # tests: up#N → the file min(N, the list length); NOT A SINGLE up →
+    # empty — no container yet, the probe's healthy gate honestly sees
+    # «not healthy») or a static file; neither → empty
+    if [ -n "${LCTL_FAUX_UP_LOGS:-}" ]; then
+      n=$(cat "$CNT.upok" 2>/dev/null || echo 0)
+      [ "$n" -ge 1 ] || exit 0
+      total=$(awk -F: '{print NF}' <<<"${LCTL_FAUX_UP_LOGS}")
+      i=$n; [ "$i" -gt "$total" ] && i=$total
+      cat "$(awk -F: -v i="$i" '{print $i}' <<<"${LCTL_FAUX_UP_LOGS}")"
+      exit 0
+    fi
+    # (SR, fix:smoke-race) a logs SEQ by the NUMBER OF podman logs CALLS —
+    #     the «late flush» scenario: the 1st log read before the
+    #     load_completed flush, the 2nd — after it
+    if [ -n "${LCTL_FAUX_LOGS_SEQ:-}" ]; then
+      n=$(cat "$CNT.logs" 2>/dev/null || echo 0); n=$((n + 1)); echo "$n" > "$CNT.logs"
+      total=$(awk -F: '{print NF}' <<<"${LCTL_FAUX_LOGS_SEQ}")
+      i=$n; [ "$i" -gt "$total" ] && i=$total
+      cat "$(awk -F: -v i="$i" '{print $i}' <<<"${LCTL_FAUX_LOGS_SEQ}")"
+      exit 0
+    fi
+    [ -n "${LCTL_FAUX_PODMAN_LOGS:-}" ] && cat "$LCTL_FAUX_PODMAN_LOGS"
+    exit 0 ;;
+  image) exit 0 ;;
+esac
+exit 0

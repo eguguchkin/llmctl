@@ -1,0 +1,11 @@
+{
+  "status": "ok",
+  "model": "qwen3.8:27b-mq4-xts",
+  "loading_model": null,
+  "pid": 8,
+  "token": null,
+  "capabilities": {
+    "mode": "standard",
+    "multi_slot_slots": 4
+  }
+}

@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+printf 'podman-compose%s\n' "${*:+ $*}" >> "${LCTL_FAUX_LOG:?}"
+exit 0

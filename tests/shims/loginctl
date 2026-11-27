@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+printf 'loginctl%s\n' "${*:+ $*}" >> "${LCTL_FAUX_LOG:?}"
+[ "${LCTL_FAUX_LINGER:-0}" = 1 ] && printf 'Linger=yes\n'
+exit 0

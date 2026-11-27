@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+printf 'curl%s\n' "${*:+ $*}" >> "${LCTL_FAUX_LOG:?}"
+CNT="${LCTL_FAUX_CNT:?}"
+case "$*" in
+  *"/health"*) printf '{"status":"ok","model":"qwen3.8:27b-mq4-xts"}'; exit 0 ;;
+  *"/ready"*)
+    [ "${LCTL_FAUX_CURL_READYFAIL:-0}" = 1 ] && exit 7
+    printf 'OK'; exit 0 ;;
+  *"/metrics"*)
+    n=$(cat "$CNT.curl" 2>/dev/null || echo 0)
+    n=$((n + 1)); echo "$n" > "$CNT.curl"
+    [ "${LCTL_FAUX_CURL_FAILALL:-0}" = 1 ] && exit 7
+    seq="${LCTL_FAUX_METRICS_SEQ:-}"
+    if [ -n "$seq" ]; then
+      total=$(awk -F: '{print NF}' <<<"$seq")
+      i=$n; [ "$i" -gt "$total" ] && i=$total
+      cat "$(awk -F: -v i="$i" '{print $i}' <<<"$seq")"
+    elif [ -n "${LCTL_FAUX_METRICS:-}" ]; then cat "$LCTL_FAUX_METRICS"; else
+      printf 'llamacpp:prompt_tokens_cached_total 539\n'
+    fi
+    exit 0 ;;
+  *"/v1/chat/completions"*)
+    n=$(cat "$CNT.curl" 2>/dev/null || echo 0)
+    n=$((n + 1)); echo "$n" > "$CNT.curl"
+    [ "${LCTL_FAUX_CURL_FAILALL:-0}" = 1 ] && exit 7
+    if [ "${LCTL_FAUX_CURL_FAILFIRST:-0}" = 1 ] && [ "$n" = 1 ]; then exit 7; fi
+    # an EMPTY answer (rc 0, no body — smoke_resp.py falls over the stdin)
+    # on call №k; a comma list «1,2» — the empties' retry (gfctl 2.1-F4)
+    case ",${LCTL_FAUX_CURL_EMPTYN:-}," in *",$n,"*) exit 0 ;; esac
+    # fix:w42-smoke-core: the model echo from the payload (the smoke
+    #   validator cross-checks it) and an SSE stream on "stream":true (the
+    #   core_smoke stream request)
+    m=$(printf '%s' "$*" | grep -o '"model":"[^"]*"' | head -1 | cut -d'"' -f4)
+    case "$*" in
+      *'"stream":true'*)
+        printf 'data: {"model":"%s","choices":[{"delta":{"content":"ок"}}]}\n\n' "${m:-m}"
+        printf 'data: {"model":"%s","choices":[{"delta":{},"finish_reason":"stop"}]}\n\n' "${m:-m}"
+        printf 'data: [DONE]\n\n'
+        exit 0 ;;
+    esac
+    # timings in the body (the FX/CX windows protocol — agent_check.py
+    # reads the timings); the reuse is scripted by LCTL_FAUX_CURL_REUSE
+    # (live|disk|none)
+    tim=""
+    if [ "${LCTL_FAUX_CURL_TIMINGS:-0}" = 1 ]; then
+      tim=",\"timings\":{\"prompt_ms\":120,\"predicted_ms\":800,\"predicted_per_second\":130.5,\"cache_n\":3,\"component_cache\":{\"reuse\":\"${LCTL_FAUX_CURL_REUSE:-live}\",\"prefilled_tokens\":5}}"
+    fi
+    printf '{"model":"%s","choices":[{"message":{"content":"ок"}}]%s}' "${m:-m}" "$tim"
+    exit 0 ;;
+esac
+exit 0

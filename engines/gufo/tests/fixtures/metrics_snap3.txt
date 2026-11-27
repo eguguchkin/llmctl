@@ -1,0 +1,25 @@
+# 4.5 watch v2 — фикстура /metrics, снапшот 3 (done-тик).
+# done-набор (docs server.md:1562–1572): prompt_s +5.2 (=105.2),
+# predicted_s +15 (=2515 → gen_avg ровно 20.0 = 50300/2515), раунды +60
+# (=5060, в формулах не участвуют), draft_tokens +1000 (=101000 →
+# drafts-пульс +1000), accepted +640 (=60640 → acceptance 60.04),
+# n_tokens_max 262144→27155 (подъём), kv 0.12→0.34; speed-gauge
+# predicted_tokens_seconds 21.4→53.3 («последний запрос»). Token-счётчики
+# стоят (живых чанков нет): decode/prefill-пульс 0.
+gufo_device_lost_total 0
+llamacpp:prompt_tokens_total 10512
+llamacpp:prompt_tokens_cached_total 990512
+llamacpp:prompt_seconds_total 105.2
+llamacpp:tokens_predicted_total 50300
+llamacpp:tokens_predicted_seconds_total 2515
+llamacpp:n_tokens_max 27155
+llamacpp:spec_decode_num_drafts_total 5060
+llamacpp:spec_decode_num_draft_tokens_total 101000
+llamacpp:spec_decode_num_accepted_tokens_total 60640
+gufo_spec_lookup_tokens_total 0
+gufo_spec_lookup_accepted_tokens_total 0
+llamacpp:prompt_tokens_seconds 98.7
+llamacpp:predicted_tokens_seconds 53.3
+llamacpp:requests_processing 0
+llamacpp:requests_deferred 0
+llamacpp:kv_cache_usage_ratio 0.34

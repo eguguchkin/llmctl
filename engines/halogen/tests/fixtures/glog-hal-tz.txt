@@ -1,0 +1,4 @@
+2026-11-26T17:30:00.000000000+03:00 halogen: halogen-flash-server 0.20.7, mode all
+2026-11-26T17:30:00.500000000+03:00 flash_serve: prompt cache ON, resume-anywhere (28 entries, snapshot every request, chunk 32768, 58 MiB each at ctx 262144): a warm answer is NOT bitwise the cold one
+2026-11-26T17:30:01.000000000+03:00 serve_api: flash_serve: listening on 127.0.0.1:8730, 4 slots over ONE 524288-position KV pool, each request up to 262144 (it reserves prompt + max_tokens), max_tok 32768, BATCHED greedy or sampled; MTP depth-2 (up to 7, cost rule) selectable (drafter 1, speculates while alone)
+2026-11-26T17:30:02.000000000+03:00 serve_api: mtp 64 tok in 0.95s = 67.04 t/s | 27 rounds, commit 2.33/round | prompt 27024 (27008 cached, 99.9%), prefill 0.09s (16 new) | detok 20us/tok | pool 144128/524288 27% | think off | disk: restored 27008 rows in 195 ms

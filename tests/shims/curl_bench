@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+printf 'curl%s\n' "${*:+ $*}" >> "${LCTL_FAUX_LOG:?}"
+case "$*" in
+  *"/health"*)
+    [ "${LCTL_FAUX_BENCH_HEALTHFAIL:-0}" = 1 ] && exit 7
+    if [ -n "${LCTL_FAUX_BENCH_HEALTHFILE:-}" ]; then cat "$LCTL_FAUX_BENCH_HEALTHFILE"; exit 0; fi
+    printf '{"status":"ok","model":"qwen3.8:27b-mq4-xts"}'; exit 0 ;;
+  *"/ready"*)
+    [ "${LCTL_FAUX_BENCH_HEALTHFAIL:-0}" = 1 ] && exit 7
+    printf 'OK'; exit 0 ;;
+  *"/v1/chat/completions"*)
+    body=$(cat)
+    if [ -n "${LCTL_FAUX_BENCH_BODY:-}" ]; then
+      printf '%s' "$body" | python3 "$(dirname "$0")/bench_body_model.py" >> "$LCTL_FAUX_BENCH_BODY"
+    fi
+    printf '{"choices":[{"message":{"content":"ок"}}],"usage":{"prompt_tokens":11,"completion_tokens":22},"timings":{"prompt_ms":120,"predicted_ms":800,"component_cache":{"reuse":"live","prefilled_tokens":5}}}'
+    exit 0 ;;
+  *"/metrics"*)
+    [ -n "${LCTL_FAUX_METRICS:-}" ] && cat "$LCTL_FAUX_METRICS"
+    exit 0 ;;
+esac
+exit 0

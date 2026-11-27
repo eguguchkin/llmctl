@@ -1,0 +1,1 @@
+{"status":"ok","model":"qwen3.8-flash-next","context":262144,"slot_ctx":262144,"slots":4,"kv_cache":"bf16","drafter_default":"mtp","vision":{"enabled":true},"version":{"api":"0.20.7","engine":"0.20.7","match":true},"busy":false,"kv_pool_positions":524288}

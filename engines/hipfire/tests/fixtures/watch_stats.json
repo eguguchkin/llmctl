@@ -1,0 +1,6 @@
+{"model":"qwen3.8:flash-next-mq4-xts","uptime_sec":3138,"queue_depth":0,
+ "requests_served":2,"retries_attempted":0,"retries_succeeded":0,
+ "recent_tok_s":24.6,
+ "loaded_config":{"model":"...","kv_mode":"q8","kv_backend":"vmm",
+                  "max_seq":262144},
+ "swap":null,"draft_positions":[],"spec_cycles":0,"spec_committed_tokens":0}

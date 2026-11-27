@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+printf 'containers-storage%s\n' "${*:+ $*}" >> "${LCTL_FAUX_LOG:?}"
+[ "${LCTL_FAUX_CS_FAIL:-0}" = 1 ] && exit 1
+exit 0

@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+printf 'sudo%s\n' "${*:+ $*}" >> "${LCTL_FAUX_LOG:?}"
+if [ "${1:-}" = install ] && [ "${2:-}" = -m ] && [ "${3:-}" = 0644 ]; then
+  case "${5:-}" in "${LCTL_FAUX_TMP:?}"/*) install -m 0644 "$4" "$5" ;; esac
+fi
+exit 0

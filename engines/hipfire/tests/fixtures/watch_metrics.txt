@@ -1,0 +1,54 @@
+# 4.2 watch W3 — фикстура /metrics hipfire (формат живого тела 0.4.7:
+# HELP+TYPE, префикс hipfire_, гистограммы _bucket/_sum/_count — каркасный
+# parse_metrics отбрасывает '#' и _bucket). Числа внутренне согласованы и
+# пинятся selfcheck'ом: кэш 9000/12000 = 75.0% (prompt_tokens_total
+# ВКЛЮЧАЕТ cached — serve/metrics.rs:339-344 + slots.rs:1895), decode-средн
+# 49.2/2 = 24.6 (совпадает с recent_tok_s /stats), prefill-средн 800/2 =
+# 400.0, τ-средн 9.82/2 = 4.91 → «τ 4.9 (средн)». Draft-пульс — Δspec_cycles
+# из /stats (R-1 арбитраж живым curl 2026-11-23: spec_cycles_total в живом
+# /metrics НЕ существует — в фикстуре её нет сознательно).
+# HELP hipfire_prompt_tokens_total Prompt tokens of completed chat requests, as reported by the daemon.
+# TYPE hipfire_prompt_tokens_total counter
+hipfire_prompt_tokens_total 12000
+# HELP hipfire_cached_prompt_tokens_total Prompt tokens served from the prefix cache, as reported by the daemon.
+# TYPE hipfire_cached_prompt_tokens_total counter
+hipfire_cached_prompt_tokens_total 9000
+# HELP hipfire_completion_tokens_total Generated tokens of completed chat requests, as reported by the daemon.
+# TYPE hipfire_completion_tokens_total counter
+hipfire_completion_tokens_total 5000
+# HELP hipfire_decode_tokens_per_second Decode speed of completed chat requests.
+# TYPE hipfire_decode_tokens_per_second histogram
+hipfire_decode_tokens_per_second_bucket{le="10"} 0
+hipfire_decode_tokens_per_second_bucket{le="25"} 1
+hipfire_decode_tokens_per_second_bucket{le="+Inf"} 2
+hipfire_decode_tokens_per_second_sum 49.2
+hipfire_decode_tokens_per_second_count 2
+# HELP hipfire_prefill_tokens_per_second Prefill speed of completed chat requests.
+# TYPE hipfire_prefill_tokens_per_second histogram
+hipfire_prefill_tokens_per_second_bucket{le="+Inf"} 2
+hipfire_prefill_tokens_per_second_sum 800
+hipfire_prefill_tokens_per_second_count 2
+# HELP hipfire_spec_tau Mean accepted draft length (tau) per speculative request.
+# TYPE hipfire_spec_tau histogram
+hipfire_spec_tau_bucket{le="+Inf"} 2
+hipfire_spec_tau_sum 9.82
+hipfire_spec_tau_count 2
+# HELP hipfire_prefix_hits_total Multi-slot continuations served from a session's resident KV cache.
+# TYPE hipfire_prefix_hits_total counter
+hipfire_prefix_hits_total 12
+# HELP hipfire_prefix_reused_tokens_total Prompt tokens reused from the multi-slot cross-session prefix cache.
+# TYPE hipfire_prefix_reused_tokens_total counter
+hipfire_prefix_reused_tokens_total 456
+# HELP hipfire_ttft_milliseconds Time to first token, including admission queueing.
+# TYPE hipfire_ttft_milliseconds histogram
+hipfire_ttft_milliseconds_bucket{le="+Inf"} 2
+hipfire_ttft_milliseconds_sum 480
+hipfire_ttft_milliseconds_count 2
+# HELP hipfire_request_latency_milliseconds Full request latency (admission queueing included).
+# TYPE hipfire_request_latency_milliseconds histogram
+hipfire_request_latency_milliseconds_bucket{le="+Inf"} 2
+hipfire_request_latency_milliseconds_sum 12000
+hipfire_request_latency_milliseconds_count 2
+# HELP hipfire_queue_capacity Admission queue capacity.
+# TYPE hipfire_queue_capacity gauge
+hipfire_queue_capacity 4

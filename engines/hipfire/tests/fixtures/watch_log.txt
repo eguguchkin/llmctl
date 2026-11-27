@@ -1,0 +1,4 @@
+2026-11-16T07:26:58.123456789Z 2026-11-16 07:26:58 [INFO] KV cache: requested mode=auto, effective K=q8, effective V=q8
+2026-11-16T07:26:58.223456789Z 2026-11-16 07:26:58 [INFO] KV cache: Q8 vmm (16/64 layers carry KV; K 272B/head + V Q8 272B/head)
+2026-11-23T07:12:33.500000000Z 2026-11-23 07:12:33 [INFO] hipfire load summary: qwen3.8-flash-next-base.mq4-xts (qwen4) | spec: qwen4 native mtp K=7, n-gram copy lane on | kv: q8 (vmm backend, automatic) | context: 262144 (user-set; model 262144, card 262144) | placement: experts: fully resident | prefill: chunk 8192 rows
+2026-11-23T07:13:10.900000000Z 2026-11-23 07:13:10 [INFO] [req chatcmpl-2-4548] drafter=mtp tau=4.91 tok/s=55.6 decode (728 tok, 123 windows)

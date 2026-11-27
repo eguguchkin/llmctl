@@ -1,0 +1,224 @@
+#!/usr/bin/env bash
+# === USAGE-BEGIN ===
+# lctl — единый пульт LLM-движков (ядро core/ + адаптеры engines/<имя>) на
+# Ubuntu/Debian (Strix Halo / gfx11xx). Живёт git-клоном: клон = стек
+# (диспетчер lctl + core/*.sh + engines/ — код; .data/<engine>/ — модели,
+# профили, логи; .env — канон активного движка); запускается ОТ СВОЕГО
+# ИМЕНИ (не root; sudo применяется точечно):
+#   git clone <repo> && cd llmctl && ./lctl start <движок> <профиль>
+#
+# Команды:
+#   start <engine> <profile> [--port N] [--bind A] [--no-autostart]
+#        [--no-recreate] [--force] [--yes]
+#                                — эксклюзивный старт (автомат §А): если активен
+#                                  другой движок — его честный off; не развёрнут —
+#                                  bootstrap (preflight → модели → конфиг →
+#                                  контейнер → health → smoke → юниты последними);
+#                                  рендер всегда сходится с фактом: изменение
+#                                  шаблонов/правки → перезапись + recreate (WARN);
+#                                  «рендер совпадает» — no-op; --no-recreate —
+#                                  записать, живой стек не трогать (применится
+#                                  при recreate; надёжно: stop && start); канон !=
+#                                  profile — конфиг + recreate; автозапуск
+#                                  включается
+#   stop                        — остановить активный движок (честный off:
+#                                  явный podman stop, юниты, linger); ничего
+#                                  активно — «не запущено», rc 0
+#   pull <engine> <profile>     — prefetch весов сета, не трогая работающее
+#                                  (без старта/конфига/юнитов)
+#   status [--json] | logs [-f] [-n N] | doctor | models | watch [--interval N]
+#                                — живой дашборд движка (TUI в терминале /
+#                                  plain-стрим в пайпе; панель — адаптер)
+#   uninstall [--purge-models] [--purge-image] [--yes]
+#                                — снять привязки к машине (юниты, контейнер/
+#                                  сеть, linger, limits.d); клон, .data/ и
+#                                  образ не трогаются (образ — по флагу)
+#   agent-check                 — агентский чек (если предусмотрен адаптером)
+#   bench [--runs N] [--parallel N[,M…]]
+#                                — бенч производительности ЖИВОГО движка
+#                                  (read-only; отчёт bench/reports/<engine>-
+#                                  <version>-<profile>.md, перезапись)
+# === USAGE-END ===
+# NOTE: this USAGE block doubles as runtime output (printed by the bare
+# `lctl` call below), so it stays in Russian on purpose.
+set -euo pipefail
+
+# ── core globals (layout: clone = stack; code lives next to the dispatcher) ──
+SELF="$(readlink -f "$0")"                       # dispatcher: real path of this file
+# LCTL_DIR env hook — selfcheck/migration (prod never sets it): the stack may
+# live separately from the code tree (in prod clone = stack — paths coincide).
+STACK_DIR="${LCTL_DIR:-$(dirname "$SELF")}"       # clone = stack (code, .env, .data/)
+DATA_DIR="$STACK_DIR/.data"                       # ALL machine state (gitignored)
+CORE_DIR="$(dirname "$SELF")/core"                # engine-independent core
+CORE_TPL="$CORE_DIR/tpl"                          # core templates (units/containers.conf/memlock)
+
+# ── shared helpers ───────────────────────────────────────────────────────────
+# @param 1..N: string[] # message text (args joined via "$*")
+# @returns integer      # 0 on successful print; a print failure aborts via set -e
+# @stdout string        # line "== <text>" with ANSI framing
+log()  { printf '\n\033[1;36m== %s\033[0m\n' "$*"; }
+
+# @param 1..N: string[] # message text
+# @returns integer      # always 0 — print only
+# @stderr string        # line "WARN: <text>"
+warn() { printf '\033[1;33mWARN:\033[0m %s\n' "$*" >&2; }
+
+# Purpose: fatal error — stderr + exit 1 (the whole dispatcher process).
+# @param 1..N: string[] # message text
+# @returns integer      # does not return — exit 1 inside the function
+# @stderr string        # line "FATAL: <text>"
+die()  { printf '\033[1;31mFATAL:\033[0m %s\n' "$*" >&2; exit 1; }
+
+# ── non-interactive: prompts only on a TTY (--yes means auto-yes) ────────────
+# @type '' | '1' ASSUME_YES="${LCTL_YES:-}"   # '1' = auto-yes (--yes / LCTL_YES=1)
+ASSUME_YES="${LCTL_YES:-}"
+
+# Purpose: yes/no question — 0 on "y"; safe auto-decline (rc 1) in a
+#   non-interactive context without --yes.
+# @param 1: string # question text (prompt)
+# @returns integer # 0 — yes; 1 — no/auto-decline
+ask() {  # ask <question>
+  [ "$ASSUME_YES" = 1 ] && return 0
+  if [ ! -t 0 ]; then echo "(неинтерактивный режим: авто-нет; повтори с --yes)"; return 1; fi
+  local a; read -r -p "$1" a; [ "$a" = y ]
+}
+
+# Purpose: predicate "string is an unsigned integer" (rc 0/1, no printing).
+# @param 1: string    # value to check
+# @returns integer    # 0 — digits only; 1 — otherwise (empty string is NOT an integer)
+isint() { case "$1" in ''|*[!0-9]*) return 1 ;; *) return 0 ;; esac; }
+
+# ── core modules (source order is fixed: data before commands; function
+#    dependencies are lazy — the core only touches the adapter at runtime,
+#    so "core before adapter" is safe; guard: engine globals are read by the
+#    core only after engine_load) ────────────────────────────────────────────
+source "$CORE_DIR/profiles.sh"     # profile_field/ram_pool_gib/profile_gate (registry mechanics)
+source "$CORE_DIR/stack.sh"        # compose/env_val/cur_profile/cur_model/preflight
+source "$CORE_DIR/state.sh"        # set_models_dir
+source "$CORE_DIR/stack_files.sh"  # render_tpl, write_stack_files core, write_env
+source "$CORE_DIR/health.sh"       # wait_health
+source "$CORE_DIR/models.sh"       # pull_profile_models
+source "$CORE_DIR/commands.sh"     # start(§А)/stop/pull/status/…/uninstall
+source "$CORE_DIR/bench.sh"        # cmd_bench (stage 7: live-engine benchmark)
+source "$CORE_DIR/autostart.sh"    # up/down/_boot/_watchdog/locks/self-healing/off
+
+# ── adapter loading: ENGINE=id, source engines/<id>/adapter.sh + derived core
+#    globals (contract §2.1 task 1.1: the adapter sets ENGINE_*, the core
+#    derives its own from them; LCTL_* env hooks override) ───────────────────
+# @param 1: string # engine id (= directory name under engines/)
+# @returns integer # 0; missing adapter / foreign ENGINE in adapter.sh — die (exit 1)
+engine_load() {
+  local e="$1"
+  ADAPTER_DIR="$(dirname "$SELF")/engines/$e"
+  [ -f "$ADAPTER_DIR/adapter.sh" ] || die "адаптер '$e' не найден ($ADAPTER_DIR/adapter.sh нет)"
+  source "$ADAPTER_DIR/adapter.sh"
+  [ "$ENGINE" = "$e" ] || die "адаптер '$e' объявил ENGINE='$ENGINE' — должно совпадать с именем каталога"
+  # core globals (the adapter does NOT set these): unit/path names derived from the engine id
+  UNIT_NAME="$ENGINE-compose"                      # base name of user units (+…-watchdog.*)
+  STOP_MARKER="$DATA_DIR/$ENGINE/.stopped"         # explicit stop: the watchdog stays down
+  LOCK_FILE="$DATA_DIR/.lctl.lock"                 # one GPU lock per machine (flock)
+  MODELS_BASE="${LCTL_MODELS:-$DATA_DIR/$ENGINE/models}"  # models base; a set dir lives inside
+  STATE_BASE="${LCTL_STATE:-$DATA_DIR/$ENGINE/profiles}"  # per-profile config/kernel (R4: cache inside)
+  LOG_DIR="$DATA_DIR/$ENGINE/logs"                 # watchdog.log, bench-runs/, prompts/
+  LIMITS_FILE="/etc/security/limits.d/99-lctl-$ENGINE-memlock.conf"
+  # mirrors of adapter globals with env overrides (core bodies read these names)
+  IMAGE="${LCTL_IMAGE:-$ENGINE_IMAGE}"
+  PORT="${LCTL_PORT:-$ENGINE_PORT_DEFAULT}"
+  BIND="${LCTL_BIND:-0.0.0.0}"
+  MEMLOCK="$ENGINE_MEMLOCK"
+  CONTAINER="$ENGINE_CONTAINER"
+  HEALTH_PATH="${ENGINE_HEALTH_PATH:-/health}"   # health endpoint path — engine dialect (task 3.1 §2.1)
+  MODELS_DIR="$MODELS_BASE/$(engine_model_set "$(cur_profile)")"  # mount; re-runs set_models_dir()
+}
+
+# ── command router (top-level scope, not a function) ────────────────────────
+cmd="${1:-}"; shift || true
+# bare invocation: print usage and exit rc 1 — WITHOUT engine resolution (usage is always available)
+if [ -z "$cmd" ]; then
+  sed -n '/^# === USAGE-BEGIN ===$/,/^# === USAGE-END ===$/p' "$0" | sed '1d;$d;s/^# \{0,1\}//'
+  exit 1
+fi
+case "$cmd" in
+  start|stop|pull|status|logs|doctor|models|agent-check|uninstall|up|down|_boot|_watchdog|on|off|use|switch|install|watch|bench) ;;
+  *) echo "неизвестная команда '$cmd'. Команды: start <engine> <profile> | stop | pull <engine> <profile> | status [--json] | doctor | logs | models | watch [--interval N] | agent-check | uninstall" >&2; exit 1 ;;
+esac
+
+# stop/off — BEFORE engine resolution: they work on an empty machine (rc 0
+# "not running" / targeted off via --engine) and do not depend on the canon
+case "$cmd" in
+  stop)
+    cmd_stop
+    exit ;;
+  off)   # hidden transitional alias: off [--engine E]
+    engine_opt=""
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        --engine) [ $# -ge 2 ] || die "--engine требует значение"; engine_opt="$2"; shift 2 ;;
+        *) die "неизвестный флаг off: $1 (доступен --engine <E>)" ;;
+      esac
+    done
+    if [ -n "$engine_opt" ]; then engine_off_foreign "$engine_opt"; else cmd_stop; fi
+    exit ;;
+esac
+
+# engine: start/pull — positional; on/switch — the --engine flag (transitional
+# aliases); use — canon only (no --engine)
+engine_opt=""; prof_opt=""
+case "$cmd" in
+  start|pull)
+    [ $# -ge 1 ] || die "использование: lctl $cmd <engine> <profile> — движок обязателен (адаптеры: $(ls "$(dirname "$SELF")/engines" 2>/dev/null | tr '\n' ' '))"
+    engine_opt="$1"; shift
+    if [ "$cmd" = start ]; then
+      [ $# -ge 1 ] || die "использование: lctl start <engine> <profile> [--port N] [--no-recreate]"
+    else
+      [ $# -ge 1 ] || die "использование: lctl pull <engine> <profile>"
+    fi
+    prof_opt="$1"; shift
+    ;;
+  on|install)   # hidden alias: old flag grammar
+    rest_args=()
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        --engine)  [ $# -ge 2 ] || die "--engine требует значение"; engine_opt="$2"; shift 2 ;;
+        --profile) [ $# -ge 2 ] || die "--profile требует значение"; prof_opt="$2"; shift 2 ;;
+        *) rest_args+=("$1"); shift ;;
+      esac
+    done
+    set -- ${rest_args[@]+"${rest_args[@]}"}
+    ;;
+  switch)
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        --engine) [ $# -ge 2 ] || die "--engine требует значение"; engine_opt="$2"; shift 2 ;;
+        *) die "неизвестный флаг switch: $1 (доступен --engine <E>)" ;;
+      esac
+    done
+    [ -n "$engine_opt" ] || die "использование: lctl switch --engine <E>"
+    ;;
+esac
+
+# engine resolution: explicit (positional/--engine) > env LCTL_ENGINE (units write it) > LCTL_ENGINE from the root .env
+ENGINE="${engine_opt:-${LCTL_ENGINE:-}}"
+[ -n "$ENGINE" ] || ENGINE=$(env_val LCTL_ENGINE)
+[ -n "$ENGINE" ] || die "движок не определён — укажи его: lctl start <engine> <profile>. Адаптеры: $(ls "$(dirname "$SELF")/engines" 2>/dev/null | tr '\n' ' ')"
+engine_load "$ENGINE"
+
+case "$cmd" in
+  start)         cmd_start ${prof_opt:+"$prof_opt"} "$@" ;;
+  pull)          cmd_pull "$prof_opt" ;;
+  on|install)    cmd_start ${prof_opt:+"$prof_opt"} "$@" ;;   # hidden alias (transitional)
+  use)           cmd_start "$@" ;;   # hidden alias: canon engine, positional profile
+  switch)        cmd_start "$@" ;;   # hidden alias: engine from --engine
+  status)        cmd_status "$@" ;;
+  logs)          cmd_logs "$@" ;;
+  doctor)        cmd_doctor ;;
+  models)        cmd_models ;;
+  agent-check)   cmd_agent_check ;;
+  bench)         cmd_bench "$@" ;;
+  watch)         cmd_watch "$@" ;;
+  uninstall)     cmd_uninstall "$@" ;;
+  up)            cmd_up ;;           # hidden alias (EXP scripts)
+  down)          cmd_down ;;         # hidden alias
+  _watchdog)     cmd_watchdog ;;
+  _boot)         cmd_boot ;;
+esac

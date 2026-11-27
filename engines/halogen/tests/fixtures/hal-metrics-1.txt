@@ -1,0 +1,27 @@
+# TYPE halogen:requests_total counter
+halogen:requests_total 10
+halogen:engine_up 1
+halogen:busy_for_seconds 2.5
+halogen:cache_hits_total 8
+halogen:cache_misses_total 2
+halogen:cache_prompt_tokens_saved_total 5000
+halogen:cache_entries 14
+halogen:cache_bytes 849117976
+halogen:cache_evicted_total 2
+halogen:cache_disk_bytes 4019845928
+halogen:cache_disk_budget_bytes 68719476736
+halogen:cache_disk_hits_total 1
+halogen:draft_tokens_total 2050
+halogen:draft_tokens_accepted_total 1640
+halogen:kv_pool_positions 524288
+halogen:kv_pool_reserved_tokens 37120
+halogen:kv_pool_waiting_for_room 0
+llamacpp:tokens_predicted_total 1640
+llamacpp:tokens_predicted_seconds_total 20.0
+llamacpp:prompt_tokens_total 37120
+llamacpp:prompt_seconds_total 10.0
+halogen:cache_prompt_tokens_saved_total 30000
+halogen:requests_total 10
+halogen:queue_waited_total 0
+halogen:queue_wait_longest_seconds 0
+halogen:queue_gave_up_total 0

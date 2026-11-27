@@ -1,0 +1,1 @@
+{"scenario": "parallel", "n": 2, "wall_s": 4.0, "prompt_tokens": null, "completion_tokens": 240, "tok_s": null, "timings": null, "error": null, "sum_completion_tokens": 240, "agg_tok_s": 60.0, "walls_s": [3.9, 4.0], "fails": 0}

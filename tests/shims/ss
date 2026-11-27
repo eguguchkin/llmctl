@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+printf 'ss%s\n' "${*:+ $*}" >> "${LCTL_FAUX_LOG:?}"
+[ "${LCTL_FAUX_SS_LISTEN:-0}" = 1 ] && printf 'LISTEN 0 4096 0.0.0.0:11435 0.0.0.0:* users:(("thief",pid=1,fd=3))\n'
+exit 0

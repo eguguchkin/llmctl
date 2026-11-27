@@ -1,0 +1,7 @@
+.data/
+.env
+/bench/
+*.log
+__pycache__/
+/compose*.yml
+.dev/

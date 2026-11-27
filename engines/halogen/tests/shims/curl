@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+printf 'curl%s\n' "${*:+ $*}" >> "${LCTL_FAUX_LOG:?}"
+CNT="${LCTL_FAUX_CNT:?}"
+case "$*" in
+  *"/health"*)
+    [ "${LCTL_FAUX_CURL_FAILALL:-0}" = 1 ] && exit 7
+    if [ -n "${LCTL_FAUX_HAL_HEALTH_BODY:-}" ]; then cat "$LCTL_FAUX_HAL_HEALTH_BODY"; else
+      printf '{"status":"ok","engine_version":"0.20.7","api_version":"0.20.7","vision":{"enabled":true},"max_tokens_default":8192}'
+    fi
+    exit 0 ;;
+  *"/v1/models"*)
+    printf '{"data":[{"id":"qwen3.8-flash-next","architecture":{"input_modalities":["text","image"],"output_modalities":["text"]}}]}'; exit 0 ;;
+  *"/slots"*)
+    printf '[{"id":0,"n_ctx":262144},{"id":1,"n_ctx":262144}]'; exit 0 ;;
+  *"/cache"*)
+    if [ -n "${LCTL_FAUX_HAL_CACHE_BODY:-}" ]; then cat "$LCTL_FAUX_HAL_CACHE_BODY"; else
+      printf '{"entries":9,"max_entries":28,"bytes":545861556,"hit_rate":0.6667,"token_hit_rate":0.7880,"disk":{"on":true,"bytes":10004018376,"budget_bytes":68719476736},"pool":{"waiting_for_room":0,"positions":524288,"used":144128}}'
+    fi
+    exit 0 ;;
+  *"/metrics"*)
+    [ "${LCTL_FAUX_CURL_FAILALL:-0}" = 1 ] && exit 7
+    seq="${LCTL_FAUX_METRICS_SEQ:-}"
+    if [ -n "$seq" ]; then
+      n=$(cat "$CNT.m" 2>/dev/null || echo 0); n=$((n + 1)); echo "$n" > "$CNT.m"
+      total=$(awk -F: '{print NF}' <<<"$seq")
+      i=$n; [ "$i" -gt "$total" ] && i=$total
+      cat "$(awk -F: -v i="$i" '{print $i}' <<<"$seq")"; exit 0
+    fi
+    if [ -n "${LCTL_FAUX_HAL_METRICS:-}" ]; then cat "$LCTL_FAUX_HAL_METRICS"; else
+      printf '# HELP halogen:requests_total requests\n# TYPE halogen:requests_total counter\nhalogen:requests_total 42\nhalogen:engine_up 1\nhalogen:busy_for_seconds 3.5\nhalogen:cache_hits_total 30\nhalogen:cache_misses_total 10\nhalogen:cache_prompt_tokens_saved_total 9000\nhalogen:cache_entries 2\nhalogen:cache_bytes 120000000\nhalogen:cache_evicted_total 1\nhalogen:cache_disk_bytes 1073741824\nhalogen:cache_disk_budget_bytes 68719476736\nhalogen:cache_disk_hits_total 4\nhalogen:draft_tokens_total 1000\nhalogen:draft_tokens_accepted_total 800\nhalogen:kv_pool_positions 524288\nhalogen:kv_pool_reserved_tokens 131072\nhalogen:kv_pool_waiting_for_room 0\nhalogen:queue_waited_total 2\nhalogen:queue_wait_longest_seconds 1.5\nhalogen:queue_gave_up_total 0\n'
+    fi
+    exit 0 ;;
+  *"/v1/chat/completions"*)
+    n=$(cat "$CNT.curl" 2>/dev/null || echo 0)
+    n=$((n + 1)); echo "$n" > "$CNT.curl"
+    [ "${LCTL_FAUX_CURL_FAILALL:-0}" = 1 ] && exit 7
+    if [ "${LCTL_FAUX_CURL_FAILFIRST:-0}" = 1 ] && [ "$n" = 1 ]; then exit 7; fi
+    case ",${LCTL_FAUX_CURL_EMPTYN:-}," in *",$n,"*) exit 0 ;; esac
+    m=$(printf '%s' "$*" | grep -o '"model":"[^"]*"' | head -1 | cut -d'"' -f4)
+    case "$*" in
+      *'"stream":true'*)
+        printf 'data: {"model":"%s","choices":[{"delta":{"content":"ок"}}]}\n\n' "${m:-m}"
+        printf 'data: {"model":"%s","choices":[{"delta":{},"finish_reason":"stop"}]}\n\n' "${m:-m}"
+        printf 'data: [DONE]\n\n'
+        exit 0 ;;
+    esac
+    printf '{"model":"%s","choices":[{"message":{"content":"ок"}}],"timings":{"prompt_n":10,"predicted_n":2,"prompt_ms":5.0,"predicted_ms":20.0,"cache_n":%s,"draft_n":3,"draft_n_accepted":2}}' "${m:-m}" "${LCTL_FAUX_CURL_CACHEN:-0}"
+    exit 0 ;;
+esac
+exit 0

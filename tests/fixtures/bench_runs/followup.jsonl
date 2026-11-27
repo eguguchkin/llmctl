@@ -1,0 +1,2 @@
+{"scenario": "followup", "turn": 1, "k": 25, "wall_s": 25.0, "prompt_tokens": 25000, "completion_tokens": 128, "tok_s": 5.12, "timings": null, "error": null}
+{"scenario": "followup", "turn": 2, "k": 25, "wall_s": 2.0, "prompt_tokens": 25150, "completion_tokens": 64, "tok_s": 32.0, "timings": {"prompt_ms": 800, "predicted_ms": 2000, "component_cache": {"reuse": "disk", "prefilled_tokens": 0}}, "error": null}

@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+printf 'systemctl%s\n' "${*:+ $*}" >> "${LCTL_FAUX_LOG:?}"
+# is-enabled/is-active: a unit is «active» only if its base is in
+# LCTL_FAUX_UNITS (a space-separated name list, e.g. "hipfire-compose");
+# else rc 1 — the §А stop/start detection on an empty machine honestly
+# gives «not running»
+case "${1:-} ${2:-}" in
+  "--user is-enabled"|"--user is-active")
+    u="${3:-}"; b="${u%.service}"; b="${b%.timer}"
+    case " ${LCTL_FAUX_UNITS:-} " in *" $b "*) exit 0 ;; *) exit 1 ;; esac ;;
+esac
+exit 0

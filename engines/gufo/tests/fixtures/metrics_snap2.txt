@@ -1,0 +1,23 @@
+# 4.5 watch v2 — фикстура /metrics, снапшот 2 (live-тик БЕЗ done).
+# Token-счётчики LIVE по чанкам (docs server.md:1557–1558): predicted
+# +300 (=50300), prompt +512 (=10512), cached +512 (=990512 → кэш-эффект
+# 98.95 ≤100). Секундные/раунды/draft_tokens/accepted/n_tokens_max — только
+# на done → БЕЗ изменений: decode-пульс +300, prefill +512, drafts +0;
+# gen_avg крип вверх (50300/2500 = 20.12), acceptance заморожена (60.0).
+gufo_device_lost_total 0
+llamacpp:prompt_tokens_total 10512
+llamacpp:prompt_tokens_cached_total 990512
+llamacpp:prompt_seconds_total 100
+llamacpp:tokens_predicted_total 50300
+llamacpp:tokens_predicted_seconds_total 2500
+llamacpp:n_tokens_max 262144
+llamacpp:spec_decode_num_drafts_total 5000
+llamacpp:spec_decode_num_draft_tokens_total 100000
+llamacpp:spec_decode_num_accepted_tokens_total 60000
+gufo_spec_lookup_tokens_total 0
+gufo_spec_lookup_accepted_tokens_total 0
+llamacpp:prompt_tokens_seconds 98.7
+llamacpp:predicted_tokens_seconds 21.4
+llamacpp:requests_processing 0
+llamacpp:requests_deferred 0
+llamacpp:kv_cache_usage_ratio 0.12

@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+printf 'curl%s\n' "${*:+ $*}" >> "${LCTL_FAUX_LOG:?}"
+CNT="${LCTL_FAUX_CNT:?}"
+for a in "$@"; do
+  case "$a" in
+    http://*/health)
+      [ "${LCTL_FAUX_CURL_FAILALL:-0}" = 1 ] && exit 7
+      # the composition mirrors fixtures/watch_health.json (W3.3: the solo
+      #     canon slots=1 — new window/done-line pins; the parallel branch
+      #     slots=2 — fixtures/watch_health_parallel.json, a selfcheck pin)
+      printf '{"status":"ok","model":"qwen3.8:27b-mq4-xts","loading_model":null,"capabilities":{"mode":"standard","multi_slot_slots":4}}'; exit 0 ;;
+    http://*/stats)
+      [ "${LCTL_FAUX_CURL_FAILALL:-0}" = 1 ] && exit 7
+      [ "${LCTL_FAUX_STATSFAIL:-0}" = 1 ] && exit 7
+      n=$(cat "$CNT.stats" 2>/dev/null || echo 0); n=$((n + 1)); echo "$n" > "$CNT.stats"
+      sseq="${LCTL_FAUX_STATS_SEQ:-}"
+      if [ -n "$sseq" ]; then
+        total=$(awk -F: '{print NF}' <<<"$sseq"); i=$n; [ "$i" -gt "$total" ] && i=$total
+        cat "$(awk -F: -v i="$i" '{print $i}' <<<"$sseq")"; exit 0
+      fi
+      [ -n "${LCTL_FAUX_STATS:-}" ] && { cat "$LCTL_FAUX_STATS"; exit 0; }
+      exit 0 ;;
+    http://*/metrics)
+      [ "${LCTL_FAUX_CURL_FAILALL:-0}" = 1 ] && exit 7
+      [ "${LCTL_FAUX_METRICSFAIL:-0}" = 1 ] && exit 7
+      n=$(cat "$CNT.curl" 2>/dev/null || echo 0); n=$((n + 1)); echo "$n" > "$CNT.curl"
+      seq="${LCTL_FAUX_METRICS_SEQ:-}"
+      if [ -n "$seq" ]; then
+        total=$(awk -F: '{print NF}' <<<"$seq"); i=$n; [ "$i" -gt "$total" ] && i=$total
+        cat "$(awk -F: -v i="$i" '{print $i}' <<<"$seq")"; exit 0
+      fi
+      [ -n "${LCTL_FAUX_METRICS:-}" ] && { cat "$LCTL_FAUX_METRICS"; exit 0; }
+      exit 0 ;;
+    http://*/v1/chat/completions)
+      # fix:w42-smoke-core: the model echo from the payload (the smoke
+      #   validator cross-checks it) and an SSE stream on "stream":true
+      #   (the core_smoke stream request)
+      m=$(printf '%s' "$*" | grep -o '"model":"[^"]*"' | head -1 | cut -d'"' -f4)
+      case "$*" in
+        *'"stream":true'*)
+          printf 'data: {"model":"%s","choices":[{"delta":{"content":"ок"}}]}\n\n' "${m:-m}"
+          printf 'data: {"model":"%s","choices":[{"delta":{},"finish_reason":"stop"}]}\n\n' "${m:-m}"
+          printf 'data: [DONE]\n\n'
+          exit 0 ;;
+      esac
+      printf '{"model":"%s","choices":[{"message":{"content":"ок"}}]}' "${m:-m}"; exit 0 ;;
+  esac
+done
+exit 0

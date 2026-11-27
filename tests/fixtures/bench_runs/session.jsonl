@@ -1,0 +1,15 @@
+{"scenario": "session", "turn": 1, "wall_s": 2.1, "prompt_tokens": 6750, "completion_tokens": 128, "tok_s": 60.95, "timings": {"prompt_ms": 4500, "predicted_ms": 2000, "component_cache": {"reuse": "none", "prefilled_tokens": 0}}, "error": null}
+{"scenario": "session", "turn": 2, "wall_s": 2.2, "prompt_tokens": 6900, "completion_tokens": 128, "tok_s": 58.18, "timings": {"prompt_ms": 300, "predicted_ms": 2000, "component_cache": {"reuse": "live", "prefilled_tokens": 6750}}, "error": null}
+{"scenario": "session", "turn": 3, "wall_s": 2.3, "prompt_tokens": 7050, "completion_tokens": 128, "tok_s": 55.65, "timings": {"prompt_ms": 300, "predicted_ms": 2000, "component_cache": {"reuse": "disk", "prefilled_tokens": 6900}}, "error": null}
+{"scenario": "session", "turn": 4, "wall_s": 2.4, "prompt_tokens": 7200, "completion_tokens": 128, "tok_s": 53.33, "timings": null, "error": null}
+{"scenario": "session", "turn": 5, "wall_s": 2.5, "prompt_tokens": 7350, "completion_tokens": 128, "tok_s": 51.2, "timings": null, "error": null}
+{"scenario": "session", "turn": 6, "wall_s": 2.6, "prompt_tokens": 7500, "completion_tokens": 128, "tok_s": 49.23, "timings": null, "error": null}
+{"scenario": "session", "turn": 7, "wall_s": 2.7, "prompt_tokens": 7650, "completion_tokens": 128, "tok_s": 47.41, "timings": null, "error": null}
+{"scenario": "session", "turn": 8, "wall_s": 2.8, "prompt_tokens": 7800, "completion_tokens": 128, "tok_s": 45.71, "timings": null, "error": null}
+{"scenario": "session", "turn": 9, "wall_s": 2.9, "prompt_tokens": 7950, "completion_tokens": 128, "tok_s": 44.14, "timings": null, "error": null}
+{"scenario": "session", "turn": 10, "wall_s": 3.0, "prompt_tokens": 8100, "completion_tokens": 128, "tok_s": 42.67, "timings": null, "error": null}
+{"scenario": "session", "turn": 11, "wall_s": 3.1, "prompt_tokens": 8250, "completion_tokens": 128, "tok_s": 41.29, "timings": null, "error": null}
+{"scenario": "session", "turn": 12, "wall_s": 3.2, "prompt_tokens": 8400, "completion_tokens": 128, "tok_s": 40.0, "timings": null, "error": null}
+{"scenario": "session", "turn": 13, "wall_s": 3.3, "prompt_tokens": 8550, "completion_tokens": 128, "tok_s": 38.79, "timings": null, "error": null}
+{"scenario": "session", "turn": 14, "wall_s": 3.4, "prompt_tokens": 8700, "completion_tokens": 128, "tok_s": 37.65, "timings": null, "error": null}
+{"scenario": "session", "turn": 15, "wall_s": 3.5, "prompt_tokens": 8850, "completion_tokens": 128, "tok_s": 36.57, "timings": null, "error": null}
