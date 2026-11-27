@@ -232,7 +232,7 @@ set_total_bytes() {
 }
 
 # Purpose: a pre-check of the set's GGUF tensor types — for each downloaded
-#   file from the set's table it calls tpl/python/gguf_type_check.py (a
+#   file from the set's table it calls py/gguf_type_check.py (a
 #   streaming header parser, no GPU); the SET's verdict = red when ≥1 file
 #   is red OR has a format error. A 1:1 check_types port
 #   (TPL_DIR→the adapter).
@@ -250,7 +250,7 @@ check_types() {
     [ -f "$dir/$f" ] || continue
     any=1
     rc_file=0
-    out=$(python3 "$ADAPTER_DIR/tpl/python/gguf_type_check.py" "$dir/$f") || rc_file=$?
+    out=$(python3 "$ADAPTER_DIR/py/gguf_type_check.py" "$dir/$f") || rc_file=$?
     printf '%s\n' "$out"
     if [ "$rc_file" = 1 ]; then
       red=1

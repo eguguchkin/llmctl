@@ -46,6 +46,6 @@ engine_bench_extras() {
   halogen_route_info >/dev/null 2>&1 || true   # ROUTE_* best-effort
   curl -fsS -m 5 "http://127.0.0.1:$PORT/metrics" 2>/dev/null | \
     ROUTE_SPEC="${ROUTE_SPEC:-}" ROUTE_SESSIONS="${ROUTE_SESSIONS:-}" ROUTE_CTX="${ROUTE_CTX:-}" \
-    PYTHONPATH="${PYTHONPATH:+$PYTHONPATH:}$ADAPTER_DIR/tpl/python" \
-    python3 "$ADAPTER_DIR/tpl/python/bench_extras.py"
+    PYTHONPATH="${PYTHONPATH:+$PYTHONPATH:}$ADAPTER_DIR/py" \
+    python3 "$ADAPTER_DIR/py/bench_extras.py"
 }

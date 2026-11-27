@@ -4,7 +4,7 @@
 #   assembles the panels [«Движок» (the frame's CommonEnginePanel: Uptime +
 #   Configuration), «Железо» (the frame), «Метрики» (the frame's
 #   MetricsPanel — a shared 8-row block), «Скорость» (the frame, row 3)]
-#   from the core/tpl/python/watch/watch_frame.py frame (PYTHONPATH is set
+#   from the core/py/watch/watch_frame.py frame (PYTHONPATH is set
 #   by the adapter's engine_watch_env via cmd_watch; the battery sets it
 #   directly), provides the engine-data ENG provider and aggregates the
 #   selfcheck: the frame part (frame.selfcheck) + the engine one (the §5
@@ -51,8 +51,8 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))  # watch_engine i
 # watch_engine imports the frame's podman timestamp): engine_watch_env/the
 # battery set PYTHONPATH
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                '..', '..', '..', '..',
-                                'core', 'tpl', 'python', 'watch'))
+                                '..', '..', '..',
+                                'core', 'py', 'watch'))
 
 import watch_engine  # noqa: E402
 import watch_frame  # noqa: E402
@@ -414,7 +414,7 @@ def selfcheck_engine():
 
     # ── engine_stats: the snap1 fixture (exact values, an explicit uptime) + edges ─
     fx1 = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                       '..', '..', 'tests', 'fixtures', 'metrics_snap1.txt')
+                       '..', 'tests', 'fixtures', 'metrics_snap1.txt')
     m1 = watch_frame.parse_metrics(open(fx1).read())
     w1 = {watch_engine.K_PRED: 50000.0, watch_engine.K_PRED_S: 2500.0,
           watch_engine.K_PROMPT: 10000.0, watch_engine.K_PROMPT_S: 2500.0,
@@ -665,7 +665,7 @@ def selfcheck_engine():
     #     50300/2515 = 20.12)
     eng2 = GufoEng()
     fx3 = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                       '..', '..', 'tests', 'fixtures', 'metrics_snap3.txt')
+                       '..', 'tests', 'fixtures', 'metrics_snap3.txt')
     m3s = watch_frame.parse_metrics(open(fx3).read())  # a done tick: seconds/acc/rounds moved
     # n_tokens_max — a gauge maximum (monotonic in a live session); in
     #     snap3 it is numerically below snap1 (the fixtures are from

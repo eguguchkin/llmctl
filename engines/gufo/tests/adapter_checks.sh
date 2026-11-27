@@ -514,9 +514,9 @@ printf '2026-11-18T07:27:02.300000000Z 2026-11-18 07:27:02 [INFO] [cache] schema
 #     container is set by the scenario — the frame has had no engine
 #     default since fix-round 2 (R6)
 wrun() {  # wrun <env-префикс уже задан caller> — stdout+stderr наружу
-  env PATH="$FAUX_GUFO:$PATH" PYTHONPATH="$ROOT/core/tpl/python/watch" \
+  env PATH="$FAUX_GUFO:$PATH" PYTHONPATH="$ROOT/core/py/watch" \
     LCTL_FAUX_LOG="$FAUXLOG" LCTL_FAUX_CNT="$FAUXCNT" LCTL_WATCH_CONTAINER=gufo \
-    "$@" python3 "$ROOT/engines/gufo/tpl/python/watch.py" 2>&1
+    "$@" python3 "$ROOT/engines/gufo/py/watch.py" 2>&1
 }
 
 scen_w1_plain() {
@@ -571,8 +571,8 @@ scen_w1_dead() {
 
 scen_w1_selfcheck() {
   local troot="${LCTL_TREE:-$ROOT}" out rc
-  out=$(LCTL_WATCH_SELFCHECK=1 PYTHONPATH="$troot/core/tpl/python/watch" \
-    timeout 120 python3 "$troot/engines/gufo/tpl/python/watch.py" 2>&1); rc=$?
+  out=$(LCTL_WATCH_SELFCHECK=1 PYTHONPATH="$troot/core/py/watch" \
+    timeout 120 python3 "$troot/engines/gufo/py/watch.py" 2>&1); rc=$?
   [ "$rc" = 0 ] \
     && printf '%s' "$out" | grep -q 'selfcheck: 104/104 ok' \
     && printf '%s' "$out" | grep -q 'selfcheck engine: 60/60 ok' || return 1

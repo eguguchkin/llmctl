@@ -19,7 +19,7 @@ Every `lctl bench` run now writes, next to the `.md` report:
   the adapter extras). The rows are the runner's own lines, no
   recomputation — the single source for every derived number.
 - `bench/MATRIX.md` — generated after EVERY bench run by
-  `core/tpl/python/bench/bench_matrix.py` from the **latest snapshot per
+  `core/py/bench/bench_matrix.py` from the **latest snapshot per
   engine+profile combination** (max `meta.date`; a stale version of the
   same combination silently loses). It renders the per-profile tables
   (solo / prose / session / prefill / parallel columns, the columns' metric

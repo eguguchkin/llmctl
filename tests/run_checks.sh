@@ -25,7 +25,7 @@
 #   protection holds; the marker not found → a FAIL «мутация не
 #   применилась», the marker-drift protection). A deliberate exception
 #   (2026-11-25): w38-bootlines / w41 / w33-spec-pulse
-#   (engines/hipfire/tpl/python/watch_tui.py) are covered by the panel's
+#   (engines/hipfire/py/watch_tui.py) are covered by the panel's
 #   selfcheck pins — no mutations for them on purpose. The SR section —
 #   the gufo/flash smoke race (fix:smoke-race, task 3.2): a late log flush
 #   + a poll-cut mutation. The PASS/FAIL count;
@@ -187,7 +187,7 @@ hf() {  # hf <bash-код> — stdout+stderr и rc наружу
     export LCTL_FAUX_LOG="$FAUXLOG" LCTL_FAUX_CNT="$FAUXCNT" LCTL_FAUX_ORPHAN_ID="$ORPHAN_ID"
     export HOME="$TMP/home" USER="tester" LCTL_FAUX_TMP="$TMP"
     SELF="$tree/lctl" STACK_DIR="$LCTL_TEST_STACK" DATA_DIR="$STACK_DIR/.data"
-    CORE_DIR="$tree/core" CORE_TPL="$tree/core/tpl"
+    CORE_DIR="$tree/core" CORE_TPL="$tree/core/tpl" CORE_PY="$tree/core/py"
     log()  { printf '\n== %s\n' "$*"; }
     warn() { printf 'WARN: %s\n' "$*" >&2; }
     die()  { printf 'FATAL: %s\n' "$*" >&2; exit 1; }
@@ -1129,11 +1129,11 @@ scen_w0_cmd_watch() {
   # the W3 env seam: the core passes LCTL_WATCH_ENGINE="$ENGINE" (a
   #     variable, not a value — R6), the frame reads it into Watch.engine
   grep -qF 'LCTL_WATCH_ENGINE="$ENGINE"' "$ROOT/core/commands.sh" || return 1
-  LCTL_WATCH_ENGINE=engine-x PYTHONPATH="$ROOT/core/tpl/python/watch" \
+  LCTL_WATCH_ENGINE=engine-x PYTHONPATH="$ROOT/core/py/watch" \
     python3 -c 'import watch_frame, sys; w = watch_frame.Watch([], eng=None); sys.exit(0 if w.engine == "engine-x" else 1)' || return 1
   # the W3.2.2 header seam: the LCTL_WATCH_IP stub is read without a socket call
   LCTL_WATCH_IP=10.0.0.9 LCTL_WATCH_PORT=11435 \
-    PYTHONPATH="$ROOT/core/tpl/python/watch" \
+    PYTHONPATH="$ROOT/core/py/watch" \
     python3 -c 'import watch_frame, sys; w = watch_frame.Watch([], eng=None); sys.exit(0 if w.watch_ip == "10.0.0.9" and w.port == 11435 else 1)' || return 1
   # a long log line via the faux: plain does not crash (the clip is in
   #     the TUI frame, the frame's log_clip; plain prints as is)
@@ -1160,7 +1160,7 @@ scen_w0_cmd_watch() {
 #     stamped seed)
 scen_w0_selfcheck() {
   local out rc
-  out=$(LCTL_WATCH_SELFCHECK=1 timeout 120 python3 "$ROOT/core/tpl/python/watch/watch_frame.py" 2>&1); rc=$?
+  out=$(LCTL_WATCH_SELFCHECK=1 timeout 120 python3 "$ROOT/core/py/watch/watch_frame.py" 2>&1); rc=$?
   [ "$rc" = 0 ] && printf '%s' "$out" | grep -q 'selfcheck: 104/104 ok' || return 1
   return 0
 }
@@ -1169,7 +1169,7 @@ scen_w0_selfcheck() {
 #     dialects — the boundary invariant for the future (a new R6 check of
 #     the battery)
 scen_w0_r6_watch() {
-  ! grep -rniE 'gufo|hipfire' "$ROOT/core/tpl/python/watch/" || return 1
+  ! grep -rniE 'gufo|hipfire' "$ROOT/core/py/watch/" || return 1
   return 0
 }
 
@@ -1182,7 +1182,7 @@ scen_w0_r6_watch() {
 #     engines/<name>/.
 scen_core_r6_static() {
   ! grep -rniE 'gufo|hipfire|halogen' "$ROOT/lctl" "$ROOT/core/"*.sh \
-    "$ROOT/core/tpl/python/smoke_resp.py" "$ROOT/core/tpl/systemd/" \
+    "$ROOT/core/py/smoke_resp.py" "$ROOT/core/tpl/systemd/" \
     "$ROOT/core/tpl/lctl-containers.conf" || return 1
   return 0
 }
@@ -1390,7 +1390,7 @@ while IFS= read -r -d '' f; do
     py_err=1; bad "py_compile $f: $(tail -1 "$TMP/py.err")"
   fi
 done < <(find "$ROOT"/core "$ROOT"/engines -type f -name '*.py' -print0)
-[ "$py_err" = 0 ] && ok "python3 -m py_compile {core,engines}/*/tpl/python/*.py (пофайлово, вкл. watch-каркас)"
+[ "$py_err" = 0 ] && ok "python3 -m py_compile {core,engines}/*/py/*.py (пофайлово, вкл. watch-каркас)"
 out=$(bash "$ROOT/lctl" 2>&1); rc=$?
 if [ "$rc" = 1 ] && [ -n "$out" ]; then ok "bare-вызов: usage напечатан, rc=1"; else bad "bare-вызов: rc=$rc (нужен 1 + usage)"; fi
 out=$(HOME="$TMP/home" LCTL_ENGINE=hipfire LCTL_PORT=1 bash "$ROOT/lctl" status --json 2>&1); rc=$?
@@ -1471,16 +1471,16 @@ check_mutation "in-pod" "$(mutant_sed in-pod engines/gufo/adapter.sh '/# fix:in-
 # the W2 mutation: a cut of the hipfire panel's health-parser json.loads
 #     (the marker in a py — the marker Inventory does not count it: it is
 #     over core/) → the panel's selfcheck fails
-if grep -q '# fix:w2-health-parse' "$ROOT/engines/hipfire/tpl/python/watch_tui.py"; then
-  check_mutation "w2-health-parse" "$(mutant_sed w2-health-parse engines/hipfire/tpl/python/watch_tui.py '/# fix:w2-health-parse/d')" scen_w2_panel
+if grep -q '# fix:w2-health-parse' "$ROOT/engines/hipfire/py/watch_tui.py"; then
+  check_mutation "w2-health-parse" "$(mutant_sed w2-health-parse engines/hipfire/py/watch_tui.py '/# fix:w2-health-parse/d')" scen_w2_panel
 else
   bad "мутация w2-health-parse: маркера нет в watch_tui.py (дрейф)"
 fi
 # the W3 mutation: a cut of the REAL ` | ` load-summary format regexps
 #     (the «Роут: нет данных» defect) → the summary pins of the
 #     selfcheck/scenario fail
-if grep -q '# fix:w3-summary-parse' "$ROOT/engines/hipfire/tpl/python/watch_tui.py"; then
-  check_mutation "w3-summary-parse" "$(mutant_sed w3-summary-parse engines/hipfire/tpl/python/watch_tui.py '/# fix:w3-summary-parse/d')" scen_w2_panel
+if grep -q '# fix:w3-summary-parse' "$ROOT/engines/hipfire/py/watch_tui.py"; then
+  check_mutation "w3-summary-parse" "$(mutant_sed w3-summary-parse engines/hipfire/py/watch_tui.py '/# fix:w3-summary-parse/d')" scen_w2_panel
 else
   bad "мутация w3-summary-parse: маркера нет в watch_tui.py (дрейф)"
 fi
@@ -1488,8 +1488,8 @@ fi
 #     aggregate (принято %) — the aggregate's selfcheck pins fail; a cut
 #     of uptime_from_log (the gufo uptime from the first -t stamp) — the
 #     uptime/средн pins of the selfcheck fail
-if grep -q '# fix:w32-draft-agg' "$ROOT/engines/hipfire/tpl/python/watch_tui.py"; then
-  check_mutation "w32-draft-agg" "$(mutant_sed w32-draft-agg engines/hipfire/tpl/python/watch_tui.py '/# fix:w32-draft-agg/d')" scen_w2_panel
+if grep -q '# fix:w32-draft-agg' "$ROOT/engines/hipfire/py/watch_tui.py"; then
+  check_mutation "w32-draft-agg" "$(mutant_sed w32-draft-agg engines/hipfire/py/watch_tui.py '/# fix:w32-draft-agg/d')" scen_w2_panel
 else
   bad "мутация w32-draft-agg: маркера нет в watch_tui.py (дрейф)"
 fi
@@ -1514,21 +1514,21 @@ fi
 # the W mutation: a cut of the lanes override (compose_scheme ignores
 #     summary.lanes — «1 ×» instead of the real fn-lanes parallelism) →
 #     the selfcheck lanes case fails
-if grep -q '# fix:w40-lanes' "$ROOT/engines/hipfire/tpl/python/watch_tui.py"; then
-  check_mutation "w40-lanes" "$(mutant_sed w40-lanes engines/hipfire/tpl/python/watch_tui.py '/# fix:w40-lanes/d')" scen_w2_panel
+if grep -q '# fix:w40-lanes' "$ROOT/engines/hipfire/py/watch_tui.py"; then
+  check_mutation "w40-lanes" "$(mutant_sed w40-lanes engines/hipfire/py/watch_tui.py '/# fix:w40-lanes/d')" scen_w2_panel
 else
   bad "мутация w40-lanes: маркера нет в watch_tui.py (дрейф)"
 fi
-if grep -q '# fix:w32-uptime' "$ROOT/engines/gufo/tpl/python/watch_engine.py"; then
-  check_mutation "w32-uptime" "$(mutant_sed w32-uptime engines/gufo/tpl/python/watch_engine.py '/# fix:w32-uptime/d')" scen_w1_selfcheck
+if grep -q '# fix:w32-uptime' "$ROOT/engines/gufo/py/watch_engine.py"; then
+  check_mutation "w32-uptime" "$(mutant_sed w32-uptime engines/gufo/py/watch_engine.py '/# fix:w32-uptime/d')" scen_w1_selfcheck
 else
   bad "мутация w32-uptime: маркера нет в watch_engine.py (дрейф)"
 fi
 # the W3.2.1 mutation (p.5): a cut of the cache budgets' env seam (the
 #     cache_dir from LCTL_WATCH_HIPFIRE_CACHE_DIR) → collect dead → the
 #     env-stub scenario «12 GiB (бюджет) / used-скан» fails
-if grep -q '# fix:w321-cache-env' "$ROOT/engines/hipfire/tpl/python/watch_tui.py"; then
-  check_mutation "w321-cache-env" "$(mutant_sed w321-cache-env engines/hipfire/tpl/python/watch_tui.py '/# fix:w321-cache-env/d')" scen_w2_cache_env
+if grep -q '# fix:w321-cache-env' "$ROOT/engines/hipfire/py/watch_tui.py"; then
+  check_mutation "w321-cache-env" "$(mutant_sed w321-cache-env engines/hipfire/py/watch_tui.py '/# fix:w321-cache-env/d')" scen_w2_cache_env
 else
   bad "мутация w321-cache-env: маркера нет в watch_tui.py (дрейф)"
 fi
@@ -1539,38 +1539,38 @@ fi
 #     log), slot-branch (the multi_slot «—» removed), gufo-window (the
 #     session ratio-of-sums cut), the K_LAT pairs (the hipfire ген-средн
 #     degrades — a NameError, the protection is not silent)
-if grep -q '# fix:w33-session-base' "$ROOT/core/tpl/python/watch/watch_frame.py"; then
-  check_mutation "w33-session-base" "$(mutant_sed w33-session-base core/tpl/python/watch/watch_frame.py '/# fix:w33-session-base/d')" scen_w2_panel
+if grep -q '# fix:w33-session-base' "$ROOT/core/py/watch/watch_frame.py"; then
+  check_mutation "w33-session-base" "$(mutant_sed w33-session-base core/py/watch/watch_frame.py '/# fix:w33-session-base/d')" scen_w2_panel
 else
   bad "мутация w33-session-base: маркера нет в watch_frame.py (дрейф)"
 fi
-if grep -q '# fix:w33-hold' "$ROOT/engines/gufo/tpl/python/watch.py"; then
-  check_mutation "w33-hold-gufo" "$(mutant_sed w33-hold-gufo engines/gufo/tpl/python/watch.py '/# fix:w33-hold/d')" scen_w1_selfcheck
+if grep -q '# fix:w33-hold' "$ROOT/engines/gufo/py/watch.py"; then
+  check_mutation "w33-hold-gufo" "$(mutant_sed w33-hold-gufo engines/gufo/py/watch.py '/# fix:w33-hold/d')" scen_w1_selfcheck
 else
   bad "мутация w33-hold-gufo: маркера нет в watch.py (дрейф)"
 fi
-if grep -q '# fix:w33-hold' "$ROOT/engines/hipfire/tpl/python/watch_tui.py"; then
-  check_mutation "w33-hold-hipfire" "$(mutant_sed w33-hold-hipfire engines/hipfire/tpl/python/watch_tui.py '/# fix:w33-hold/d')" scen_w2_panel
+if grep -q '# fix:w33-hold' "$ROOT/engines/hipfire/py/watch_tui.py"; then
+  check_mutation "w33-hold-hipfire" "$(mutant_sed w33-hold-hipfire engines/hipfire/py/watch_tui.py '/# fix:w33-hold/d')" scen_w2_panel
 else
   bad "мутация w33-hold-hipfire: маркера нет в watch_tui.py (дрейф)"
 fi
-if grep -q '# fix:w33-done-parse' "$ROOT/engines/hipfire/tpl/python/watch_tui.py"; then
-  check_mutation "w33-done-parse" "$(mutant_sed w33-done-parse engines/hipfire/tpl/python/watch_tui.py '/# fix:w33-done-parse/d')" scen_w2_panel
+if grep -q '# fix:w33-done-parse' "$ROOT/engines/hipfire/py/watch_tui.py"; then
+  check_mutation "w33-done-parse" "$(mutant_sed w33-done-parse engines/hipfire/py/watch_tui.py '/# fix:w33-done-parse/d')" scen_w2_panel
 else
   bad "мутация w33-done-parse: маркера нет в watch_tui.py (дрейф)"
 fi
-if grep -q '# fix:w33-slot-branch' "$ROOT/engines/hipfire/tpl/python/watch_tui.py"; then
-  check_mutation "w33-slot-branch" "$(mutant_sed w33-slot-branch engines/hipfire/tpl/python/watch_tui.py '/# fix:w33-slot-branch/d')" scen_w2_panel
+if grep -q '# fix:w33-slot-branch' "$ROOT/engines/hipfire/py/watch_tui.py"; then
+  check_mutation "w33-slot-branch" "$(mutant_sed w33-slot-branch engines/hipfire/py/watch_tui.py '/# fix:w33-slot-branch/d')" scen_w2_panel
 else
   bad "мутация w33-slot-branch: маркера нет в watch_tui.py (дрейф)"
 fi
-if grep -q '# fix:w33-gufo-window' "$ROOT/engines/gufo/tpl/python/watch_engine.py"; then
-  check_mutation "w33-gufo-window" "$(mutant_sed w33-gufo-window engines/gufo/tpl/python/watch_engine.py '/# fix:w33-gufo-window/d')" scen_w1_selfcheck
+if grep -q '# fix:w33-gufo-window' "$ROOT/engines/gufo/py/watch_engine.py"; then
+  check_mutation "w33-gufo-window" "$(mutant_sed w33-gufo-window engines/gufo/py/watch_engine.py '/# fix:w33-gufo-window/d')" scen_w1_selfcheck
 else
   bad "мутация w33-gufo-window: маркера нет в watch_engine.py (дрейф)"
 fi
-if grep -q '# fix:w33-lat-keys' "$ROOT/engines/hipfire/tpl/python/watch_tui.py"; then
-  check_mutation "w33-lat-keys" "$(mutant_sed w33-lat-keys engines/hipfire/tpl/python/watch_tui.py '/# fix:w33-lat-keys/d')" scen_w2_panel
+if grep -q '# fix:w33-lat-keys' "$ROOT/engines/hipfire/py/watch_tui.py"; then
+  check_mutation "w33-lat-keys" "$(mutant_sed w33-lat-keys engines/hipfire/py/watch_tui.py '/# fix:w33-lat-keys/d')" scen_w2_panel
 else
   bad "мутация w33-lat-keys: маркера нет в watch_tui.py (дрейф)"
 fi
@@ -1656,7 +1656,7 @@ if scen_render_die_tplpath; then ok "2.2: die при нераскрытом __KE
 echo "== 13. W0 watch-каркас (ядро): cmd_watch-гварды + selfcheck каркаса + R6-статика"
 if scen_w0_cmd_watch; then ok "W0: cmd_watch — кривой --interval/аргумент → die; exec-ветка W2 (TICKS=1 — один тик): faux /health+/stats+/metrics на :11435 → [движок] plain rc 0; env-шов LCTL_WATCH_ENGINE (grep ядра + Watch.engine=engine-x); длинная лог-строка не роняет plain; роутер+гвардия на месте"; else bad "W0 cmd_watch-гварды"; fi
 if scen_w0_selfcheck; then ok "W0: selfcheck каркаса 94/94 — глифы/цвета/«—»-инвариант (все fmt*, вкл. fmt_uptime/fmt_int_sep/fmt_pct «58.0 %»), status-bar с именем движка, log_clip + log_lines_fit (D3), D5-константы (отступ 1 перед буллетом), dir_size_bytes, схема v2 «Движок» (плоские ряды §1) + «Метрики» (7 рядов §1), железо (CPU первой)/скорость (title «Скорость»), wire-примитивы (parse_metrics/Deltas/sparkline/TZ + podman-RFC3339), LogStreamer с -t, шапка «engine · ip:порт · model» addr-сегментом (W3.2.2, primary_ip + LCTL_WATCH_IP-шов)"; else bad "W0 selfcheck каркаса"; fi
-if scen_w0_r6_watch; then ok "W0: R6-статика W3 — grep gufo|hipfire по core/tpl/python/watch/ пуст (граница каркас↔адаптер)"; else bad "W0 R6-статика каркаса"; fi
+if scen_w0_r6_watch; then ok "W0: R6-статика W3 — grep gufo|hipfire по core/py/watch/ пуст (граница каркас↔адаптер)"; else bad "W0 R6-статика каркаса"; fi
 if scen_core_r6_static; then ok "Core-R6: grep gufo|hipfire|halogen по lctl + core/*.sh + smoke_resp/systemd/containers.tpl пуст (имена движков — только engines/<имя>/)"; else bad "Core-R6 статика ядра"; fi
 
 # ── the B wave (task 7.1): bench — the router/gates/e2e+rewrite/md5 gate/deadline/ ─
@@ -1860,19 +1860,22 @@ scen_b_golden_snapshot() {
   B_TS=2026-11-22T00:00:00+00 B_ENGINE=engine-x B_VERSION=1.0 B_PROFILE=prof-x \
   B_MODEL=model-x B_MD5=253c7ac50857fe6d0e10fb0d2c5e35c0 \
   B_PARAMS="runs=2, parallel=2,4" LCTL_BENCH_MAX_S=3600 \
-    python3 "$ROOT/core/tpl/python/bench/bench_report.py" "$ROOT/tests/fixtures/bench_runs" \
+    python3 "$ROOT/core/py/bench/bench_report.py" "$ROOT/tests/fixtures/bench_runs" \
     > "$TMP/golden.out" 2>/dev/null
   cmp -s "$TMP/golden.out" "$ROOT/tests/fixtures/bench_golden_report.md"
 }
 
 # B the R6 hygiene: the bodies of core/bench.sh and
-#     core/tpl/python/bench/* WITHOUT the engine names/dialects
+#     core/py/bench/* WITHOUT the engine names/dialects
 #     (gufo|hipfire|tau|/metrics) and WITHOUT a host — the engine part
 #     lives in engines/<name>/bench.sh, the host does not get into the
 #     report
 scen_b_r6_hygiene() {
-  ! grep -rqE 'gufo|hipfire|tau|/metrics' "$ROOT/core/bench.sh" "$ROOT/core/tpl/python/bench/" || return 1
-  ! grep -rqE '192\.168\.|hostname|HOSTNAME' "$ROOT/core/bench.sh" "$ROOT/core/tpl/python/bench/" || return 1
+  ! grep -rqE 'gufo|hipfire|tau|/metrics' "$ROOT/core/bench.sh" "$ROOT/core/py/bench/" || return 1
+  ! grep -rqE '192\.168\.|hostname|HOSTNAME' "$ROOT/core/bench.sh" "$ROOT/core/py/bench/" || return 1
+  # канон каталогов (аудит 2026-11-27): tpl — только render_tpl-шаблоны и
+  # статические ассеты; исполняемый python живёт в py/ — ни одного .py в tpl
+  ! find "$ROOT/core/tpl" "$ROOT"/engines/*/tpl -name '*.py' | grep -q . || return 1
   return 0
 }
 
@@ -1883,7 +1886,7 @@ scen_b_json_snapshot() {
   B_TS=2026-11-22T00:00:00+00 B_ENGINE=engine-x B_VERSION=1.0 B_PROFILE=prof-x \
   B_MODEL=model-x B_MD5=253c7ac50857fe6d0e10fb0d2c5e35c0 \
   B_PARAMS="runs=2, parallel=2,4" LCTL_BENCH_MAX_S=3600 \
-    python3 "$ROOT/core/tpl/python/bench/bench_report.py" "$ROOT/tests/fixtures/bench_runs" \
+    python3 "$ROOT/core/py/bench/bench_report.py" "$ROOT/tests/fixtures/bench_runs" \
     "$TMP/snap.json" >/dev/null 2>&1 || return 1
   python3 "$ROOT/tests/shims/bench_json_check.py" "$TMP/snap.json" >/dev/null
 }
@@ -1898,7 +1901,7 @@ scen_b_matrix() {
   printf '%s\n' '{"meta": {"date": "2026-11-27T10:00:00+00", "engine": "engine-a", "version": "1.0", "profile": "prof-x", "model": "m", "fixture_md5": "x", "params": "p", "truncated": false}, "solo": [{"run": 1, "wall_s": 1.0, "prompt_tokens": 140, "completion_tokens": 40, "tok_s": 111.11, "timings": null, "error": null}], "prose": [], "session": [], "followup": [{"turn": 1, "wall_s": 10.0, "prompt_tokens": 25000, "completion_tokens": 128, "tok_s": 5.12, "timings": null, "error": null}], "parallel": [{"n": 2, "wall_s": 4.0, "agg_tok_s": 42.0, "error": null}], "extras": null}' > "$TMP/mx/engine-a-1.0-prof-x.json"
   printf '%s\n' '{"meta": {"date": "2026-11-26T09:00:00+00", "engine": "engine-b", "version": "2.0", "profile": "prof-x", "model": "m", "fixture_md5": "x", "params": "p", "truncated": false}, "solo": [{"run": 1, "wall_s": 1.0, "prompt_tokens": 140, "completion_tokens": 40, "tok_s": 55.0, "timings": null, "error": null}], "prose": [], "session": [], "followup": [], "parallel": [], "extras": null}' > "$TMP/mx/engine-b-2.0-prof-x.json"
   printf 'not json\n' > "$TMP/mx/broken.json"
-  python3 "$ROOT/core/tpl/python/bench/bench_matrix.py" "$TMP/mx" > "$TMP/mx1.md" 2> "$TMP/mx1.err" || return 1
+  python3 "$ROOT/core/py/bench/bench_matrix.py" "$TMP/mx" > "$TMP/mx1.md" 2> "$TMP/mx1.err" || return 1
   grep -q '111.11' "$TMP/mx1.md" || return 1                 # latest by date won
   grep -q 'engine-a 0.9\|99.99' "$TMP/mx1.md" && return 1    # the stale snapshot lost
   grep -q 'префилл 25k (miss), с → tok/s' "$TMP/mx1.md" || return 1
@@ -1906,7 +1909,7 @@ scen_b_matrix() {
   grep -q '| 42.00 |' "$TMP/mx1.md" || return 1              # the par-2 column
   grep -q 'даты прогонов различаются' "$TMP/mx1.md" || return 1
   grep -q 'broken.json — не-JSON/битый, пропущен' "$TMP/mx1.err" || return 1
-  python3 "$ROOT/core/tpl/python/bench/bench_matrix.py" "$TMP/mx" > "$TMP/mx2.md" 2>/dev/null || return 1
+  python3 "$ROOT/core/py/bench/bench_matrix.py" "$TMP/mx" > "$TMP/mx2.md" 2>/dev/null || return 1
   cmp -s "$TMP/mx1.md" "$TMP/mx2.md" || return 1             # determinism
   return 0
 }
@@ -1925,7 +1928,7 @@ if scen_b_deadline; then ok "B4: LCTL_BENCH_MAX_S=0 → rc 0, отчёт с «П
 if scen_b_golden_snapshot; then ok "B5: golden-снапшот bench_report.py — байт-в-байт (дата из env — детерминизм)"; else bad "B5 golden-снапшот"; fi
 if scen_b_json_snapshot; then ok "B6: bench_report argv[1] → .json-снапшот (meta=env, строки verbatim, extras)"; else bad "B6 json-снапшот"; fi
 if scen_b_matrix; then ok "B6: bench_matrix — latest-по-дате (stale проигрывает), префилл/пар-колонки, разнобой дат помечен, битый файл → warn, рендер детерминирован"; else bad "B6 матрица"; fi
-if scen_b_r6_hygiene; then ok "B5: R6-гигиена — core/bench.sh + core/tpl/python/bench без gufo|hipfire|tau|/metrics и без хоста"; else bad "B5 R6-гигиена"; fi
+if scen_b_r6_hygiene; then ok "B5: R6-гигиена — core/bench.sh + core/py/bench без gufo|hipfire|tau|/metrics и без хоста"; else bad "B5 R6-гигиена"; fi
 
 echo "== B7. bench-мутации (маркеры core/bench.sh → соответствующий B-сценарий падает)"
 check_mutation "bench-version"   "$(mutant_marker bench-version bench-version)"   scen_b_version_guard

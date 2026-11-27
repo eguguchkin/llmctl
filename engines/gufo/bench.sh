@@ -61,8 +61,8 @@ engine_bench_extras() {
   curl -fsS -m 5 "http://127.0.0.1:$PORT/metrics" 2>/dev/null | \
     ROUTE_SPEC="${ROUTE_SPEC:-}" ROUTE_SESSIONS="${ROUTE_SESSIONS:-}" ROUTE_CTX="${ROUTE_CTX:-}" \
     LCTL_BENCH_UPTIME_LOG="$ulog" \
-    PYTHONPATH="${PYTHONPATH:+$PYTHONPATH:}$ADAPTER_DIR/tpl/python" \
-    python3 "$ADAPTER_DIR/tpl/python/bench_extras.py"
+    PYTHONPATH="${PYTHONPATH:+$PYTHONPATH:}$ADAPTER_DIR/py" \
+    python3 "$ADAPTER_DIR/py/bench_extras.py"
   rc=$?
   rm -f "$ulog"
   return "$rc"

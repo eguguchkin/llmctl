@@ -73,7 +73,7 @@ core_smoke_vision_gate() {
 #   tails.
 #
 # Side effects: up to 12 http generation requests (6 × the single retry);
-#   curl/python3 subprocesses (core/tpl/python/smoke_resp.py); the retry
+#   curl/python3 subprocesses (core/py/smoke_resp.py); the retry
 #   sleep. stdout — the «ответ: …» lines and "SMOKE: OK"; warn to stderr on
 #   retries; a failure — die.
 #
@@ -100,7 +100,7 @@ core_smoke() {
       try=$((try + 1))
       if out=$(curl -fsS -m 300 "http://127.0.0.1:$PORT/v1/chat/completions" \
         -H 'Content-Type: application/json' -d "$req" 2>/dev/null) && \
-         printf '%s' "$out" | python3 "$CORE_TPL/python/smoke_resp.py" "$model"; then
+         printf '%s' "$out" | python3 "$CORE_PY/smoke_resp.py" "$model"; then
         break
       fi
       if [ "$try" -ge 2 ]; then ok=0; break; fi
@@ -115,7 +115,7 @@ core_smoke() {
     try=$((try + 1))
     if out=$(curl -fsS -m 300 "http://127.0.0.1:$PORT/v1/chat/completions" \
       -H 'Content-Type: application/json' -d "$req" 2>/dev/null) && \
-       printf '%s' "$out" | python3 "$CORE_TPL/python/smoke_resp.py" "$model" stream; then
+       printf '%s' "$out" | python3 "$CORE_PY/smoke_resp.py" "$model" stream; then
       break
     fi
     if [ "$try" -ge 2 ]; then ok=0; break; fi
@@ -129,7 +129,7 @@ core_smoke() {
     try=$((try + 1))
     if out=$(curl -fsS -m 300 "http://127.0.0.1:$PORT/v1/chat/completions" \
       -H 'Content-Type: application/json' -d "$req" 2>/dev/null) && \
-       printf '%s' "$out" | python3 "$CORE_TPL/python/smoke_resp.py" "$model" tools; then
+       printf '%s' "$out" | python3 "$CORE_PY/smoke_resp.py" "$model" tools; then
       break
     fi
     if [ "$try" -ge 2 ]; then ok=0; break; fi
@@ -149,7 +149,7 @@ core_smoke() {
       try=$((try + 1))
       if out=$(curl -fsS -m 300 "http://127.0.0.1:$PORT/v1/chat/completions" \
         -H 'Content-Type: application/json' -d "$req" 2>/dev/null) && \
-         printf '%s' "$out" | python3 "$CORE_TPL/python/smoke_resp.py" "$model"; then
+         printf '%s' "$out" | python3 "$CORE_PY/smoke_resp.py" "$model"; then
         break
       fi
       if [ "$try" -ge 2 ]; then ok=0; break; fi
@@ -782,7 +782,7 @@ cmd_agent_check() {
 #   engine name for the `lctl watch │ <engine> · <model>` header; the core
 #   passes the VARIABLE, its value is not returned into the frame — R6)
 #   and the optional engine_watch_env hook (the adapter hangs its own env,
-#   e.g. PYTHONPATH to the core/tpl/python/watch frame). The panel is
+#   e.g. PYTHONPATH to the core/py/watch frame). The panel is
 #   engine dialect: no ENGINE_WATCH_TUI file → an honest message, rc 0
 #   (the agent-check pattern; engines without a panel — until their watch
 #   wave).

@@ -2,7 +2,7 @@
 # ── bench (stage 7): a client-side read-only benchmark over the ACTIVE engine ─
 # The core owns the orchestration: flags → gates (.env, engine version, live
 # health) → context (profile/model/fixture md5) → running the 4 scenarios by
-# the runner (core/tpl/python/bench/bench_run.py, JSONL in a mktemp dir) →
+# the runner (core/py/bench/bench_run.py, JSONL in a mktemp dir) →
 # the adapter's extras hook → report render (bench_report.py) + a JSON
 # snapshot (<combo>.json) → the matrix render (bench_matrix.py from the
 # latest snapshots of ALL local combinations → bench/MATRIX.md) → writing
@@ -136,7 +136,7 @@ cmd_bench() {
   trap 'bench_abort INT 130' INT
   trap 'bench_abort TERM 143' TERM
   local deadline=$(( $(date +%s) + ${LCTL_BENCH_MAX_S:-3600} ))
-  local runner="$CORE_TPL/python/bench/bench_run.py" truncated=""
+  local runner="$CORE_PY/bench/bench_run.py" truncated=""
   local par_nums="${par_list//,/ }"
   log "bench: $ENGINE $ENGINE_VERSION | профиль $prof | модель $model | runs=$runs parallel=$par_list"
 
@@ -179,8 +179,8 @@ cmd_bench() {
   B_TS="$ts_iso" B_ENGINE="$ENGINE" B_VERSION="$ENGINE_VERSION" \
   B_PROFILE="$prof" B_MODEL="$model" B_MD5="$md5_real" \
   B_PARAMS="runs=$runs, parallel=$par_list" LCTL_BENCH_MAX_S="${LCTL_BENCH_MAX_S:-3600}" \
-    python3 "$CORE_TPL/python/bench/bench_report.py" "$BENCH_RUNS" "${report%.md}.json" > "$report"   # fix:bench-report — a markdown render + a <combo>.json snapshot; the short summary is the runner's stderr
-  python3 "$CORE_TPL/python/bench/bench_matrix.py" "$report_dir" > "$matrix" 2>/dev/null || warn "матрица не отрендерилась — bench/MATRIX.md остался прежним (битые .json-снапшоты?)"   # fix:bench-matrix — the derived artifact: a failure does not cancel the run
+    python3 "$CORE_PY/bench/bench_report.py" "$BENCH_RUNS" "${report%.md}.json" > "$report"   # fix:bench-report — a markdown render + a <combo>.json snapshot; the short summary is the runner's stderr
+  python3 "$CORE_PY/bench/bench_matrix.py" "$report_dir" > "$matrix" 2>/dev/null || warn "матрица не отрендерилась — bench/MATRIX.md остался прежним (битые .json-снапшоты?)"   # fix:bench-matrix — the derived artifact: a failure does not cancel the run
   log "bench завершён$([ -n "$truncated" ] && echo ' (ОБОРВАН по лимиту LCTL_BENCH_MAX_S — цифры частичные)')"
   echo "отчёт: $report"
   echo "матрица: $matrix"

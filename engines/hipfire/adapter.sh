@@ -20,7 +20,7 @@ ENGINE_COMPOSE_FILES=( -f compose.yml -f compose.halo.yml -f compose.local.yml )
 ENGINE_ENV_TEMPLATE="$ADAPTER_DIR/tpl/env/env.tpl"   # the root .env template (the §4 canon)
 ENGINE_MEMLOCK=1318060032                     # the limits.d value (the engine's fit)
 ENGINE_FAIL_PATTERN="pre-warm failed"         # the early-failure grep -E pattern for wait_health
-ENGINE_WATCH_TUI="$ADAPTER_DIR/tpl/python/watch_tui.py"   # (wave 4) the watch python panel
+ENGINE_WATCH_TUI="$ADAPTER_DIR/py/watch_tui.py"   # (wave 4) the watch python panel
 
 # engine constants (the core does not know them)
 # IMPORTANT: models is mounted into the container at /home/hipfire/.hipfire/models —
@@ -42,7 +42,7 @@ MAX_SEQ=262144
 engine_model_set() { case "$1" in flash) echo flash ;; *) echo 27b ;; esac; }
 
 # Purpose: the env add-on for cmd_watch (the core execs ENGINE_WATCH_TUI):
-#   1) PYTHONPATH — the hipfire python panel imports the core/tpl/python/
+#   1) PYTHONPATH — the hipfire python panel imports the core/py/
 #   watch frame (the panel does not know where the core is; cmd_watch knows
 #   CORE_TPL);
 #   2) the cache budgets' env seam (W3.2.1 p.5, layout §1 «… (бюджет)»):
@@ -55,7 +55,7 @@ engine_model_set() { case "$1" in flash) echo flash ;; *) echo 27b ;; esac; }
 #   likewise). The LCTL_WATCH_HIPFIRE_* names are adapter dialect, the frame
 #   does not know them (R6).
 engine_watch_env() {
-  PYTHONPATH="${PYTHONPATH:+$PYTHONPATH:}$CORE_TPL/python/watch"; export PYTHONPATH
+  PYTHONPATH="${PYTHONPATH:+$PYTHONPATH:}$CORE_PY/watch"; export PYTHONPATH
   local cfg_dir="$STACK_DIR/$(env_val HIPFIRE_STATE_DIR)/config" ram_b disk_b
   ram_b=$(sed -n 's/^[[:space:]]*session_cache_bytes[[:space:]]*=[[:space:]]*//p' \
     "$cfg_dir/config.toml" 2>/dev/null | tail -n 1 || true)

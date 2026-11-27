@@ -26,7 +26,7 @@ ENGINE_COMPOSE_FILES=( -f compose.yml )        # one file — rendered by engine
 # (EXP-002) — the same global as gufo's (fix:in-pod).
 ENGINE_COMPOSE_EXTRA_ARGS=( --in-pod false )
 ENGINE_ENV_TEMPLATE="$ADAPTER_DIR/tpl/env/env.tpl"   # the root .env template (the §4 canon)
-ENGINE_WATCH_TUI="$ADAPTER_DIR/tpl/python/watch.py"   # (Ф3b) the watch python panel on the watch_frame frame
+ENGINE_WATCH_TUI="$ADAPTER_DIR/py/watch.py"   # (Ф3b) the watch python panel on the watch_frame frame
 ENGINE_MEMLOCK=1318060032                      # the same GPU-memlock limit as gufo/hipfire (ROCm/KFD, the core's limits.d)
 # To verify by the first window (the Ф2 plan 2026-11-25): Window Ф2
 # (2026-11-26): «out of memory» is a FALSE POSITIVE: a normal start line of
@@ -66,7 +66,7 @@ source "$ADAPTER_DIR/bench.sh"         # engine_bench_model (the canon) + engine
 source "$ADAPTER_DIR/agentcheck.sh"     # cmp_ref + engine_agent_check (Ф3c)
 
 # Purpose: the env add-on for cmd_watch (the core execs ENGINE_WATCH_TUI):
-#   the halogen panel imports the core/tpl/python/watch frame — its path
+#   the halogen panel imports the core/py/watch frame — its path
 #   into PYTHONPATH (the panel does not know where the core is; cmd_watch
 #   knows CORE_TPL).
-engine_watch_env() { PYTHONPATH="${PYTHONPATH:+$PYTHONPATH:}$CORE_TPL/python/watch"; export PYTHONPATH; }
+engine_watch_env() { PYTHONPATH="${PYTHONPATH:+$PYTHONPATH:}$CORE_PY/watch"; export PYTHONPATH; }

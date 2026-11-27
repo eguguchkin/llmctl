@@ -33,7 +33,7 @@ ENGINE_ENV_TEMPLATE="$ADAPTER_DIR/tpl/env/env.tpl"   # the root .env template (t
 ENGINE_MEMLOCK=1318060032                     # the limits.d value (validated by live windows)
 ENGINE_FAIL_PATTERN="load_failed"             # the early-failure grep -E pattern for wait_health
 ENGINE_HEALTH_PATH=/ready                     # stage-3 Additions p.1: gufo has no /health
-ENGINE_WATCH_TUI="$ADAPTER_DIR/tpl/python/watch.py"   # (the W1 wave) the watch python panel
+ENGINE_WATCH_TUI="$ADAPTER_DIR/py/watch.py"   # (the W1 wave) the watch python panel
 
 # engine constants (the core does not know them)
 # the gufo context canon — $STATE_BASE/canon.env (set by the core AFTER
@@ -49,10 +49,10 @@ ENGINE_WATCH_TUI="$ADAPTER_DIR/tpl/python/watch.py"   # (the W1 wave) the watch 
 engine_model_set() { case "$1" in flash) echo flash ;; *) echo 27b ;; esac; }
 
 # Purpose: the env add-on for cmd_watch (the core execs ENGINE_WATCH_TUI):
-#   the gufo python panels import the core/tpl/python/watch frame — its
+#   the gufo python panels import the core/py/watch frame — its
 #   path into PYTHONPATH (the panel does not know where the core is;
 #   cmd_watch knows CORE_TPL).
-engine_watch_env() { PYTHONPATH="${PYTHONPATH:+$PYTHONPATH:}$CORE_TPL/python/watch"; export PYTHONPATH
+engine_watch_env() { PYTHONPATH="${PYTHONPATH:+$PYTHONPATH:}$CORE_PY/watch"; export PYTHONPATH
   # the profile's cache dir (the /cache mount) — a host-side du for
   # «Кэш диск: U / X» (методики-gufo; the env is read once at panel start —
   # GOTCHAS)

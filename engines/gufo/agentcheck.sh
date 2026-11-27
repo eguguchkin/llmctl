@@ -6,7 +6,7 @@
 # (б) the 5k/25k/100k follow-up ladder — the turn2 wall; (в) [док
 # 25k][q1]→[q2] — the q2 wall; (г) the restart-restore — a run of the same
 # conversation AFTER a recreate (the disk tier). The HTTP/math —
-# tpl/python/agent_check.py (the env LCTL_AGENT_STATE/LCTL_SMOKE_RETRY_S —
+# py/agent_check.py (the env LCTL_AGENT_STATE/LCTL_SMOKE_RETRY_S —
 # renamed in the gufo copy), the orchestration/references/rc — here. The
 # comparison — the PURE cmp_ref function (±25% → a WARN); an untaken
 # reference — a WARN «эталон не снят», NOT a FAIL. rc: 0 on all-PASS and on
@@ -86,7 +86,7 @@ engine_agent_check() {
   state="$LOG_DIR/agent-check-restore.json"
   port="$PORT"
   echo "== lctl agent-check — профиль $prof, модель $ROUTE_MODEL (25 запросов, SPEC §7)"
-  out=$(LCTL_AGENT_STATE="$state" python3 "$ADAPTER_DIR/tpl/python/agent_check.py" stage1 "$port" "$ROUTE_MODEL") \
+  out=$(LCTL_AGENT_STATE="$state" python3 "$ADAPTER_DIR/py/agent_check.py" stage1 "$port" "$ROUTE_MODEL") \
     || die "agent-check: stage1 структурно не прошёл (транспорт/timings/JSON — причина в stderr выше)"
   printf '%s\n' "$out"
   session_w=$(grep '^CHECK session ' <<<"$out" | grep -oE 'total=[0-9.]+' | head -n1 | cut -d= -f2-) || true
@@ -106,7 +106,7 @@ engine_agent_check() {
   echo "рестарт контейнера (restore проверяет disk-тир; канон профиля $prof)…"
   compose up -d --force-recreate 2>&1 | tail -2
   wait_health 180
-  out=$(LCTL_AGENT_STATE="$state" python3 "$ADAPTER_DIR/tpl/python/agent_check.py" stage2 "$port" "$ROUTE_MODEL") \
+  out=$(LCTL_AGENT_STATE="$state" python3 "$ADAPTER_DIR/py/agent_check.py" stage2 "$port" "$ROUTE_MODEL") \
     || die "agent-check: stage2 (restore-ход) структурно не прошёл — причина в stderr выше"
   printf '%s\n' "$out"
   rm -f "$state"

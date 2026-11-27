@@ -8,7 +8,7 @@
 #   (no uptime key in HTTP — the recon semantics), the route parsers
 #   (event=load_completed, + draft_limit) and the cache configuration
 #   (event=configured). The shared wire primitives (parse_metrics, Deltas,
-#   sparkline, TZ/podman-RFC3339) live in the core/tpl/python/watch/
+#   sparkline, TZ/podman-RFC3339) live in the core/py/watch/
 #   watch_frame.py frame (imported from there). The counter semantics
 #   source — gufo/docs/internal/server.md:1557–1583, the key emitter —
 #   gufo/src/cli/serve/http_server.cpp:1595–1685 (12 counters + 5 gauges).

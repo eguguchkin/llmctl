@@ -29,8 +29,8 @@ import sys
 import time
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                '..', '..', '..', '..',
-                                'core', 'tpl', 'python', 'watch'))
+                                '..', '..', '..',
+                                'core', 'py', 'watch'))
 import watch_engine  # noqa: E402  (a sibling — the gufo panel's formulas)
 from watch_frame import parse_metrics  # noqa: E402  (W3: moved into the frame)
 

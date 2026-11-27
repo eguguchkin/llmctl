@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Purpose: the halogen panel's entry point of `lctl watch` (Ф3b;
-#   ENGINE_WATCH_TUI, the frame core/tpl/python/watch/watch_frame.py —
+#   ENGINE_WATCH_TUI, the frame core/py/watch/watch_frame.py —
 #   PYTHONPATH is set by the adapter's engine_watch_env, the battery sets
 #   it directly). The metrics are CALIBRATED live against the response
 #   bodies (the 2026-11-26 window, F40): the log t/s == the body's
@@ -58,8 +58,8 @@ from collections import deque
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 # The frame is on sys.path even on a bare run (--selfcheck without env):
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                '..', '..', '..', '..',
-                                'core', 'tpl', 'python', 'watch'))
+                                '..', '..', '..',
+                                'core', 'py', 'watch'))
 
 import watch_frame as wf  # noqa: E402
 

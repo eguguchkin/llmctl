@@ -4,7 +4,7 @@
 #   assembles the panels [«Движок» (the frame's CommonEnginePanel: Uptime +
 #   Configuration), «Железо» (the frame), «Метрики» (the frame's
 #   MetricsPanel — a shared 8-row block), «Скорость» (the frame, row 3)]
-#   from the core/tpl/python/watch/watch_frame.py frame (PYTHONPATH is set
+#   from the core/py/watch/watch_frame.py frame (PYTHONPATH is set
 #   by the adapter's engine_watch_env via cmd_watch; the battery sets it
 #   directly), provides the engine-data ENG provider and aggregates the
 #   selfcheck (the --selfcheck flag or the battery's LCTL_WATCH_SELFCHECK
@@ -61,8 +61,8 @@ import sys
 # pattern): the bare-run fallback (--selfcheck without env); engine_watch_env/
 # the battery set PYTHONPATH
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                '..', '..', '..', '..',
-                                'core', 'tpl', 'python', 'watch'))
+                                '..', '..', '..',
+                                'core', 'py', 'watch'))
 import watch_frame  # noqa: E402
 
 # The /metrics names (only from recon 4.2 §1 + the serve/metrics.rs
@@ -646,7 +646,7 @@ def selfcheck_engine():
             fails.append(name)
 
     base = os.path.dirname(os.path.abspath(__file__))
-    fx = os.path.join(base, '..', '..', 'tests', 'fixtures')
+    fx = os.path.join(base, '..', 'tests', 'fixtures')
     fx_h = parse_health(open(os.path.join(fx, 'watch_health.json')).read())
     fx_s = parse_stats_json(open(os.path.join(fx, 'watch_stats.json')).read())
     fx_m = watch_frame.parse_metrics(open(os.path.join(fx, 'watch_metrics.txt')).read())

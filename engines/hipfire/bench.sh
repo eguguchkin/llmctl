@@ -28,5 +28,5 @@ engine_bench_extras() {
   local runs_dir="$1" tau
   tau=$(podman logs "$CONTAINER" 2>&1 | grep -oE "(τ|tau)=[0-9.]+" | tail -1 | cut -d= -f2-) || true
   route_snapshot
-  python3 "$ADAPTER_DIR/tpl/python/bench_tau.py" "$tau" "${ROUTE_SPEC:-}"
+  python3 "$ADAPTER_DIR/py/bench_tau.py" "$tau" "${ROUTE_SPEC:-}"
 }

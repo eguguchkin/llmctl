@@ -168,11 +168,11 @@ assert d["tau_s"] is None, d' || return 1
 W2_CNT=''
 scen_w2_panel() {
   local troot="${LCTL_TREE:-$ROOT}" out rc
-  [ -f "$troot/engines/hipfire/tpl/python/watch_tui.py" ] || return 1
-  grep -qF 'ENGINE_WATCH_TUI="$ADAPTER_DIR/tpl/python/watch_tui.py"' "$ROOT/engines/hipfire/adapter.sh" || return 1
+  [ -f "$troot/engines/hipfire/py/watch_tui.py" ] || return 1
+  grep -qF 'ENGINE_WATCH_TUI="$ADAPTER_DIR/py/watch_tui.py"' "$ROOT/engines/hipfire/adapter.sh" || return 1
   grep -qF 'engine_watch_env()' "$ROOT/engines/hipfire/adapter.sh" || return 1   # PYTHONPATH-хук каркаса
-  out=$(PYTHONPATH="$troot/core/tpl/python/watch" timeout 120 \
-    python3 "$troot/engines/hipfire/tpl/python/watch_tui.py" --selfcheck 2>&1); rc=$?
+  out=$(PYTHONPATH="$troot/core/py/watch" timeout 120 \
+    python3 "$troot/engines/hipfire/py/watch_tui.py" --selfcheck 2>&1); rc=$?
   [ "$rc" = 0 ] \
     && printf '%s' "$out" | grep -q 'selfcheck: 104/104 ok' \
     && printf '%s' "$out" | grep -q 'selfcheck engine: 72/72 ok' || return 1
@@ -185,9 +185,9 @@ scen_w2_panel() {
 #     container is set by the scenario — the frame has had no engine
 #     default since fix-round 2, R6)
 wrun2() {
-  timeout 120 env PATH="$FAUX_FULL:$PATH" PYTHONPATH="$ROOT/core/tpl/python/watch" \
+  timeout 120 env PATH="$FAUX_FULL:$PATH" PYTHONPATH="$ROOT/core/py/watch" \
     LCTL_FAUX_LOG="$FAUXLOG" LCTL_FAUX_CNT="$FAUXCNT" LCTL_WATCH_CONTAINER=hipfire \
-    "$@" python3 "$ROOT/engines/hipfire/tpl/python/watch_tui.py" 2>&1
+    "$@" python3 "$ROOT/engines/hipfire/py/watch_tui.py" 2>&1
 }
 
 # W2-plain (W3.2): 3 ticks on the fixtures — tick 1 the base (the scheme
@@ -300,7 +300,7 @@ scen_w2_cache_env() {
   mkdir -p "$TMP/w2-cache/sub"
   python3 "$ROOT/engines/hipfire/tests/shims/make_w2_cache.py" "$TMP/w2-cache" || return 1
   out=$(timeout 120 env PATH="$FAUX_FULL:$PATH" \
-    PYTHONPATH="$ROOT/core/tpl/python/watch" \
+    PYTHONPATH="$ROOT/core/py/watch" \
     LCTL_FAUX_LOG="$FAUXLOG" LCTL_FAUX_CNT="$FAUXCNT" \
     LCTL_WATCH_CONTAINER=hipfire \
     LCTL_FAUX_PODMAN_LOGS="$fx/watch_log.txt" \
@@ -310,7 +310,7 @@ scen_w2_cache_env() {
     LCTL_WATCH_HIPFIRE_CACHE_RAM=12884901888 \
     LCTL_WATCH_HIPFIRE_CACHE_DISK=34359738368 \
     LCTL_WATCH_HIPFIRE_CACHE_DIR="$TMP/w2-cache" \
-    python3 "$troot/engines/hipfire/tpl/python/watch_tui.py" 2>&1); rc=$?
+    python3 "$troot/engines/hipfire/py/watch_tui.py" 2>&1); rc=$?
   [ "$rc" = 0 ] || { echo "DBG-w2cache rc=$rc: $(tail -3 <<<"$out")" >&2; return 1; }
   e1=$(grep ' \[движок\] ' <<<"$out" | sed -n 1p)
   printf '%s' "$e1" | grep -qF 'кэш-ram 12.0 GiB (бюджет)' || return 1

@@ -253,9 +253,9 @@ HALHEALTH="$ROOT/engines/halogen/tests/fixtures/hal-health.json"
 HALCACHE="$ROOT/engines/halogen/tests/fixtures/hal-cache.json"
 
 wrun_hal() {  # stdout+stderr наружу; env-префикс задан caller'ом
-  env PATH="$FAUX_HAL:$PATH" PYTHONPATH="$ROOT/core/tpl/python/watch" \
+  env PATH="$FAUX_HAL:$PATH" PYTHONPATH="$ROOT/core/py/watch" \
     LCTL_FAUX_LOG="$FAUXLOG" LCTL_FAUX_CNT="$FAUXCNT" LCTL_WATCH_CONTAINER=halogen \
-    "$@" python3 "$ROOT/engines/halogen/tpl/python/watch.py" 2>&1
+    "$@" python3 "$ROOT/engines/halogen/py/watch.py" 2>&1
 }
 
 scen_w1h_plain() {
@@ -317,8 +317,8 @@ scen_w1h_dead() {
 
 scen_w1h_selfcheck() {
   local troot="${LCTL_TREE:-$ROOT}" out rc
-  out=$(LCTL_WATCH_SELFCHECK=1 PYTHONPATH="$troot/core/tpl/python/watch" \
-    timeout 120 python3 "$troot/engines/halogen/tpl/python/watch.py" 2>&1); rc=$?
+  out=$(LCTL_WATCH_SELFCHECK=1 PYTHONPATH="$troot/core/py/watch" \
+    timeout 120 python3 "$troot/engines/halogen/py/watch.py" 2>&1); rc=$?
   [ "$rc" = 0 ] \
     && printf '%s' "$out" | grep -q 'selfcheck: 104/104 ok' \
     && printf '%s' "$out" | grep -q 'selfcheck engine: 43/43 ok' || return 1

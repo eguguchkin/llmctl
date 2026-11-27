@@ -51,6 +51,7 @@ STACK_DIR="${LCTL_DIR:-$(dirname "$SELF")}"       # clone = stack (code, .env, .
 DATA_DIR="$STACK_DIR/.data"                       # ALL machine state (gitignored)
 CORE_DIR="$(dirname "$SELF")/core"                # engine-independent core
 CORE_TPL="$CORE_DIR/tpl"                          # core templates (units/containers.conf/memlock)
+CORE_PY="$CORE_DIR/py"                            # core python scripts (executed from the clone, never rendered)
 
 # ── shared helpers ───────────────────────────────────────────────────────────
 # @param 1..N: string[] # message text (args joined via "$*")

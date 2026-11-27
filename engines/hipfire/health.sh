@@ -13,7 +13,7 @@
 #
 # @stdin string    # the /health body
 # @returns integer # 0 — healthy; 1 — not JSON or not healthy
-engine_health_ok() { python3 "$ADAPTER_DIR/tpl/python/health_ok.py"; }
+engine_health_ok() { python3 "$ADAPTER_DIR/py/health_ok.py"; }
 
 # Purpose: the health line for `lctl status` — a human-readable summary of
 #   the status/model/mode. (a port of status_hline.py)
@@ -21,7 +21,7 @@ engine_health_ok() { python3 "$ADAPTER_DIR/tpl/python/health_ok.py"; }
 # @stdin string    # the /health body ('' — the server not answering)
 # @stdout string   # one line «health: … | модель: … | режим: …»
 # @returns integer # python3's rc
-engine_status_health() { python3 "$ADAPTER_DIR/tpl/python/status_hline.py"; }
+engine_status_health() { python3 "$ADAPTER_DIR/py/status_hline.py"; }
 
 # Purpose: the machine-readable status for `lctl status --json`; the core
 #   passes the PROFILE/AUTO/WDOG env. (a port of status_json.py)
@@ -29,7 +29,7 @@ engine_status_health() { python3 "$ADAPTER_DIR/tpl/python/status_hline.py"; }
 # @stdin string    # the /health body ('' → health: null)
 # @stdout string   # a JSON object
 # @returns integer # python3's rc
-engine_status_json() { python3 "$ADAPTER_DIR/tpl/python/status_json.py"; }
+engine_status_json() { python3 "$ADAPTER_DIR/py/status_json.py"; }
 
 # Purpose: the smoke check of a live server — delegated to the core's
 #   core_smoke (audit-fix: the header described the pre-w42 smoke —
@@ -111,7 +111,7 @@ route_snapshot() {
   ROUTE_SPEC=$(podman logs "$CONTAINER" 2>&1 \
     | grep -oE "spec: [a-z0-9 ]+" | tail -1 | head -c 60) || true
   ROUTE_HEALTH=$(curl -fsS -m 5 "http://127.0.0.1:$PORT/health" 2>/dev/null \
-    | python3 "$ADAPTER_DIR/tpl/python/health_mode.py" 2>/dev/null || echo '?')
+    | python3 "$ADAPTER_DIR/py/health_mode.py" 2>/dev/null || echo '?')
   return 0
 }
 

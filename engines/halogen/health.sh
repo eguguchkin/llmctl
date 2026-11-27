@@ -24,7 +24,7 @@ parse_route() {
   ROUTE_SPEC=""; ROUTE_SESSIONS="?"; ROUTE_CTX="?"; ROUTE_MODEL="$HALOGEN_MODEL_CANON"
   body=$(cat)
   [ -n "$body" ] || return 0
-  ROUTE_SPEC=$(printf '%s' "$body" | python3 "$ADAPTER_DIR/tpl/python/route_parse.py" spec-health) || true
+  ROUTE_SPEC=$(printf '%s' "$body" | python3 "$ADAPTER_DIR/py/route_parse.py" spec-health) || true
   return 0
 }
 
@@ -39,18 +39,18 @@ halogen_route_info() {
   local h models slots vision mods
   ROUTE_SPEC="halogen ?"; ROUTE_SESSIONS="?"; ROUTE_CTX="?"; ROUTE_MODEL="$HALOGEN_MODEL_CANON"
   h=$(curl -fsS -m 5 "http://127.0.0.1:$PORT/health" 2>/dev/null) || return 1
-  ROUTE_SPEC=$(printf '%s' "$h" | python3 "$ADAPTER_DIR/tpl/python/route_parse.py" spec 2>/dev/null) || ROUTE_SPEC="halogen ?"
-  vision=$(printf '%s' "$h" | python3 "$ADAPTER_DIR/tpl/python/route_parse.py" vision 2>/dev/null) || vision="?"
+  ROUTE_SPEC=$(printf '%s' "$h" | python3 "$ADAPTER_DIR/py/route_parse.py" spec 2>/dev/null) || ROUTE_SPEC="halogen ?"
+  vision=$(printf '%s' "$h" | python3 "$ADAPTER_DIR/py/route_parse.py" vision 2>/dev/null) || vision="?"
   models=$(curl -fsS -m 5 "http://127.0.0.1:$PORT/v1/models" 2>/dev/null) || models=""
   if [ -n "$models" ]; then
-    mods=$(printf '%s' "$models" | python3 "$ADAPTER_DIR/tpl/python/route_parse.py" mods 2>/dev/null) || mods="?"
+    mods=$(printf '%s' "$models" | python3 "$ADAPTER_DIR/py/route_parse.py" mods 2>/dev/null) || mods="?"
   else
     mods="?"
   fi
   slots=$(curl -fsS -m 5 "http://127.0.0.1:$PORT/slots" 2>/dev/null) || slots=""
   if [ -n "$slots" ]; then
-    ROUTE_SESSIONS=$(printf '%s' "$slots" | python3 "$ADAPTER_DIR/tpl/python/route_parse.py" slots 2>/dev/null) || ROUTE_SESSIONS="?"
-    ROUTE_CTX=$(printf '%s' "$slots" | python3 "$ADAPTER_DIR/tpl/python/route_parse.py" ctx 2>/dev/null) || ROUTE_CTX="?"
+    ROUTE_SESSIONS=$(printf '%s' "$slots" | python3 "$ADAPTER_DIR/py/route_parse.py" slots 2>/dev/null) || ROUTE_SESSIONS="?"
+    ROUTE_CTX=$(printf '%s' "$slots" | python3 "$ADAPTER_DIR/py/route_parse.py" ctx 2>/dev/null) || ROUTE_CTX="?"
   else
     ROUTE_SESSIONS="?"; ROUTE_CTX="?"
   fi
