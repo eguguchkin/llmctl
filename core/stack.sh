@@ -107,7 +107,7 @@ cur_profile() {
 cur_model()   { env_val LCTL_MODEL; }
 
 # ── preflight and host preparation ──────────────────────────────────────────
-# Purpose: GPU host preparation (И1) — a self-sufficient preflight step:
+# Purpose: GPU host preparation (I1) — a self-sufficient preflight step:
 #   gated on device presence (/dev/kfd OR /dev/dri), render/video groups for
 #   rootless GPU access, limits.d memlock from the core/tpl template (the
 #   MEMLOCK value — from the adapter's ENGINE_MEMLOCK, "engine picking"). On
@@ -141,7 +141,7 @@ cur_model()   { env_val LCTL_MODEL; }
 #   terminates the process without returning to the caller
 gpu_prep() {
   local kfd="${LCTL_KFD:-/dev/kfd}" dri="${LCTL_DRI:-/dev/dri}"
-  # GPU host prep (И1): only when devices exist; non-GPU — an info-skip
+  # GPU host prep (I1): only when devices exist; non-GPU — an info-skip
   if [ -e "$kfd" ] || [ -e "$dri" ]; then
     if ! id -nG | grep -qw render || ! id -nG | grep -qw video; then
       log "добавляю $USER в группы render,video (sudo точечно)"
@@ -158,7 +158,7 @@ gpu_prep() {
       log "пишу $lim (memlock $MEMLOCK)"
       sudo install -m 0644 "$tmp" "$lim"                           # fix:gpu-limits
       # memlock gate on the SUFFICIENCY threshold (fix:memlock-gate,
-      # post-EXP-008, mirror gfctl 4.1-F2), not on "unlimited": in
+      # post-EXP-008, mirror 4.1-F2), not on "unlimited": in
       # environments without pam_limits unlimited is unreachable and the
       # relogin ulimit does not change — the old hard gate looped (install:
       # file+exit 42 ↔ relogin changes nothing). Threshold 8388608 kB is an

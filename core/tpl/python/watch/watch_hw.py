@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 # Purpose: the system sources of the watch frame's «Железо»/«Память» block
-#   (a 1:1 port of gfctl tpl/python/watch_sysfs.py @ 462573f + a seam of
+#   (a 1:1 port of the legacy watch_sysfs.py + a seam of
 #   LCTL_ path overrides — an analog of the core's LCTL_KFD): the AMD GPU
 #   card from /sys/class/drm (the scales: freq1_input = Hz,
 #   power1_input = µW, vram/gtt = bytes), the CPU Tctl from k10temp, RAM
 #   from /proc/meminfo. File reads only — no network/subprocesses; a
 #   missing sensor → None in ITS OWN field (the frame render prints «—» —
-#   the W3 invariant, a degradation without a crash). The gfctl v1 trap is
+#   the W3 invariant, a degradation without a crash). The v1 trap is
 #   fixed: the GPU temperature comes ONLY from THIS card's hwmon dirs (the
 #   MAX temp1_input), not the first temp*_input found (on the target
 #   machines that one was the CPU k10temp).
@@ -45,7 +45,7 @@ def _num(s):
 
 
 # (field, a file in card*/device/hwmon/hwmon*/, divisor) — the scales
-# verified live (gfctl/hfctl, a gfx1151 machine). gpu_busy_percent is NOT
+# verified live (a gfx1151 machine). gpu_busy_percent is NOT
 # in the hwmon dir — card*/device/, read separately in read_gpu.
 GPU_SPEC = (
     ('sclk_mhz', 'freq1_input', 1e6),
@@ -110,7 +110,7 @@ def read_mem(path=None):
     # @param 1: string  # a path to meminfo (None → env LCTL_PROC_MEMINFO
     #   or /proc/meminfo; the selfcheck may plant a file)
     # @returns dict  # {'available_gib','total_gib'} — GiB (round 1,
-    #   gfctl watch 1:1); a missing field/an unreadable file → None in its
+    #   the watch port 1:1); a missing field/an unreadable file → None in its
     #   own key
     if path is None:
         path = os.environ.get('LCTL_PROC_MEMINFO', '/proc/meminfo')

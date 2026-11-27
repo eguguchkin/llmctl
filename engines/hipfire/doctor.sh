@@ -2,7 +2,7 @@
 # ── hipfire: the doctor engine sections (the gpu-locks + health) ────────────
 # The engine_doctor hook (contract §2.3) — extra `lctl doctor` sections on
 # top of the core parts (system/profiles/install/environment — the core).
-# A port from the hfctl cmd_doctor (the gpu-lock and health sections).
+# A port from the legacy cmd_doctor (the gpu-lock and health sections).
 
 # Purpose: the engine diagnostic sections: the project's gpu-locks
 #   (/run/lock/hipfire — exclusive: a foreign holder = a start refusal)

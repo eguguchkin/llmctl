@@ -222,7 +222,7 @@ def fmt_c(x):
 def temp_color(deg, fmt=None):
     # @param 2: callable  # a printer (fmt_c/fmti) — the threshold is
     #   compared against the PRINTED value (79.95 prints «80.0» → yellow;
-    #   gfctl 1:1); without fmt — against the raw number
+    #   1:1); without fmt — against the raw number
     # @returns integer  # None→0; ≥90 → C_RED; 80…89.9 → C_YELLOW; else 0
     if deg is None:
         return 0
@@ -325,7 +325,7 @@ def dir_size_bytes(path):
 
 def put(win, y, x, s, attr=0):
     # addstr at a window point; clipped at the edge, beyond — silently (a
-    # degradation, not a trace — the gfctl frame)
+    # degradation, not a trace — the legacy frame)
     h, w = win.getmaxyx()
     if y < 0 or y >= h or x >= w or not s:
         return

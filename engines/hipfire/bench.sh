@@ -1,7 +1,7 @@
 # shellcheck shell=bash
 # ── hipfire: the bench hook (stage 7; the §stage-7-Additions adapter-contract) ─
 # The bench report's engine metrics as one JSON line: the engine's τ from
-# the container logs (the last τ=/tau= match; a port of the hfctl
+# the container logs (the last τ=/tau= match; a port of the legacy
 # bench_tau; absent from the logs → null — we do not make it up) + the
 # ROUTE_SPEC from the route snapshot. The core renders the section as is,
 # it does not interpret. The cumulativeness/source are marked in the keys.

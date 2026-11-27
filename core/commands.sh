@@ -776,7 +776,7 @@ cmd_agent_check() {
 
 # Purpose: `lctl watch [--interval N]` — the live dashboard (stage 4): bash
 #   ONLY parses --interval N|--interval=N (default 2; an integer ≥1, else
-#   die — the gfctl cmd_watch pattern 1:1) and execs python
+#   die — the cmd_watch pattern 1:1) and execs python
 #   ENGINE_WATCH_TUI with the env LCTL_WATCH_PORT/INTERVAL/CONTAINER
 #   (+MODEL — display; python takes the model from the log; +ENGINE — the
 #   engine name for the `lctl watch │ <engine> · <model>` header; the core

@@ -5,9 +5,9 @@
 # registry's skeleton: the list, the default, the alias normalization and
 # the P_*-file readers (ref_get / profile_ladder). The values and their
 # comments live in the profile files themselves.
-# The canon names are R1 (agnostic): gfctl 27b-single→27b,
-# 27b-multi→27b-parallel, flash-multi→flash. The values are the gfctl
-# lib/profiles.sh @ 462573f lineage (AGENT-CONFIGS pp.3–4; a divergence
+# The canon names are R1 (agnostic): 27b-single→27b,
+# 27b-multi→27b-parallel, flash-multi→flash. The values are the legacy
+# lib/profiles.sh lineage (AGENT-CONFIGS pp.3–4; a divergence
 # without a new window is forbidden).
 #
 # @typedef profile_id: '27b' | '27b-parallel' | 'flash'
@@ -19,7 +19,7 @@ PROFILE_DEFAULT=27b
 
 # Purpose: a profile's agent-check reference value — P_REF_<METRIC> from
 #   the profile file (metrics: session | followup | restore | docq). The
-#   1:1 gfctl ref_get lineage.
+#   1:1 ref_get lineage.
 #
 # @param 1: profile_id      # the canonical profile id
 # @param 2: string          # the metric (session|followup|restore|docq)
@@ -48,11 +48,11 @@ profile_ladder() {
 }
 
 # Purpose: normalize a profile alias to the canonical id (R1): 27b and the
-#   gfctl legacy names (27b-single/single) → 27b; 27b-parallel and legacy
+#   legacy names (27b-single/single) → 27b; 27b-parallel and legacy
 #   (27b-multi/multi) → 27b-parallel; flash and legacy flash-multi → flash;
 #   a canon passes as is.
 #
-# @param 1: string          # an alias (incl. gfctl legacy) or a canonical id
+# @param 1: string          # an alias (incl. legacy) or a canonical id
 # @stdout profile_id        # the canonical id (only on rc 0)
 # @returns integer          # 0 — the canon printed; 1 — an unknown value
 resolve_profile() {

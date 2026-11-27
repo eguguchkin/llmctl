@@ -1,7 +1,7 @@
 # shellcheck shell=bash
 # ── hipfire: the engine config (a volume via compose run — the project's
 #    volume is guaranteed) + the profile's applied key set ──────────────────
-# The engine_apply_profile hook (contract §2.3) is assembled from the hfctl
+# The engine_apply_profile hook (contract §2.3) is assembled from the legacy
 # lib/engine.sh without edits to the core bodies.
 
 # Purpose: write one engine config key into the active profile's config dir

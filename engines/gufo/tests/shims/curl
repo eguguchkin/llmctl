@@ -25,7 +25,7 @@ case "$*" in
     [ "${LCTL_FAUX_CURL_FAILALL:-0}" = 1 ] && exit 7
     if [ "${LCTL_FAUX_CURL_FAILFIRST:-0}" = 1 ] && [ "$n" = 1 ]; then exit 7; fi
     # an EMPTY answer (rc 0, no body — smoke_resp.py falls over the stdin)
-    # on call №k; a comma list «1,2» — the empties' retry (gfctl 2.1-F4)
+    # on call №k; a comma list «1,2» — the empties' retry (2.1-F4)
     case ",${LCTL_FAUX_CURL_EMPTYN:-}," in *",$n,"*) exit 0 ;; esac
     # fix:w42-smoke-core: the model echo from the payload (the smoke
     #   validator cross-checks it) and an SSE stream on "stream":true (the

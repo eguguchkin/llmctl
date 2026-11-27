@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-# Purpose: the HTTP/math of `gfctl agent-check` (SPEC §7) and of the
-#   control follow-up `gfctl cache --verify` — deterministic POST
+# Purpose: the HTTP/math of `lctl agent-check` (SPEC §7) and of the
+#   control follow-up the control cache-verify — deterministic POST
 #   /v1/chat/completions with the FX/CX window envelope (temperature 0 =
 #   greedy, reasoning_effort "none", max_tokens per scenario; NOT /no_think
 #   and NOT chat_template_kwargs). The timings are read FROM THE RESPONSE
@@ -57,12 +57,12 @@ import sys
 import time
 
 TIMEOUT_S = 1200          # the FX/CX windows: the request budget with a long prefill
-TAG = "gfctl-agentcheck"  # a fixed conversation marker (determinism)
+TAG = "lctl-agentcheck"  # a fixed conversation marker (determinism)
 UNIT = ("Опиши подробно структуру связного списка, стека и очереди на Python, "
         "с примерами операций и оценкой сложности каждой операции. ")
 
 # The session's working note (the HX-A window's agent_bench protocol:
-# 16 facts ×11 ≈ 35k chars ≈ 6.6k tokens) — facts about the gufo/gfctl
+# 16 facts ×11 ≈ 35k chars ≈ 6.6k tokens) — facts about the gufo
 # domain, no hosts/IPs.
 FACTS = [
     "gufo — движок вывода в образе gufo-runtime; сервер живёт в rootless podman с устройствами /dev/kfd и /dev/dri.",

@@ -2,7 +2,7 @@
 # run_checks.sh — the llmctl internal-check battery (stage 2, waves 0–3;
 # stage 8 — the render convergence: S2/S7 updated, S2a/S2b/S2c + the
 # render-converge/no-recreate mutations): the frame from
-# hfctl tests/run_checks.sh @ c2cec59 adapted to the core/ + engines/
+# battery skeleton adapted to the core/ + engines/
 # layout and the core↔adapter contract (§2 task 1.1): the Ф1–Ф5 scenarios
 # (self-healing), P-A…P-H (preflight: the apt five + the GPU prep), N1–N7
 # (the .data/<engine>/ layout + the root .env), N10 (a faux end-to-end
@@ -11,10 +11,10 @@
 # hint), N13 (env-model) + the adapter sections
 # engines/<name>/tests/*.sh (included by the runner).
 #
-# FIXED a known hfctl-battery bug (task 1.1 §6, confirmed empirically):
+# FIXED a known battery bug (task 1.1 §6, confirmed empirically):
 # `bash -n a.sh b.sh` reads only the FIRST file as the script, the rest
 # become positional parameters → a syntax error of the second file is
-# invisible. Both hfctl multi-file calls replaced with a PER-FILE loop
+# invisible. Both legacy multi-file calls replaced with a PER-FILE loop
 # (mutant_parses — the mutations' guard, and section 0 — the whole tree),
 # a MANDATORY negative test of the fix added (a mutant with a broken
 # SECOND file must be caught by the guard).
@@ -98,7 +98,7 @@ FAUXLOG="$TMP/faux.log"; FAUXCNT="$TMP/faux.cnt"
 : > "$FAUXLOG"
 
 # The shim bodies live as FILES in tests/shims/ (the 0-inline-fixture
-# canon, the hfctl task-8 rule: a heredoc -> cp of a file): shim()
+# canon, the fixture rule: a heredoc -> cp of a file): shim()
 # installs one into the faux PATH.
 SHIMS="$ROOT/tests/shims"
 shim() { cp "$SHIMS/$1" "$2" && chmod +x "$2"; }
@@ -1330,7 +1330,7 @@ tree_sh_list() {  # tree_sh_list <dir> — все скрипты дерева (.
   find "$1" -name .git -prune -o -type f \( -name '*.sh' -o -name lctl \) -print0
 }
 mutant_parses() {  # mutant_parses <dir> — rc 0 = КАЖДЫЙ .sh дерева парсится
-  # (the hfctl bug fix: `bash -n a.sh b.sh` validated only the first file)
+  # (the known battery bug: `bash -n a.sh b.sh` validated only the first file)
   local f
   while IFS= read -r -d '' f; do bash -n "$f" 2>/dev/null || return 1; done < <(tree_sh_list "$1")
   return 0
@@ -1383,7 +1383,7 @@ while IFS= read -r -d '' f; do
   n_sh=$((n_sh + 1))
   if ! bash -n "$f" 2>"$TMP/syn.err"; then syn_err=1; bad "bash -n $f: $(cat "$TMP/syn.err")"; fi
 done < <(tree_sh_list "$ROOT")
-[ "$syn_err" = 0 ] && ok "bash -n пофайлово: все скрипты дерева ($n_sh файлов; мультифайл-баг hfctl починен)"
+[ "$syn_err" = 0 ] && ok "bash -n пофайлово: все скрипты дерева ($n_sh файлов; мультифайл-баг батареи починен)"
 py_err=0
 while IFS= read -r -d '' f; do
   if ! PYTHONPYCACHEPREFIX="$TMP/pycache" python3 -m py_compile "$f" 2>"$TMP/py.err"; then
@@ -1597,7 +1597,7 @@ if grep -q '^HIPFIRE_MODEL=' "$ROOT/engines/hipfire/tpl/env/env.tpl"; then
 else
   bad "мутация env-model: HIPFIRE_MODEL-строки нет в env.tpl (дрейф)"
 fi
-if scen_bashn_second; then ok "негатив bash -n: поломка ВТОРОГО файла ловится гарде mutant_parses (hfctl пропускал, rc 0)"; else bad "негатив bash -n (синтакс-ошибка не в первом файле)"; fi
+if scen_bashn_second; then ok "негатив bash -n: поломка ВТОРОГО файла ловится гарде mutant_parses (легаси пропускал, rc 0)"; else bad "негатив bash -n (синтакс-ошибка не в первом файле)"; fi
 
 echo "== 11. 1.2 автомат §А: use-поглощение / no-op / stop / pull / verb-алиасы"
 if scen_s1_use_absorbed; then ok "S1: start с другим профилем = §А-4 use-поглощение — канон переписан, cfgset, recreate, юниты последними, статус-строка"; else bad "S1 use-поглощение"; fi
@@ -1615,7 +1615,7 @@ if scen_s7_own_canon_survives; then ok "S7: чужие юниты при сво�
 
 echo "== 12. K-волна (task 3.1 §2): health-path / off-now / memlock-gate / compose-rerender"
 if scen_k1_health_default; then ok "K-1: wait_health hipfire curls ДЕФОЛТНЫЙ /health (HEALTH_PATH-зеркало; gufo-оверрайд — адаптерный тест)"; else bad "K-1 health-путь дефолт"; fi
-if scen_k3_off_now; then ok "K-3: cmd_off → systemctl --user disable --now (юнит+таймер гаснут немедленно, mirror gfctl 95bf4e4)"; else bad "K-3 off-now"; fi
+if scen_k3_off_now; then ok "K-3: cmd_off → systemctl --user disable --now (юнит+таймер гаснут немедленно, mirror 95bf4e4)"; else bad "K-3 off-now"; fi
 if scen_k4_enough; then ok "K-4: memlock ровно на пороге 8388608 → файл + WARN «достаточно», rc 0, linger достигнут"; else bad "K-4 достаточно"; fi
 if scen_k4_unlimited; then ok "K-4: memlock unlimited → PASS без WARN, rc 0"; else bad "K-4 unlimited"; fi
 if scen_k4_below; then ok "K-4: сессия ниже порога (4194304 < 8388608; старый гейт сравнивал с MEMLOCK и пропустил бы) → файл + WARN «ребут» + rc 42"; else bad "K-4 ниже порога"; fi

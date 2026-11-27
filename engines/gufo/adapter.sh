@@ -5,7 +5,7 @@
 # stack_files.sh (the compose goldens + serve_args), engine.sh (canon.env +
 # probe + apply_profile), health.sh (the /ready dialect + load_completed),
 # doctor.sh, agentcheck.sh, bench.sh (the stage-7 bench hooks) — are
-# included here. Assembled from gfctl pieces @ 462573f WITHOUT edits to the
+# included here. Assembled from the legacy pieces @ 462573f WITHOUT edits to the
 # core bodies (the R6 boundary criterion; the core edits are exactly the
 # K-wave of task 3.1 §2).
 
@@ -61,7 +61,7 @@ engine_watch_env() { PYTHONPATH="${PYTHONPATH:+$PYTHONPATH:}$CORE_TPL/python/wat
 
 source "$ADAPTER_DIR/profiles.sh"      # the 9-field table + aliases + ref_get + ladders
 source "$ADAPTER_DIR/models.sh"        # the pin tables + download_file + engine_pull_model
-source "$ADAPTER_DIR/stack_files.sh"   # engine_write_compose + serve_args (1:1 gfctl)
+source "$ADAPTER_DIR/stack_files.sh"   # engine_write_compose + serve_args (1:1)
 source "$ADAPTER_DIR/engine.sh"        # the canon.env reader/writer + probe + engine_apply_profile
 source "$ADAPTER_DIR/health.sh"        # parse_route/engine_smoke/engine_check_route/engine_status_*
 source "$ADAPTER_DIR/doctor.sh"        # engine_doctor (inventory/types/cache/gpu-lock)

@@ -1,6 +1,6 @@
 # shellcheck shell=bash
-# ── gufo: the weights — the pin tables + delivery (a port of gfctl lib/models.sh @ 462573f,
-#    the names GFCTL_→LCTL_, TPL_DIR→$ADAPTER_DIR/tpl; 1:1 bodies) ──────────────
+# ── gufo: the weights — the pin tables + delivery (a port of the legacy models.sh,
+#    the names normalized toLCTL_, TPL_DIR→$ADAPTER_DIR/tpl; 1:1 bodies) ──────────────
 # A set entry's format: filename|size_bytes|sha256|url|role, role ∈ main|draft|mtp|mmproj.
 # The pins — FULL 64-hex sha256 from the IX/FX windows' dl scripts (a sha-verify
 # PASS): 27B — jpetrina pure-IQ4_XS + a z-lab DFlash2 draft (pinned to a
@@ -27,7 +27,7 @@ mmproj-flash-next-BF16.gguf|907542944|2e788f8c511d8093c7b43cb87b2fd7e14228340318
 
 # Purpose: a set's entries line by line from the header table (the '|'
 #   separator: filename|size|sha256|url|role) — the only reader of the
-#   table. A 1:1 gfctl weights_for port.
+#   table. A 1:1 weights_for port.
 #
 # @param 1: weight_set      # the set dir
 # @stdout string[]          # the set's entries, one per file
@@ -40,7 +40,7 @@ weights_for() {
 }
 
 # Purpose: the set's file name with the given role (the @DRAFT@/@MTP@
-#   substitution in serve_extra; main — for --model). A 1:1 gfctl
+#   substitution in serve_extra; main — for --model). A 1:1
 #   set_file_role port.
 #
 # @param 1: weight_set      # the set dir
@@ -56,7 +56,7 @@ set_file_role() {
 }
 
 # Purpose: the free space in GiB (one decimal) on the dir's FS; creates the
-#   dir when missing (mkdir -p). A 1:1 gfctl free_disk_gib port.
+#   dir when missing (mkdir -p). A 1:1 free_disk_gib port.
 #
 # @param 1: string          # the dir (its FS is probed)
 # @stdout string           # GiB with one decimal or «?»
@@ -71,8 +71,8 @@ free_disk_gib() {
 # Purpose: the download work unit — fetch one file with a pre-flight
 #   «нужно X GiB (остаток), свободно Y Gi» BEFORE the traffic, with curl
 #   resuming (-C - .part resume) and a sha256 verification after.
-#   MIRROR-FIRST (gfctl 4.1-F1): a non-empty LCTL_MIRROR_BASE (the fallback
-#   GFCTL_MIRROR_BASE — the live machines) → the first attempt fetches
+#   MIRROR-FIRST (4.1-F1): a non-empty LCTL_MIRROR_BASE (the fallback
+#   GFCTL_MIRROR_BASE fallback — kept for back-compat) → the first attempt fetches
 #   "$MIRROR/<basename>"; a mirror failure (rc≠0 or http ≥400) → a WARN and
 #   the pin URL in the same attempt. A 1:1 body port.
 #
@@ -95,7 +95,7 @@ download_file() {
   if [ -f "$part" ]; then
     psz=$(stat -c %s "$part" 2>/dev/null || echo 0)
     if [ "$psz" -gt 0 ] && [ "$psz" -le "$size" ]; then remaining=$((size - psz)); fi
-    # part>pin (gfctl review 1.1): the local .part is already of the FULL
+    # part>pin (review 1.1): the local .part is already of the FULL
     # pin size (an interruption between the download end and the mv) — the
     # network is not touched: the mv + the sha arbitration in the common
     # tail; a corrupt «full» .part will catch a SHA-MISMATCH and be
@@ -186,7 +186,7 @@ engine_pull_model() {
 #   статус» (present, size OK, sha OK / sha ✗ / SIZE ≠ / MISSING) + the
 #   unfinished .part lines. The sha is recomputed ALWAYS on a matched size
 #   (stateless honesty, ~10 s for 27b, ~40 s for flash on NVMe). A 1:1
-#   gfctl inventory port.
+#   inventory port.
 #
 # @param 1: weight_set      # the set dir
 # @stdout string[]          # the inventory lines
@@ -222,7 +222,7 @@ inventory() {
 }
 
 # Purpose: the set's pin sizes sum in bytes (for doctor's «нужно X GiB»).
-#   A 1:1 gfctl set_total_bytes port.
+#   A 1:1 set_total_bytes port.
 #
 # @param 1: weight_set      # the set dir
 # @stdout integer           # the total size in bytes
@@ -234,7 +234,7 @@ set_total_bytes() {
 # Purpose: a pre-check of the set's GGUF tensor types — for each downloaded
 #   file from the set's table it calls tpl/python/gguf_type_check.py (a
 #   streaming header parser, no GPU); the SET's verdict = red when ≥1 file
-#   is red OR has a format error. A 1:1 gfctl check_types port
+#   is red OR has a format error. A 1:1 check_types port
 #   (TPL_DIR→the adapter).
 #
 # @param 1: weight_set      # the set dir

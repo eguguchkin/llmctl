@@ -38,7 +38,7 @@ printf '2026-11-18 07:27:02 [INFO] [cache] schema=component-cache-v1 event=confi
 # ── the adapter scenarios (return 0 = all the asserts hold) ─────────────────
 
 # G0-registry: the fields 1–9 = the task 3.1 §1.1 literals; the resolve
-# aliases (R1+gfctl legacy); the ladders; ref_get (EXP-007 verbatim); the
+# aliases (R1+legacy); the ladders; ref_get (EXP-007 verbatim); the
 # default; the pin sums (OQ-3: flash = 111 334 654 778 B — catches a pin
 # carry typo)
 scen_g0_registry() {
@@ -108,7 +108,7 @@ scen_g0_pins_download() {
 }
 
 # G0-check_types: green (ffn IQ4_XS)/red (ffn IQ2_S)/«нечего проверять»
-#     on the gguf_* fixtures (gfctl copies)
+#     on the gguf_* fixtures (legacy copies)
 scen_g0_check_types() {
   local d="$TMP/gct" out rc
   rm -rf "$d"; mkdir -p "$d/27b"

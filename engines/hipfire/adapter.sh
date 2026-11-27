@@ -4,7 +4,7 @@
 # parts — profiles.sh (the registry), stack_files.sh (engine_write_compose),
 # engine.sh (the engine config), health.sh (the health dialect), models.sh
 # (the pull), doctor.sh (engine_doctor), bench.sh (the stage-7 bench hook) —
-# are included here. Assembled from hfctl pieces WITHOUT edits to the core
+# are included here. Assembled from the legacy pieces WITHOUT edits to the core
 # bodies (the R6 boundary criterion).
 
 ENGINE=hipfire
@@ -35,7 +35,7 @@ MAX_SEQ=262144
 
 # Purpose: the profile's model set dir name — profile isolation: the server
 #   mounts only its own set (a foreign model → 404, not a silent swap).
-#   (a port from the hfctl lib/state.sh model_set)
+#   (a port from the legacy state.sh model_set)
 #
 # @param 1: string       # the profile id (unknown → the 27b set)
 # @stdout '27b' | 'flash' # the set subdir name under $MODELS_BASE

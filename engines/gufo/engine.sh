@@ -5,8 +5,8 @@
 # probe canons (= STATE, found by search) live in $STATE_BASE/canon.env
 # (R4, the GUFO_CONTEXT_<profile> keys), the core neither reads nor
 # overwrites them. The only writer is the adapter (apply_profile/probe), an
-# atomic tmp+mv write (the gfctl write_canon pattern). A manual canon.env
-# edit = state — it survives use. The gfctl <profile>_<sessions> pairs
+# atomic tmp+mv write (the write_canon pattern). A manual canon.env
+# edit = state — it survives use. The <profile>_<sessions> pairs
 # degenerate into GUFO_CONTEXT_<prof>: the R1 surface has no sessions — a
 # table constant (OQ-1; the env LCTL_SESSIONS is read ONLY by this file —
 # zero core surface).
@@ -45,7 +45,7 @@ gufo_write_canon() {
   mv -f "$STATE_BASE/canon.env.tmp" "$STATE_BASE/canon.env"
 }
 
-# Purpose: the probe context search (gfctl 2.1 1:1 in spirit, the adapter's
+# Purpose: the probe context search (2.1 1:1 in spirit, the adapter's
 #   body) — iterate the ladder in DESCENDING order: per step — a compose
 #   re-render (gufo_render_compose), `compose up -d --force-recreate`,
 #   gufo_wait_load. The attempt verdicts: load_failed (an early exit), a
@@ -128,7 +128,7 @@ gufo_probe() {
 # Limitations/assumptions: prof — a canonical id (the resolve_profile
 #   normalization at the caller). A full probe failure → die (exit 1) — a
 #   loud result, not a silent rc 1 (OQ-2). A healthy server is not disturbed
-#   by the probe (the gfctl install parity: «healthy — recreate не нужен»);
+#   by the probe (the install parity: «healthy — recreate не нужен»);
 #   sessions — the LCTL_SESSIONS env (OQ-1) or the table's field 6.
 #
 # @param 1: string   # the canonical profile id

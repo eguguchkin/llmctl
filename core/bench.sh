@@ -15,7 +15,7 @@
 # with an honest truncation mark.
 
 # @type /^[\da-f]{32}$/ # the canonical md5 of the solo-scenario fixture
-#   (core/tpl/bench/merge_sort_thinking_off.txt, 1:1 from hfctl); a mismatch
+#   (core/tpl/bench/merge_sort_thinking_off.txt, 1:1); a mismatch
 #   at run time — warn, measurement comparability is in question
 BENCH_FIXTURE_MD5=253c7ac50857fe6d0e10fb0d2c5e35c0
 

@@ -4,12 +4,12 @@
 # service's serve line (§0в task 3.1), so the render is a mandatory part of
 # bootstrap/use (K-2: use re-renders). The serve line is assembled ONLY from
 # the profiles.sh table (fields 1/6/7/8/9 + the @DRAFT@/@MTP@ tokens →
-# /models/<file>, the set's models:ro mount) — a 1:1 gfctl serve_args port.
+# /models/<file>, the set's models:ro mount) — a 1:1 serve_args port.
 # The context at render: GUFO_CONTEXT_<prof> from canon.env → field 7 (the
 # fallback).
 
 # Purpose: print the engine's arguments (`gufo serve llm …`) as ONE line:
-#   --host 0.0.0.0 always (gfctl F2: the 127.0.0.1 default in a container =
+#   --host 0.0.0.0 always (F2: the 127.0.0.1 default in a container =
 #   a dead port-publish), --model = the set's main-role file (flash — the
 #   FIRST shard 00001-of-00004, gufo picks up the rest itself, the FX-W1b
 #   window), the table's field 9 with the @DRAFT@/@MTP@ substitution →

@@ -22,12 +22,18 @@ limits are prepared automatically.
 
 ## Why
 
-Three sibling control panels (gfctl for gufo, hfctl for hipfire) duplicated
-the lifecycle and self-healing while the genuinely interesting part — the
-engine dialects — kept drifting apart. llmctl collapses the lifecycle into
-one audited core and expresses each engine as a thin adapter. Switching
-engines on one machine is one command, so A/B benchmarking is a routine,
-not a project.
+- **Effective parameters, fixed per workload** — a profile pins the
+  quant, the draft model, the session count, the context and the cache
+  budgets that proved effective for a workload class (solo code, prose,
+  agent sessions, parallel load). The tuning is done once and recorded —
+  not re-derived per run.
+- **Transparent switching and comparison** — one machine hosts exactly
+  one active engine; switching is one command, benchmarking is one
+  command, and the reports are scenario-comparable across engines (the
+  same fixture, the same four scenarios).
+- **Painless re-deployment** — a bare Ubuntu machine becomes a working
+  stack with one command; all state lives inside the clone; the engine
+  canon is a generated, reproducible document, not hand-maintained state.
 
 ## Install
 
@@ -109,10 +115,22 @@ information. One engine+profile combination rewrites its own report.
 Cross-engine comparisons are valid only within the same scenario and the
 same fixture md5.
 
-Recorded reference points (a 128 GB Strix Halo, `--runs 1`, 2026-11-27):
-halogen/flash solo 112.9 tok/s, parallel-4 121.7 tok/s, agent session
-6.8 s — the fastest of all seven engine×profile combinations tested;
-see `bench/reports/` for the full set.
+The latest recorded matrix (a 128 GB Strix Halo, `lctl bench --runs 1`,
+one session, 2026-11-27; medians in tok/s, the agent session is wall time;
+`runs=1` is an orientation point, not an acceptance):
+
+| engine / profile | solo | prose | session 15 | parallel-2 | parallel-4 |
+|---|---|---|---|---|---|
+| **halogen / flash** | **112.92** | **67.58** | **6.76 s** | **86.92** | **121.70** |
+| gufo / flash (MTP) | 81.44 | 41.60 | 8.62 s | 53.21 | 71.66 |
+| gufo / 27b (solo DFlash) | 65.18 | 20.34 | 25.89 s | 27.30 | 27.88 |
+| gufo / 27b-parallel | 64.93 | 20.32 | 26.00 s | 29.05 | 43.20 |
+| hipfire / 27b | 100.63 | 19.67 | 20.65 s | 26.84 | 26.84 |
+| hipfire / 27b-parallel | 92.95 | 15.40 | 30.05 s | 20.04 | 28.14 |
+| hipfire / flash | 75.88 | 45.88 | 13.38 s | 41.90 | 56.43 |
+
+All seven combinations came up healthy in the same session; the full
+reports are in [`bench/reports/`](bench/reports/).
 
 ## Development
 

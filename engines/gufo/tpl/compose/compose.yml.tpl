@@ -1,6 +1,6 @@
 # gufo compose stack (генерируется engine_write_compose из этого golden'а;
 # ручные правки теряются — служебная строка движка рендерится под профиль).
-# Переводы F9-флагов gfctl (task 3.1 §1.3): devices kfd+dri, group_add
+# Переводы флагов движка (адаптер-контракт §1.3): devices kfd+dri, group_add
 # keep-groups, ipc host, memlock -1:-1, userns keep-id:uid=1000,gid=1000,
 # порт bind:port:port, сет весов /models:ro, кэш-каталог профиля /cache.
 # `name: gufo` — пин compose-проекта (эксклюзив с hipfire бесплатен).

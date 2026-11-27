@@ -1,5 +1,5 @@
 # shellcheck shell=bash
-# ── gufo: the doctor engine sections (a port of the gfctl cmd_doctor slices @ 462573f) ──
+# ── gufo: the doctor engine sections (a port of the cmd_doctor slices @ 462573f) ──
 # The engine_doctor hook (contract §2.3) — extra `lctl doctor` sections on
 # top of the core parts (system/profiles/install/environment — the core):
 # the set's sha inventory, the GGUF types (the numeric RED contract), the
@@ -68,7 +68,7 @@ engine_doctor() {
 
 # Purpose: a PURE cache-config filter — the log text on stdin; takes the
 #   LAST `event=configured` line and writes the CC_SESSIONS/CC_CAPACITY/
-#   CC_DISK/CC_RAMCACHE/CC_AUTOMATIC globals ('' = no field). A 1:1 gfctl
+#   CC_DISK/CC_RAMCACHE/CC_AUTOMATIC globals ('' = no field). A 1:1
 #   parse_configured port (the \b boundaries: capacity_bytes does not
 #   catch disk_capacity_bytes).
 #

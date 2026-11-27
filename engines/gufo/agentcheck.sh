@@ -1,5 +1,5 @@
 # shellcheck shell=bash
-# ── gufo: agent-check (a port of gfctl lib/agentcheck.sh @ 462573f; the names GFCTL_→
+# ── gufo: agent-check (a port of the legacy agentcheck.sh; the names normalized to
 #    LCTL_, container_up→compose recreate) ─────────────────────────────────────
 # The engine_agent_check hook (contract §2.3): 4 checks on 25 deterministic
 # POST /v1/chat/completions: (а) a session of 15 turns — the total wall;
@@ -15,7 +15,7 @@
 # Purpose: a PURE comparison of a measurement against a reference — a
 #   verdict line to stdout: an empty ref → «WARN: <метка> X.Xs — референс
 #   не снят (EXP-007)»; measured ≤ ref×1.25 → «PASS: …»; otherwise
-#   «WARN: … регрессия >25%» + a hint. A 1:1 gfctl cmp_ref port.
+#   «WARN: … регрессия >25%» + a hint. A 1:1 cmp_ref port.
 #
 # @param 1: string          # the check label (into the verdict line)
 # @param 2: string          # measured, seconds (a number from python)
@@ -41,7 +41,7 @@ cmp_ref() {
 }
 
 # Purpose: a TCP probe of the server port — 0 when something listens on
-#   127.0.0.1:$1. A 1:1 gfctl port_open port (a loopback probe,
+#   127.0.0.1:$1. A 1:1 port_open port (a loopback probe,
 #   «listening/not listening», not a health check).
 #
 # @param 1: /^[0-9]+$/       # the port
@@ -51,7 +51,7 @@ port_open() {
   timeout 2 bash -c "exec 3<>/dev/tcp/127.0.0.1/$p" 2>/dev/null
 }
 
-# Purpose: the engine_agent_check hook (`lctl agent-check`, the gfctl
+# Purpose: the engine_agent_check hook (`lctl agent-check`, the legacy
 #   cmd_agentcheck-glue 1:1): the gates (the container running → the port
 #   listening → the model in the log) → a restart warn → python stage1 (24
 #   requests) → cmp_ref over the CHECK lines → the restart-restore

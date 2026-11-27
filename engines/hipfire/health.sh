@@ -2,7 +2,7 @@
 # ── hipfire: the health dialect (the smoke, the actual route, the status lines) ──
 # The healthy-/health predicate, the smoke dialect, the route predicates
 # (the engine log texts: fn-lanes staged/refused, spec) and the status
-# lines — all engine-owned (contract §2.3 task 1.1). A port from the hfctl
+# lines — all engine-owned (contract §2.3 task 1.1). A port from the legacy
 # lib/health.sh.
 
 # Purpose: the «server healthy» predicate over the GET /health body (stdin):
@@ -32,7 +32,7 @@ engine_status_health() { python3 "$ADAPTER_DIR/tpl/python/status_hline.py"; }
 engine_status_json() { python3 "$ADAPTER_DIR/tpl/python/status_json.py"; }
 
 # Purpose: the smoke check of a live server — delegated to the core's
-#   core_smoke (audit-fix: the header described the pre-w42 hfctl smoke —
+#   core_smoke (audit-fix: the header described the pre-w42 smoke —
 #   2 requests, the local validator; fix:w42-smoke-core made the hook
 #   thin). The dialect — only the model: the canon from .env (LCTL_MODEL >
 #   field 1, fix:env-model: the canon is accepted by the served-model-name

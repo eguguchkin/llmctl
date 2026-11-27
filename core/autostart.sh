@@ -201,7 +201,7 @@ cmd_off() {
   # stop; a direct podman stop does not do the project netns teardown and
   # always gets through (the 2026-11-21 window).
   podman stop "$CONTAINER" >/dev/null 2>&1 || true   # fix:off-stop
-  systemctl --user disable --now "$UNIT_NAME.service" "$UNIT_NAME-watchdog.timer" 2>/dev/null || true   # fix:off-now (disable без --now оставлял активный таймер до daemon-reload — окно гонки тика вотчдога; gfctl 95bf4e4)
+  systemctl --user disable --now "$UNIT_NAME.service" "$UNIT_NAME-watchdog.timer" 2>/dev/null || true   # fix:off-now (disable без --now оставлял активный таймер до daemon-reload — окно гонки тика вотчдога; 95bf4e4)
   rm -f "$HOME/.config/systemd/user/$UNIT_NAME.service" \
         "$HOME/.config/systemd/user/$UNIT_NAME-watchdog.service" \
         "$HOME/.config/systemd/user/$UNIT_NAME-watchdog.timer"

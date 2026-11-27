@@ -1,6 +1,6 @@
 # shellcheck shell=bash
 # ── hipfire: pulling models from the hipfire registry ───────────────────────
-# The engine_pull_model hook (contract §2.3) — a port from the hfctl
+# The engine_pull_model hook (contract §2.3) — a port from the legacy
 # lib/models.sh.
 
 # Purpose: pull one model (or a draft sidecar) from the hipfire registry

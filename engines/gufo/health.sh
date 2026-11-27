@@ -8,8 +8,8 @@
 # filtered by curl -f). An early failure — ENGINE_FAIL_PATTERN=load_failed
 # (the core's 120 s gate — parity). The smoke — 3 chat requests, the retry
 # of ANY empty answer EXACTLY ONCE via LCTL_SMOKE_RETRY_S (default 15 s,
-# gfctl F15/2.1-F4). The engine-line parsing is isolated in
-# parse_route/gufo_wait_load. A port of gfctl lib/health.sh @ 462573f;
+# F15/2.1-F4). The engine-line parsing is isolated in
+# parse_route/gufo_wait_load. A port of the legacy health.sh;
 # canon_port → the core's PORT global (the core/.env owns the port canon).
 
 # Purpose: a PURE route filter — the log text on stdin; takes the LAST
@@ -20,7 +20,7 @@
 #
 # Limitations/assumptions: a missing load_completed is NORMAL (the load is
 #   still running): the globals are zeroed, rc 0 always; every grep/sed is
-#   silenced under set -e+pipefail. A 1:1 gfctl parse_route port.
+#   silenced under set -e+pipefail. A 1:1 parse_route port.
 #
 # @stdin string             # the container log text (podman logs 2>&1)
 # @returns integer          # always 0
@@ -42,7 +42,7 @@ parse_route() {
 #   LCTL_HEALTH_POLL step (default 5 s): `podman logs | parse_route`; a
 #   non-empty ROUTE_SPEC → rc 0. An early exit: after LCTL_LOADFAIL_AFTER
 #   seconds (default 20) a `grep load_failed` in the log → a warn + a 30-line
-#   tail + rc 1. A 1:1 port of the gfctl wait_load body (the LCTL_* env
+#   tail + rc 1. A 1:1 port of the wait_load body (the LCTL_* env
 #   names).
 #
 # @param 1: integer         # the timeout in seconds (default 180)
@@ -83,7 +83,7 @@ engine_health_ok() { cat >/dev/null; return 0; }
 # Purpose: escape a string for safe insertion into a JSON output
 #   (status --json: \ → \\, " → \", tab/newline/CR → \t/\n/\r — special
 #   chars in model names from the space-containing log must not break the
-#   document). A 1:1 gfctl json_str port.
+#   document). A 1:1 json_str port.
 #
 # @param 1: string    # the source string
 # @stdout string     # the JSON string's content (WITHOUT the framing quotes)
@@ -97,7 +97,7 @@ json_str() {
 
 # Purpose: the engine_smoke hook (contract §2.3) — the smoke check of a
 #   live server, delegated to the core's core_smoke (audit-fix: the header
-#   described the pre-w42 gfctl smoke — 3 requests, the adapter's
+#   described the pre-w42 smoke — 3 requests, the adapter's
 #   smoke_resp.py; fix:w42-smoke-core made the hook thin). The dialect —
 #   only the model: ROUTE_MODEL from load_completed (empty → poll
 #   parse_route (fix:smoke-race) and die «health не выполнен» — the gufo
@@ -168,7 +168,7 @@ engine_check_route() {
 # Purpose: the health line for `lctl status` — the gufo version: it ignores
 #   the stdin /ready body; the sources — parse_route (podman logs) + a
 #   repeated /ready probe + a du of the profile's cache dir. The scheme as
-#   in gfctl cmd_status: «health: ok | профиль: X | роут: … | кэш: dir
+#   in cmd_status: «health: ok | профиль: X | роут: … | кэш: dir
 #   (N.N GiB)».
 #
 # Side effects: podman logs, a curl /ready (5 s), du; printing one line.

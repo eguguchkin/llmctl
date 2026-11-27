@@ -15,9 +15,10 @@ core↔adapter contracts.
 
 ## Problem
 
-Three sibling panels (gfctl/gufo, hfctl/hipfire, then halogen) duplicated
-the lifecycle and self-healing, while the engine specifics (profiles,
-metrics, health dialects) are the owner's actual research subject.
+Local LLM engines expose different profile formats, health dialects and
+metrics, and each one alone is too thin to justify its own install/run/
+monitor panel — yet the effective parameters per workload (quant, draft
+model, sessions, context, cache) are the owner's actual research subject.
 Experiments require fast engine switching on one machine ("exactly one
 engine at any moment").
 
@@ -49,13 +50,13 @@ agent-check/watch/bench/uninstall. The contract points here:
 
 ### R2 — the core (core/, engine-independent, one source)
 
-Ported from hfctl/gfctl with the name adaptation: preflight (the apt five
-+ GPU-prep `gpu_prep`), bootstrap-first-on (the §B phase order with "units
-last"), units + watchdog + the flock discipline (`hf_lock_reclaim`),
-self-healing (`orphan_heal` via containers-storage, pod-infra validation,
-the honest off via an explicit podman stop), uninstall v2, the
-CONTAINERS_CONF scope of slirp4netns, the battery skeleton (faux
-substitutes, mutations over `# fix:<name>` markers).
+The full stack lifecycle: preflight (the apt five + GPU-prep `gpu_prep`),
+bootstrap-first-on (the §B phase order with "units last"), units +
+watchdog + the flock discipline (the lock reclaim), self-healing
+(`orphan_heal` via containers-storage, pod-infra validation, the honest
+off via an explicit podman stop), uninstall v2, the CONTAINERS_CONF scope
+of slirp4netns, the battery skeleton (faux substitutes, mutations over
+`# fix:<name>` markers).
 
 ### R3 — the adapter (engines/<name>/, engine-specific — must stay its own)
 
@@ -84,7 +85,7 @@ not survive `start`; the fine-tuning hatch is the adapter mechanisms
 
 ### R5 — invariants
 
-И1/И2/И3 (see AGENTS.md) — mandatory, checked by the battery.
+I1/I2/I3 (see AGENTS.md) — mandatory, checked by the battery.
 
 ### R6 — the halogen boundary pilot
 
@@ -93,10 +94,9 @@ halogen's sake = a boundary defect (in fact — a boundary revision).
 
 ### Non-goals (now)
 
-Migrating gfctl/hfctl before their current work is done; custom per-engine
-panels over the shared schema (the engine panels are identical —
-dashboard-layout.md §3, the unified dashboard built in W3.3); changing the
-engines on the machines without the owner's GO.
+Custom per-engine panels over the shared schema (the engine panels are
+identical — dashboard-layout.md §3, the unified dashboard built in W3.3);
+changing the engines on the machines without the owner's GO.
 
 ## Acceptance
 
@@ -105,35 +105,46 @@ clean sequences per И2. The first vertical slice: the core skeleton + the
 hipfire adapter, `lctl start hipfire <profile>` end-to-end on a faux
 machine.
 
-## NOTES (the stage-2 delta, implemented in 1.1)
+## NOTES
 
 - **Core/adapter**: the adapter globals `ENGINE_*` (13 — verified against
   the code 2026-11-25, the full list: adapter-contract.md §Глобалы) + the
   hooks `engine_*` (14: §Хуки there) — the contract; the core computes
   `UNIT_NAME="$ENGINE-compose"`, `STOP_MARKER/LOCK_FILE/MODELS_BASE/STATE_BASE/LOG_DIR/LIMITS_FILE`
-  from the engine id. The `hf_*` self-healing names are kept (§2.4).
+  from the engine id. The self-healing functions keep the historic `hf_`
+  prefix (a rename is cosmetic debt).
 - **ADAPTER_DIR/CORE_DIR** resolve from the dispatcher directory (dirname
   SELF), not from `$STACK_DIR` — in production "the clone = the stack" the
   paths coincide with §2.1, but the selfcheck/migration hook `LCTL_DIR`
   does not break the adapter load. The CONTAINERS_CONF scope of compose()
-  — from `$STACK_DIR` (as in hfctl).
+  — from `$STACK_DIR`.
 - **The units** render with `Environment=LCTL_ENGINE=__ENGINE__` — the
   engine resolution in `_boot`/`_watchdog` goes through the env (the
   order: `--engine` > the env `LCTL_ENGINE` > the `.env` canon).
-- **bench/watch/agent-check**: the historical stage-2 delta — the router
-  had only `agent-check` then; watch (stage 4, W3.3 — the unified
-  dashboard) and bench were added later and fixed in R1 (2026-11-25).
-- **`on --models-dir`** from hfctl did not migrate (not in R1); the models
-  path — the canon `.data/<engine>/models/<set>`.
+- **`on --models-dir`** is not in the surface (R1); the models path — the
+  canon `.data/<engine>/models/<set>`.
 - **profile_gate**: the refusal explanation takes field 5 of the adapter
   registry (the profile description) — no engine texts in the core.
 - **The curl faux with hipfire answers** lives in
   `engines/hipfire/tests/adapter_checks.sh` (the engine dialect); the rest
   of the faux substitutes — in the battery skeleton.
-- **1.2**: the start/stop/pull surface (the §A automaton in cmd_start: the
-  foreign off → bootstrap/ensure/recreate; stop — over the units of the
-  active engine, before the engine resolution); the hipfire registry was
-  renamed flash/27b/27b-parallel (legacy — the resolve_profile aliases,
-  the `.env` canon — the new name, cur_profile maps on read); the verb
-  aliases on|off|use|switch|install — transitional, not documented in
-  usage.
+- **The legacy profile names** (27b-single / 27b-slots / flash-multi) are
+  the resolve_profile aliases; the `.env` canon stores the new name,
+  cur_profile maps on read.
+
+## Debt / notes (live)
+
+- Investigate: on a switch, apply_profile silently skipped writing
+  session_cache_bytes into the 27b config (parallel wrote it; a manual run
+  of the same command worked; 2026-11-24, deploy 4.2) — re-verify the
+  config on future deploys.
+- GOTCHAS: the panel's env (the cache budgets via engine_watch_env) is
+  read once at the panel process start — restart the panel after a cache
+  config change (observed 2026-11-24: "Cache RAM —" with a working config).
+- Optional: the real behavior of the snapshot disk cache — env
+  HIPFIRE_QWEN4_TAIL_SNAPSHOT_MIN_PROMPT (the 16k-token threshold) /
+  TURN_SNAPSHOTS=1, a per-profile decision.
+- Cosmetic: selfcheck text wording ("amendment 6").
+- Cosmetic: the env fallback `GFCTL_MIRROR_BASE` in the models delivery
+  keeps its historic name until the live machines are verified (nothing
+  exports it today); `LCTL_MIRROR_BASE` is the primary.

@@ -59,7 +59,7 @@ import watch_frame  # noqa: E402
 
 
 # The gufo KV mode — an ADAPTER HARDCODE constant (layout §3, the user's
-# 2026-11-23 decision): no registry has a KV flag (gfctl/llmctl) → the
+# 2026-11-23 decision): no registry has a KV flag (llmctl) → the
 # llama-compatible core's default applies = f16; f32 is never the default.
 # NOT the frame (R6). Verify against a KV log line at the next live
 # window; if a kv flag lands in the profile — remove the hardcode.
