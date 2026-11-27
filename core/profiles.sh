@@ -1,40 +1,75 @@
 # shellcheck shell=bash
 # ── profiles: registry mechanics (core) ─────────────────────────────────────
-# The profile line format — CORE CONTRACT for fields 1–5 ('|'-separated,
-# contents are the adapter's): 1 default model, 2 all models of the set
-# (space), 3 draft tag ('-' = none), 4 RAM-gate threshold in whole GiB,
-# 5 description for logs. Fields 6+ are adapter dialect extensions (slots/
-# ctx/cache limits/ladders — live adapters ship 9-field tables); the core
-# never reads them. The adapter must define PROFILE_LIST, PROFILE_DEFAULT,
-# profile_<id> variables (hyphens→underscores) and resolve_profile <alias>
-# (rc 1 on unknown). This is how any new adapter's registry (stage 3+) lands
-# on the same gates without core edits.
+# The profile format v2 — ONE FILE per profile: engines/<eng>/profiles/<id>.env,
+# sourced into P_* variables (until 2026-11-27: a profile_<id> '|'-row).
+# The core contract — fields 1–5 by the numbers; 6+ — the adapter dialect;
+# the tails (ladder, references) — the same file:
+#   P_MODEL / P_MODELS / P_DRAFT / P_RAM_GIB / P_DESC   # the contract 1–5
+#   P_SESSIONS / P_CTX                                  # 6 / 7 (adapter)
+#   P_CACHE_RAM / P_CACHE_DISK                          # 8 in bytes (adapter;
+#                    # profile_field 8 assembles the legacy 'ram/disk' form)
+#   P_SERVE_ARGS                                        # 9 (adapter)
+#   P_PROBE_LADDER                                      # the probe ladder ('-' = none)
+#   P_REF_<METRIC>  # session|followup|restore|docq — the agent-check references
+# profile_field <id> <1..9> keeps the NUMERIC contract (the readers do not
+# change); the files replace only the profile_<id> rows. The adapter must
+# still define PROFILE_LIST, PROFILE_DEFAULT and resolve_profile (rc 1 on
+# unknown). A new adapter's registry (stage 3+) lands on the same gates
+# without core edits — now by dropping profiles/<id>.env files.
 
-# Purpose: the N-th field (1-based, '|' separator) of a profile record from
-#   the adapter table: 1 — default model, 2 — all models of the set
-#   (space-separated), 3 — draft sidecar ('-' = none), 4 — RAM-gate
-#   threshold in whole GiB, 5 — description for logs; 6+ — adapter dialect.
+# Purpose: source a profile file into the P_* variables. Resets the previous
+#   P_* set first — no cross-profile leakage (the files are data, the values
+#   may contain expansions: sourced, not parsed).
 #
-# Side effects: prints only the field to stdout; tr and cut subprocesses;
-#   the profile_* table is read via indirect expansion ${!name} (name:
-#   profile_ with the id, hyphens replaced by underscores); touches no files
-#   or globals.
+# Side effects: sets/unsets P_* globals in the caller's shell; touches no
+#   files. Requires ADAPTER_DIR (the adapter's registry dir).
+#
+# @param 1: string       # canonical profile id
+# @returns integer      # 0 — sourced; 1 — no ADAPTER_DIR or no such file
+profile_src() {
+  [ -n "${ADAPTER_DIR:-}" ] && [ -f "$ADAPTER_DIR/profiles/$1.env" ] || return 1
+  local v
+  for v in $(compgen -A variable | grep '^P_'); do unset "$v"; done
+  . "$ADAPTER_DIR/profiles/$1.env"
+}
+
+# Purpose: the N-th field (1-based) of a profile — from the profile FILE
+#   (profile_src): 1 — default model, 2 — all models (space-separated),
+#   3 — draft sidecar ('-' = none), 4 — RAM-gate threshold in whole GiB,
+#   5 — description, 6 — sessions, 7 — context, 8 — the cache tiers
+#   'ram/disk' in bytes (assembled from P_CACHE_RAM/P_CACHE_DISK), 9 — the
+#   serve flags. 6+ — the adapter dialect; the core reads only 1–5.
+#
+# Side effects: prints only the field to stdout; runs in a SUBSHELL — the
+#   caller's shell is not polluted with P_*.
 #
 # Limitations/assumptions: the id is taken AS IS — aliases are not resolved
 #   (the adapter's resolve_profile normalization is the caller's duty).
-#   Requires the adapter's profile_* table (after engine_load). The field
-#   number is not validated: N beyond the field count yields an empty string
-#   with rc 0 (cut); a non-numeric N is a cut error.
+#   Requires the adapter's profiles/ dir (after engine_load). A number
+#   beyond the field count yields an empty string with rc 0 (the former
+#   cut semantics); a non-numeric N is rc 1.
 #
 # @param 1: string        # canonical adapter profile id
-# @param 2: /^[0-9]+$/   # table field number (core contract: 1–5)
+# @param 2: /^[0-9]+$/   # field number (core contract: 1–5)
 # @stdout string          # field value (empty string when N is beyond the field count)
-# @returns integer        # 0 — field printed; 1 — unknown profile (empty stdout)
+# @returns integer        # 0 — field printed; 1 — unknown profile or non-numeric N
 profile_field() {
-  local name="profile_$(echo "$1" | tr '-' '_')" v
-  v="${!name:-}"
-  [ -n "$v" ] || return 1
-  echo "$v" | cut -d'|' -f"$2"
+  (
+    profile_src "$1" || exit 1
+    case "$2" in
+      1) printf '%s\n' "${P_MODEL:-}" ;;
+      2) printf '%s\n' "${P_MODELS:-}" ;;
+      3) printf '%s\n' "${P_DRAFT:-}" ;;
+      4) printf '%s\n' "${P_RAM_GIB:-}" ;;
+      5) printf '%s\n' "${P_DESC:-}" ;;
+      6) printf '%s\n' "${P_SESSIONS:-}" ;;
+      7) printf '%s\n' "${P_CTX:-}" ;;
+      8) printf '%s/%s\n' "${P_CACHE_RAM:-0}" "${P_CACHE_DISK:-0}" ;;
+      9) printf '%s\n' "${P_SERVE_ARGS:-}" ;;
+      [1-9]*) exit 0 ;;   # a number beyond the field count — empty, rc 0
+      *) exit 1 ;;        # non-numeric — the former cut error
+    esac
+  )
 }
 
 # Purpose: the machine's whole available memory pool in whole GiB — MemTotal

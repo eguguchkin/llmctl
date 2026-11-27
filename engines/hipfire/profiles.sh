@@ -1,23 +1,20 @@
 # shellcheck shell=bash
-# ── hipfire: the profile registry (the content is the adapter's, the format is the core contract) ──
-# The format: default_model|all_models (space)|draft_tag ('-' = none)|min_ram_gib|description
-# The profile names are engine-agnostic (1.2): flash / 27b / 27b-parallel
-# (the model is an adapter detail). The old names
-# (flash-multi/27b-single/27b-slots) are valid transitional aliases:
-# resolve_profile maps them onto the canon; the .env canon stores the NEW
-# name.
+# ── hipfire: the profile registry (the format is the core contract, core/profiles.sh) ──
+# Format v2 — ONE FILE per profile: profiles/<id>.env, sourced into P_*
+# variables. The hipfire files carry the 5 core-contract fields only (no
+# adapter dialect fields). The profile names are engine-agnostic (1.2):
+# flash / 27b / 27b-parallel; the old names (flash-multi/27b-single/
+# 27b-slots) are valid transitional aliases: resolve_profile maps them
+# onto the canon; the .env canon stores the NEW name.
 #
 # @typedef profile_id: '27b' | '27b-parallel' | 'flash'
 
 PROFILE_LIST="27b 27b-parallel flash"
-profile_27b="qwen3.8:27b-mq4-xts|qwen3.8:27b-mq4-xts|qwen3.8:27b-draft-mq4|58|singleton+DFlash (максимум соло-скорости)"
-profile_27b_parallel="qwen3.8:27b-mq4-xts|qwen3.8:27b-mq4-xts|qwen3.8:27b-draft-mq4|58|multi_slot ${SLOTS}×${MAX_SEQ} (HOL-изоляция; −25% агрегат)"
-profile_flash="qwen3.8:flash-next-mq4-xts|qwen3.8:flash-next-mq4-xts|-|80|Flash-Next mq4-xts, VMM fn-lanes (настоящий батчинг; требует ≥80 GiB пула)"
 # @type profile_id PROFILE_DEFAULT=27b
 PROFILE_DEFAULT=27b
-# the flash RAM-gate threshold is checked by field 4; 80 = 72 (the registry
-# minimum) + a margin (the lane store + the OS); calibrated on a 128 GB
-# machine.
+# the flash RAM-gate threshold (P_RAM_GIB=80) is checked by profile_field 4;
+# 80 = 72 (the registry minimum) + a margin (the lane store + the OS);
+# calibrated on a 128 GB machine.
 
 # Purpose: normalize a profile alias to the canonical id: 27b|single|mq6|mq4 →
 #   27b (legacy: 27b-single); 27b-parallel|slots → 27b-parallel (legacy:

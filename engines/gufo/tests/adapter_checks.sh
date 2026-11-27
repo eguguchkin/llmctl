@@ -128,7 +128,7 @@ scen_g0_check_types() {
 #     parallel/flash — the role tokens and the cache tiers; purity; a
 #     foreign token → die
 scen_g1_serve_args() {
-  local a1 a2
+  local a1 a2 r out
   a1=$(LCTL_TEST_ENGINE=gufo hf 'serve_args 27b 1 262144') || return 1
   [ "$a1" = "gufo serve llm --host 0.0.0.0 --port 11435 --model /models/qwen3.8-27b-IQ4_XS-pure.gguf --speculative dflash2 --dflash-model /models/Qwen3.8-27B-DFlash2-Q4_K_M.gguf --mmproj /models/mmproj-BF16.gguf --log-progress --served-model-name qwen3.8-27b --served-model-name Qwen3.8-27B --served-model-name qwen3.8:27b-mq4-xts --sessions 1 --context 262144 --cache-ram-bytes 12884901888 --cache-disk /cache --cache-disk-bytes 68719476736" ] || return 1
   a2=$(LCTL_TEST_ENGINE=gufo hf 'serve_args 27b 1 262144') || return 1
@@ -139,10 +139,16 @@ scen_g1_serve_args() {
   grep -q -- '--model /models/Qwen3.8-Flash-Next-UD-Q4_K_XL-00001-of-00004.gguf' <<<"$a1" || return 1
   grep -q -- '--mtp-model /models/mtp-Qwen3.8-Flash-Next-shared-Q8_0.gguf' <<<"$a1" || return 1
   grep -q -- '--mmproj /models/mmproj-flash-next-BF16.gguf' <<<"$a1" || return 1
-  LCTL_TEST_ENGINE=gufo hf 'profile_bad="m.gguf|m.gguf|-|56|тест|1|1024|12884901888/68719476736|--speculative x --foo @BOGUS@"
-serve_args bad 1 1024' >/dev/null 2>&1 && return 1   # чужой токен — die rc 1
+  # a foreign token → die (v2: the registry is file-based, the former
+  #     profile_bad="..." variable is not read; the temp profile = a 27b
+  #     copy with @BOGUS@ in the serve flags)
+  { grep -v '^P_SERVE_ARGS=' "$ROOT/engines/gufo/profiles/27b.env"; printf 'P_SERVE_ARGS="--speculative x --foo @BOGUS@"\n'; } > "$ROOT/engines/gufo/profiles/bad.env"
+  out=$(LCTL_TEST_ENGINE=gufo hf 'serve_args bad 1 1024' 2>&1); r=$?
+  rm -f "$ROOT/engines/gufo/profiles/bad.env"
+  [ "$r" = 1 ] && grep -q 'неизвестный токен' <<<"$out" || return 1
   return 0
 }
+
 
 # G1-canon.env: an upsert (foreign keys kept, no duplicates), a read, an
 #     unknown profile → ''

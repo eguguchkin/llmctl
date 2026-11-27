@@ -57,7 +57,10 @@ CONTAINERS_CONF-скоуп slirp4netns, каркас батареи (faux-под
 
 ### R3 — адаптер (engines/<имя>/, движковое — обязано быть своим)
 
-profiles-реестр; health-диалект (что считать healthy + формат); источники
+profiles-реестр (формат v2, 2026-11-27: файл-переменные `profiles/<id>.env`,
+сорсится в `P_*` — `profile_src`/`profile_field 1..9` в core/profiles.sh;
+ядро читает только 1–5, остальное — диалект адаптера; `PROFILE_LIST`/
+`PROFILE_DEFAULT`/`resolve_profile` остаются в `profiles.sh`); health-диалект (что считать healthy + формат); источники
 метрик для watch-панелей; doctor-чеклист; движковые конфиг-ключи; пины
 образов/моделей; smoke-диалект; state-схема канона.
 

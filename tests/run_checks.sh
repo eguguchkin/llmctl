@@ -778,6 +778,8 @@ scen_n11_switch() {
   cp -a "$ROOT/lctl" "$ROOT/core" "$ROOT/engines" "$tree/" || return 1
   mkdir -p "$tree/engines/stub"
   shim stub_adapter.sh "$tree/engines/stub/adapter.sh"
+  mkdir -p "$tree/engines/stub/profiles"
+  shim stub_profile.env "$tree/engines/stub/profiles/stub-p.env"
   # the canon: stub active (as after a switch to stub)
   printf 'LCTL_ENGINE=stub\nLCTL_PROFILE=stub-p\nLCTL_PORT=11999\nLCTL_BIND=0.0.0.0\n' > "$LCTL_TEST_STACK/.env"
   local lim="$TMP/limits-n11.conf"
@@ -1071,6 +1073,8 @@ scen_s7_own_canon_survives() {
   cp -a "$ROOT/lctl" "$ROOT/core" "$ROOT/engines" "$tree/" || return 1
   mkdir -p "$tree/engines/stub"
   shim stub_adapter.sh "$tree/engines/stub/adapter.sh"
+  mkdir -p "$tree/engines/stub/profiles"
+  shim stub_profile.env "$tree/engines/stub/profiles/stub-p.env"
   # a deployed canon of the TARGET engine with a custom port/bind — a
   # legitimate mechanism (the PORT/BIND globals → write_env), not a manual
   # .env edit
