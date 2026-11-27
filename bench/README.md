@@ -46,7 +46,10 @@ headline; the follow-up turn 1 is the prefill data source (see Prefill).
 runner prefixes the document with a per-run nonce (`time_ns`), invalidating
 the whole prompt's prefix cache — the disk tier can no longer remember the
 byte-identical document from a previous run. The length stays constant, so
-cross-engine comparison is by tok/s.
+cross-engine comparison is by tok/s. The 15-turn session document is NOT
+nonce'd (its canon is byte-identity across engines), so session walls are
+warm-cache numbers whenever the same fixture was prefilled earlier — see
+the matrix caveat below.
 
 ### 4. Parallel load
 
@@ -74,54 +77,61 @@ populated the cache:
 - warm (the identical prompt, immediately repeated): `prompt_ms` = **122 ms**.
 
 Dividing the full 25k prompt length by the warm 122 ms gives the absurd
-"200 000 tok/s" — that is the cache talking, not the engine. The honest
-prefill rate on this profile is ~2 100 tok/s (a 25k document costs ~12 s
-of prefill on a miss). This probe is now the permanent behavior: the
-follow-up turn 1 always carries a per-run nonce (see scenario 3) — every
-future `lctl bench` reports a guaranteed-cold prefill.
+"200 000 tok/s" — that is the cache talking, not the engine. This probe is
+now the permanent behavior: the follow-up turn 1 always carries a per-run
+nonce (see scenario 3) — **every prefill number in the matrix below is an
+honest cache miss** (confirmed: the halogen nonce run reproduced the probe
+within 4 % — 12.13 s vs 11.75 s).
 
-Per-combination prefill figures in the matrices below are marked:
-`honest` — a proven cache miss; `cache hit` — the wall is real but the
-prefill was served from the cache; `likely cold` — no reuse marker, the
-first run of the day, unconfirmed by the engine.
+## flash profile — engine comparison (2026-11-27, `--runs 1`, FAEX 128 GB, nonce run)
 
-## flash profile — engine comparison (2026-11-27, `--runs 1`, FAEX 128 GB)
+Medians; decode/aggregates in tok/s, walls in seconds. The 25k prefill
+column is a guaranteed cache miss for every engine (per-run nonce), so it
+compares honestly.
 
-Medians; decode/aggregates in tok/s, walls in seconds.
-
-| engine | solo decode, tok/s | prose, tok/s | session 15, s | 25k prefill | par-2, tok/s | par-4, tok/s |
+| engine | solo decode, tok/s | prose, tok/s | session 15, s | 25k prefill (miss), s → tok/s | par-2, tok/s | par-4, tok/s |
 |---|---|---|---|---|---|---|
-| **halogen 0.20.7** | **112.92** | **67.58** | **6.76** | **11.7 s ≈ 2 140 tok/s** (honest, cold probe) | **86.92** | **121.70** |
-| gufo 0.36 | 81.44 | 41.60 | 8.62 | not measured (cache hit) | 53.21 | 71.66 |
-| hipfire 0.4.7 | 75.88 | 45.88 | 13.38 | 15.08 s ≈ 1 660 tok/s (likely cold) | 41.90 | 56.43 |
+| **halogen 0.20.7** | **112.87** | **67.80** | **6.74** | **12.13 → ~2 060** | **87.57** | **119.23** |
+| hipfire 0.4.7 | 76.01 | 45.41 | 13.36 | 14.84 → ~1 685 | 42.00 | 60.69 |
+| gufo 0.36 (MTP) | 81.57 | 41.04 | 8.96 | 16.68 → ~1 500 | 54.34 | 65.16 |
+
+halogen leads every column; the prefill ladder (halogen ~2 060 > hipfire
+~1 685 > gufo ~1 500 tok/s) roughly mirrors the decode ladder.
 
 ## 27b profile — engine comparison (same session)
 
-| engine | solo decode, tok/s | prose, tok/s | session 15, s | 25k prefill | par-2, tok/s | par-4, tok/s |
+| engine | solo decode, tok/s | prose, tok/s | session 15, s | 25k prefill (miss), s → tok/s | par-2, tok/s | par-4, tok/s |
 |---|---|---|---|---|---|---|
-| gufo 0.36 | 65.18 | 20.34 | **25.89** | **47.25 s ≈ 530 tok/s** (honest, triple-confirmed) | 27.30 | 27.88 |
-| **hipfire 0.4.7** | **100.63** | 19.67 | **20.65** | 26.83 s ≈ 930 tok/s (likely cold) | 26.84 | 26.84 |
+| gufo 0.36 | 67.83 | **20.53** | **14.73** | 50.39 → ~500 | 26.27 | 27.98 |
+| **hipfire 0.4.7** | **100.48** | 19.66 | 20.68 | **26.94 → ~930** | **26.86** | **26.81** |
 
-hipfire wins solo decode by 55 % (the mq4-xts quant + VMM); gufo wins the
-prose scenario and the honest prefill is slower (530 tok/s) — but it is
-the only triple-confirmed number here (the follow-up wall, the session
-document turn 1, and the engine's own `prefill_avg` counter: 47.25 s /
-11.6 s / 499 tok/s).
+hipfire wins solo decode by ~49 % and prefills ~1.9× faster; gufo wins
+prose and the session wall. The gufo honest prefill is triple-consistent
+across runs: 47.25 s ≈ 530 tok/s (the day's first run, confirmed by the
+session turn 1 at 11.6 s ≈ 550 and the engine's `prefill_avg` 499 tok/s),
+50.39 s ≈ 496 tok/s (this nonce run).
 
 ## 27b-parallel profile — engine comparison (same session)
 
-| engine | solo decode, tok/s | prose, tok/s | session 15, s | 25k prefill | par-2, tok/s | par-4, tok/s |
+| engine | solo decode, tok/s | prose, tok/s | session 15, s | 25k prefill (miss), s → tok/s | par-2, tok/s | par-4, tok/s |
 |---|---|---|---|---|---|---|
-| gufo 0.36 | 64.93 | **20.32** | **26.00** | 47.25 s ≈ 529 tok/s | **29.05** | **43.20** |
-| **hipfire 0.4.7** | **92.95** | 15.40 | 30.05 | 34.24 s ≈ 730 tok/s (likely cold) | 20.04 | 28.14 |
+| gufo 0.36 | 67.46 | **20.49** | **14.62** | 50.64 → ~494 | **29.10** | **41.64** |
+| **hipfire 0.4.7** | **93.00** | 15.40 | 30.04 | **34.59 → ~723** | 20.04 | 27.13 |
 
 halogen does not ship a 27b profile (the owner's 2026-11-25 decision).
 
-## Missing honest numbers
+## Matrix caveats
 
-The 2026-11-27 matrix was taken with the pre-nonce runner: its follow-up
-turn 1s for halogen/flash and gufo/flash were cache hits (marked above);
-the nonce fix guarantees honesty for every FUTURE run. To back-fill the
-honest prefill for those two combinations: re-run `lctl bench` for them
-(the nonce makes turn 1 a guaranteed miss — a read-only pass over the
-live engine, no restart needed; gufo/flash requires the engine window).
+- **Session walls are warm-cache** in this matrix: the 15-turn document is
+  not nonce'd and was already in the disk tier from the same day's first
+  run (gufo/27b: 14.73 s here vs 25.89 s on the day's cold first pass).
+  Do not compare them to a cold-cache session; the prefill column is not
+  affected (nonce = guaranteed miss).
+- **Multi-slot profiles do not beat the solo profiles at parallel-2**
+  (gufo 27b: 26.27 vs 26.27; hipfire 27b: 26.86 vs 26.86) — consistent
+  with the earlier serial-DFlash finding; the wins appear at parallel-4
+  (gufo 27b-parallel 41.64, halogen 119.23 at 106 % of solo).
+- Engines that do not emit a `reuse` marker (halogen, hipfire: `reuse=-`)
+  are still honestly measured — the nonce guarantees the miss without the
+  marker; gufo's `reuse=live` on turn 2 additionally confirms its live
+  cache works.
