@@ -36,12 +36,11 @@ costs the decoder.
 
 The agent-workload emulation: 15 consecutive turns where each turn's
 prompt grows by the previous answer (6.4k → 7.2k prompt tokens), then a
-25k-token document follow-up in two turns (turn 1 = the cold 25k prefill,
+25k-token document follow-up in two turns (turn 1 = the 25k prefill,
 turn 2 = the warm re-read). Per turn the report prints wall time, tokens,
 decode tok/s and — when the engine supplies timings — `prompt_ms`, the
-engine's own prefill time. This scenario is the KV-cache/management
-stress: the aggregate session wall is the headline, the per-turn
-`prompt_ms` is the prefill data source.
+engine's own prompt-processing time. The aggregate session wall is the
+headline; the follow-up turn 1 is the prefill data source (see Prefill).
 
 ### 4. Parallel load
 
@@ -52,63 +51,70 @@ own wall, and the aggregate as a percentage of the solo decode. 100 %+ is
 a batching/queueing win; far below 100 % means the engine serializes
 clients.
 
-## Prefill
+## Prefill — read the numbers carefully
 
-The honest prefill rate is measurable **only on a cache miss** — and the
-bench documents are byte-identical between runs while the disk cache tier
-survives server restarts, so a "first" turn is often a cache hit in
-disguise. The arbiters are the `reuse` marker and the engine's own cache
-counters (`cache_prompt_tokens_saved_total`).
+The honest prefill rate is measurable **only on a cache miss**. The bench
+documents are byte-identical between runs and the disk cache tier survives
+server restarts, so a "first" turn is often a cache hit in disguise. The
+arbiters: the `reuse` marker, the engine cache counters
+(`cache_prompt_tokens_saved_total`), and the `prompt_ms` timing itself.
 
-Evidence from the 2026-11-27 matrix — the honest rate is a few hundred
-tok/s, not thousands:
+**The trap, demonstrated live (halogen/flash, 2026-11-27)**: the same
+25k-token prompt was sent twice, the second time after the first had
+populated the cache:
 
-- **gufo / 27b — three independent numbers agree**: the 25k follow-up
-  turn 1 (reuse=none) took 47.25 s → **~530 tok/s**; the session document
-  on turn 1 (reuse=none, 6.4k tokens) took 11.6 s → **~550 tok/s**; the
-  engine's own `prefill_avg` counter over the session = **499 tok/s**.
-- **gufo / flash**: follow-up turn 1 = 2.71 s with `reuse=live` — a cache
-  hit, not a cold run. No honest cold prefill measured.
-- **halogen / flash**: follow-up turn 1 = 1.96 s with no reuse marker, but
-  the identical 25k document was in the persistent disk cache from the
-  previous day's runs (`cache_prompt_tokens_saved_total` ≈ 398k tokens in
-  the same session). Not cold either — no honest number in the matrix.
-- **hipfire**: no reuse markers at all; the follow-up walls (27b: 26.83 s
-  ≈ 930 tok/s; 27b-parallel: 34.24 s ≈ 730 tok/s; flash: 15.08 s ≈ 1660
-  tok/s) are *likely* honest cold runs (the first hipfire runs of the
-  day), but the engine cannot confirm it.
+- cold (unique prompt prefix → guaranteed miss): `prompt_ms` = **11 746 ms**
+  for 25 121 tokens → **~2 140 tok/s**;
+- warm (the identical prompt, immediately repeated): `prompt_ms` = **122 ms**.
 
-The session table's `prompt_ms` column is the engine's prompt-processing
-timing **after the cache** — on warm turns it covers only the new tail
-(~60–100 tokens), not the whole context. It must never be divided into
-the full prompt length.
+Dividing the full 25k prompt length by the warm 122 ms gives the absurd
+"200 000 tok/s" — that is the cache talking, not the engine. The engine's
+honest prefill rate on this profile is ~2 100 tok/s (a 25k document costs
+~12 s of prefill on a miss).
 
-## The 2026-11-27 matrix (a 128 GB Strix Halo, `--runs 1`, one session)
+Per-combination prefill figures in the matrices below are marked:
+`honest` — a proven cache miss; `cache hit` — the wall is real but the
+prefill was served from the cache; `likely cold` — no reuse marker, the
+first run of the day, unconfirmed by the engine.
 
-Medians; decode/aggregates in tok/s, walls in seconds. `runs=1` — an
-orientation point, not an acceptance run.
+## flash profile — engine comparison (2026-11-27, `--runs 1`, FAEX 128 GB)
 
-| engine / profile | solo decode, tok/s | prose, tok/s | session 15, s | 25k prefill, s → tok/s | par-2, tok/s | par-4, tok/s |
+Medians; decode/aggregates in tok/s, walls in seconds.
+
+| engine | solo decode, tok/s | prose, tok/s | session 15, s | 25k prefill | par-2, tok/s | par-4, tok/s |
 |---|---|---|---|---|---|---|
-| **halogen / flash** | **112.92** | **67.58** | **6.76** | 1.96 (cache hit) | **86.92** | **121.70** |
-| gufo / flash (MTP) | 81.44 | 41.60 | 8.62 | 2.71 (cache hit) | 53.21 | 71.66 |
-| gufo / 27b (solo) | 65.18 | 20.34 | 25.89 | **47.25 → ~530** | 27.30 | 27.88 |
-| gufo / 27b-parallel | 64.93 | 20.32 | 26.00 | 47.25 → ~529 | 29.05 | 43.20 |
-| hipfire / 27b | 100.63 | 19.67 | 20.65 | 26.83 → ~930* | 26.84 | 26.84 |
-| hipfire / 27b-parallel | 92.95 | 15.40 | 30.05 | 34.24 → ~730* | 20.04 | 28.14 |
-| hipfire / flash | 75.88 | 45.88 | 13.38 | 15.08 → ~1660* | 41.90 | 56.43 |
+| **halogen 0.20.7** | **112.92** | **67.58** | **6.76** | **11.7 s ≈ 2 140 tok/s** (honest, cold probe) | **86.92** | **121.70** |
+| gufo 0.36 | 81.44 | 41.60 | 8.62 | not measured (cache hit) | 53.21 | 71.66 |
+| hipfire 0.4.7 | 75.88 | 45.88 | 13.38 | 15.08 s ≈ 1 660 tok/s (likely cold) | 41.90 | 56.43 |
 
-\* hipfire sends no reuse marker — likely cold (the first hipfire runs of
-the day), not confirmed by the engine.
+## 27b profile — engine comparison (same session)
 
-Readings: halogen leads every decode/aggregation column; the honest
-prefill of the 27B quant is ~530 tok/s (gufo, triple-confirmed) — a
-25k-token document costs ~47 s of prefill on a cache miss; the multi-slot
-profiles do not beat the solo profiles at parallel-2.
+| engine | solo decode, tok/s | prose, tok/s | session 15, s | 25k prefill | par-2, tok/s | par-4, tok/s |
+|---|---|---|---|---|---|---|
+| gufo 0.36 | 65.18 | 20.34 | **25.89** | **47.25 s ≈ 530 tok/s** (honest, triple-confirmed) | 27.30 | 27.88 |
+| **hipfire 0.4.7** | **100.63** | 19.67 | **20.65** | 26.83 s ≈ 930 tok/s (likely cold) | 26.84 | 26.84 |
 
-Readings: halogen leads every column (its warm prefill is ~60k tok/s —
-a 6.5k context is re-prefilled in ~110 ms); gufo's flash-MTP halves the
-cold 25k prefill against its 27b (2.7 s vs 47.3 s — the smaller weights
-and MTP); the multi-slot profiles do not beat the solo profiles at
-parallel-2; hipfire supplies no per-request timings, so its warm-prefill
-column is empty while its cold-25k walls are client-measured and honest.
+hipfire wins solo decode by 55 % (the mq4-xts quant + VMM); gufo wins the
+prose scenario and the honest prefill is slower (530 tok/s) — but it is
+the only triple-confirmed number here (the follow-up wall, the session
+document turn 1, and the engine's own `prefill_avg` counter: 47.25 s /
+11.6 s / 499 tok/s).
+
+## 27b-parallel profile — engine comparison (same session)
+
+| engine | solo decode, tok/s | prose, tok/s | session 15, s | 25k prefill | par-2, tok/s | par-4, tok/s |
+|---|---|---|---|---|---|---|
+| gufo 0.36 | 64.93 | **20.32** | **26.00** | 47.25 s ≈ 529 tok/s | **29.05** | **43.20** |
+| **hipfire 0.4.7** | **92.95** | 15.40 | 30.05 | 34.24 s ≈ 730 tok/s (likely cold) | 20.04 | 28.14 |
+
+halogen does not ship a 27b profile (the owner's 2026-11-25 decision).
+
+## Missing honest numbers — how to fill them
+
+An honest cold prefill needs a **guaranteed cache miss**. Two ways:
+a unique prompt prefix (the cold probe demonstrated above — no engine
+restart needed, read-only load over the live port), or wiping the engine's
+disk cache tier (needs a maintenance window and the owner's GO). Not yet
+measured honestly: gufo/flash (its follow-up turn 1 was a `reuse=live`
+cache hit), halogen's full `lctl bench` pass (the probe above covers the
+25k point), hipfire confirmations.
