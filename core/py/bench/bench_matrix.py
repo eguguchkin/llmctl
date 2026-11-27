@@ -113,6 +113,19 @@ def main(argv):
                          prefill_cell(m)] +
                         [br.f2(m["par"].get(n)) for n in par_ns])
         out += ["## профиль %s" % prof, "", br.md_table(head, rows), ""]
+    # чтение цифр — постоянные оговорки рядом с таблицами (детерминированный
+    # футер; методика — bench/README.md)
+    out += ["## Как читать", "",
+            "- сессия 15 — **тёплый кэш** (документ сессии не nonce'ится): "
+            "сравнивай сессии только внутри одного сеанса матрицы; "
+            "префилл-колонка не затронута (nonce = гарантированный miss)",
+            "- multi-slot-профили не бьют соло на par-2 — выигрыш multi-slot "
+            "появляется на par-4",
+            "- движки без reuse-маркера («-») измерены честно — nonce "
+            "гарантирует miss без маркера; «live» на turn 2 дополнительно "
+            "подтверждает живой кэш движка",
+            "- префилл: с → tok/s = prompt_tokens/wall turn 1 (гарантированный "
+            "cache miss); методика и ловушка кэша — bench/README.md", ""]
     sys.stdout.write("\n".join(out) + "\n")
     for name in skipped:
         sys.stderr.write("bench_matrix: %s — не-JSON/битый, пропущен\n" % name)
