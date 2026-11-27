@@ -177,7 +177,7 @@ scen_g1_compose() {
   local y="$LCTL_TEST_STACK/compose.yml" c="$LCTL_TEST_STACK/.data/gufo/profiles/canon.env"
   LCTL_TEST_ENGINE=gufo hf 'set_models_dir 27b-parallel; write_env 27b-parallel "$(profile_field 27b-parallel 1)"; write_stack_files' >/dev/null 2>&1 || return 1
   grep -q '^name: gufo$' "$y" || return 1
-  grep -qF 'ghcr.io/gufo-org/toolboxes/gufo-runtime:0.36' "$y" || return 1
+  grep -qF 'ghcr.io/gufo-org/toolboxes/gufo-runtime:0.37' "$y" || return 1
   grep -q '      - /dev/kfd' "$y" && grep -q '      - /dev/dri' "$y" || return 1
   grep -q '      - keep-groups' "$y" || return 1
   grep -q '^    ipc: host$' "$y" || return 1

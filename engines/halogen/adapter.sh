@@ -14,7 +14,7 @@
 ENGINE=halogen
 ADAPTER_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # @type /^[\w./:-]+$/ ENGINE_IMAGE — the version pin: the image tag = ENGINE_VERSION
-ENGINE_VERSION=0.20.7                          # the ghcr tag (release 0.20.7: the concurrency mode default, drafter-r2-ht4); the bench report name
+ENGINE_VERSION=0.21.0                          # the ghcr tag (bumped 0.20.7→0.21.0 on 2026-11-27; the 0.20.7 facts: the concurrency mode default, drafter-r2-ht4 — to be re-verified live); the bench report name
 ENGINE_IMAGE="${LCTL_IMAGE:-ghcr.io/peonist-ai/halogen-flash-server:${ENGINE_VERSION}}"
 ENGINE_PORT_DEFAULT=11435                      # the Round 6 «единый порт» — as gufo/hipfire: a LAN client keeps one base_url across switch
 ENGINE_CONTAINER=halogen_halogen_1             # <project>_<service>_<n> podman-compose (the halogen project, the halogen service)

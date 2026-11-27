@@ -1,4 +1,4 @@
-# 4.2 watch W3 — фикстура /metrics hipfire (формат живого тела 0.4.7:
+# 4.2 watch W3 — фикстура /metrics hipfire (формат живого тела 0.4.8:
 # HELP+TYPE, префикс hipfire_, гистограммы _bucket/_sum/_count — каркасный
 # parse_metrics отбрасывает '#' и _bucket). Числа внутренне согласованы и
 # пинятся selfcheck'ом: кэш 9000/12000 = 75.0% (prompt_tokens_total

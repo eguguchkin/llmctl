@@ -14,7 +14,7 @@ ADAPTER_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # @type /^[\w./:-]+$/ ENGINE_IMAGE — the version pin: the image tag = ENGINE_VERSION
 #   (not latest: the R-4 drift risk of task 3.1 is removed — the image changes
 #   only by an explicit bump)
-ENGINE_VERSION=0.36                            # = the ghcr tag (build 0.36.0, 4a7d8c6; verified live 2026-11-24 podman run --rm + the container); the bench report name, stage 7
+ENGINE_VERSION=0.37                            # = the ghcr tag (bumped 0.36→0.37.0 on 2026-11-27; the old-pin facts: verified live 2026-11-24; the live re-verification runs in the update window); the bench report name, stage 7
 ENGINE_IMAGE="${LCTL_IMAGE:-ghcr.io/gufo-org/toolboxes/gufo-runtime:${ENGINE_VERSION}}"
 ENGINE_PORT_DEFAULT=11435                     # the PORT default before reading the canon (D2); Round 6 «единый порт» — 11435 for BOTH engines (2026-11-24, was 8080): a LAN client keeps one base_url across switch
 ENGINE_CONTAINER=gufo_gufo_1                  # the server container <project>_<service>_<n>

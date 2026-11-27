@@ -700,7 +700,7 @@ scen_n6_purge() {
   [ "$rc" = 0 ] \
     && [ ! -e "$LCTL_TEST_STACK/.data/hipfire/models" ] \
     && [ -d "$LCTL_TEST_STACK/.data/hipfire/profiles" ] \
-    && grep -qF 'podman rmi ghcr.io/warpfront/hipfire:0.4.7' "$FAUXLOG" \
+    && grep -qF 'podman rmi ghcr.io/warpfront/hipfire:0.4.8' "$FAUXLOG" \
     && printf '%s' "$out" | grep -q 'модели удалены' \
     && printf '%s' "$out" | grep -q 'образ удалён'
 }
@@ -1736,7 +1736,7 @@ scen_b_gate_loading() {
 }
 
 # B the e2e+rewrite (a FILE-based assert): a healthy faux → the report
-#     written to bench/reports/hipfire-0.4.7-27b.md, the header (the
+#     written to bench/reports/hipfire-0.4.8-27b.md, the header (the
 #     date/engine/version/profile/model/md5/parameters), all the sections,
 #     the И-hygiene (no host), the requests' model = the canon; a repeated
 #     run — a REWRITE (one header, no timestamp copies)
@@ -1744,15 +1744,15 @@ scen_b_e2e_overwrite() {
   new_stack b2e2e
   hf 'set_models_dir 27b; write_stack_files; write_env 27b "$(profile_field 27b 1)"' >/dev/null 2>&1 || return 1
   : > "$TMP/bench-body.log"
-  local out rc report="$LCTL_TEST_STACK/bench/reports/hipfire-0.4.7-27b.md"
+  local out rc report="$LCTL_TEST_STACK/bench/reports/hipfire-0.4.8-27b.md"
   out=$(LCTL_FAUX_BENCH_BODY="$TMP/bench-body.log" LCTL_TEST_PATH="$FAUX_BENCH:$PATH" \
     hf 'cmd_bench --runs 1' 2>&1); rc=$?
   [ "$rc" = 0 ] || return 1
   [ -f "$report" ] || return 1
   printf '%s' "$out" | grep -q 'отчёт: ' || return 1
   printf '%s' "$out" | grep -q 'кратко: ' || return 1
-  grep -q '^# bench hipfire 0.4.7 — профиль 27b$' "$report" || return 1
-  grep -q 'движок: hipfire (версия 0.4.7)' "$report" || return 1
+  grep -q '^# bench hipfire 0.4.8 — профиль 27b$' "$report" || return 1
+  grep -q 'движок: hipfire (версия 0.4.8)' "$report" || return 1
   grep -q 'профиль: 27b | модель: qwen3.8:27b-mq4-xts' "$report" || return 1
   grep -q 'md5 253c7ac50857fe6d0e10fb0d2c5e35c0' "$report" || return 1
   grep -q 'параметры: runs=1, parallel=2,4' "$report" || return 1
@@ -1776,7 +1776,7 @@ scen_b_e2e_overwrite() {
   [ -f "${report%.md}.json" ] || return 1
   printf '%s' "$out" | grep -q 'матрица: ' || return 1
   grep -q '^# bench matrix' "$LCTL_TEST_STACK/bench/MATRIX.md" || return 1
-  grep -q '^| hipfire 0.4.7 ' "$LCTL_TEST_STACK/bench/MATRIX.md" || return 1   # комбинация в матрице
+  grep -q '^| hipfire 0.4.8 ' "$LCTL_TEST_STACK/bench/MATRIX.md" || return 1   # комбинация в матрице
   [ "$(grep -c '^# bench matrix' "$LCTL_TEST_STACK/bench/MATRIX.md")" = 1 ] || return 1
   return 0
 }
@@ -1796,7 +1796,7 @@ scen_b_md5_warn() {
   out=$(LCTL_TREE="$tree" LCTL_TEST_PATH="$FAUX_BENCH:$PATH" hf 'cmd_bench --runs 1' 2>&1); rc=$?
   [ "$rc" = 0 ] \
     && printf '%s' "$out" | grep -q 'сравнимость замеров под вопросом' \
-    && [ -f "$LCTL_TEST_STACK/bench/reports/hipfire-0.4.7-27b.md" ]
+    && [ -f "$LCTL_TEST_STACK/bench/reports/hipfire-0.4.8-27b.md" ]
 }
 
 # B the model (the engine_bench_model hook, the gufo dialect): the
@@ -1820,9 +1820,9 @@ scen_b_model_hook() {
   [ "$rc" = 0 ] || return 1
   grep -q 'qwen3.8-27b-IQ4_XS-pure' "$TMP/bench-body.log" || return 1   # имя из load_completed
   ! grep -q '\.gguf' "$TMP/bench-body.log" || return 1                  # НЕ имя gguf (LCTL_MODEL)
-  grep -q 'gen_avg: 20' "$LCTL_TEST_STACK/bench/reports/gufo-0.36-27b.md" || return 1
-  grep -q 'route_spec: dflash2' "$LCTL_TEST_STACK/bench/reports/gufo-0.36-27b.md" || return 1
-  ! grep -q 'не выполнен' "$LCTL_TEST_STACK/bench/reports/gufo-0.36-27b.md" || return 1   # полный прогон gufo (T1-класс)
+  grep -q 'gen_avg: 20' "$LCTL_TEST_STACK/bench/reports/gufo-0.37-27b.md" || return 1
+  grep -q 'route_spec: dflash2' "$LCTL_TEST_STACK/bench/reports/gufo-0.37-27b.md" || return 1
+  ! grep -q 'не выполнен' "$LCTL_TEST_STACK/bench/reports/gufo-0.37-27b.md" || return 1   # полный прогон gufo (T1-класс)
   ! grep -q 'bench_run:' <<<"$out" || return 1
 }
 
@@ -1842,7 +1842,7 @@ scen_b_version_guard() {
 scen_b_deadline() {
   new_stack b4dl
   hf 'set_models_dir 27b; write_stack_files; write_env 27b "$(profile_field 27b 1)"' >/dev/null 2>&1 || return 1
-  local out rc report="$LCTL_TEST_STACK/bench/reports/hipfire-0.4.7-27b.md"
+  local out rc report="$LCTL_TEST_STACK/bench/reports/hipfire-0.4.8-27b.md"
   out=$(LCTL_BENCH_MAX_S=0 LCTL_TEST_PATH="$FAUX_BENCH:$PATH" hf 'cmd_bench --runs 1' 2>&1); rc=$?
   [ "$rc" = 0 ] || return 1
   [ -f "$report" ] || return 1
@@ -1920,9 +1920,9 @@ if scen_b_flags; then ok "B0: флаги — --runs abc/0/21, --parallel 9/2,x, 
 if scen_b_gate_noenv; then ok "B1: .env нет → die «стек не установлен — сначала 'lctl start'»"; else bad "B1 гейт no-env"; fi
 if scen_b_gate_dead; then ok "B1: health-отказ → die «стек не поднят…», ноль запросов генерации"; else bad "B1 гейт dead"; fi
 if scen_b_gate_loading; then ok "B1: loading_model → die «модель ещё грузится» (БЕЗ ожидания — bench не виснет молча)"; else bad "B1 гейт loading"; fi
-if scen_b_e2e_overwrite; then ok "B2: e2e на faux — отчёт hipfire-0.4.7-27b.md (+ .json-снапшот + bench/MATRIX.md с комбинацией), шапка/4 секции/extras/гигиена-без-хоста, модель=канон, повторный прогон ПЕРЕЗАПИСЫВАЕТ"; else bad "B2 e2e+перепись"; fi
+if scen_b_e2e_overwrite; then ok "B2: e2e на faux — отчёт hipfire-0.4.8-27b.md (+ .json-снапшот + bench/MATRIX.md с комбинацией), шапка/4 секции/extras/гигиена-без-хоста, модель=канон, повторный прогон ПЕРЕЗАПИСЫВАЕТ"; else bad "B2 e2e+перепись"; fi
 if scen_b_md5_warn; then ok "B3: битая фикстура (копия дерева) → WARN «сравнимость под вопросом», прогон дошёл до отчёта"; else bad "B3 md5-гейт"; fi
-if scen_b_model_hook; then ok "B3: gufo-хуки — запросы с именем из load_completed (НЕ gguf), extras gen_avg/route_spec в отчёте gufo-0.36-27b.md"; else bad "B3 bench-хуки gufo"; fi
+if scen_b_model_hook; then ok "B3: gufo-хуки — запросы с именем из load_completed (НЕ gguf), extras gen_avg/route_spec в отчёте gufo-0.37-27b.md"; else bad "B3 bench-хуки gufo"; fi
 if scen_b_version_guard; then ok "B3: ENGINE_VERSION вне ^[A-Za-z0-9._-]+$ → die (версия идёт в имя отчёта)"; else bad "B3 версия-гвард"; fi
 if scen_b_deadline; then ok "B4: LCTL_BENCH_MAX_S=0 → rc 0, отчёт с «ПРОГОН ОБОРВАН», секции «не выполнен», замеров нет"; else bad "B4 дедлайн"; fi
 if scen_b_golden_snapshot; then ok "B5: golden-снапшот bench_report.py — байт-в-байт (дата из env — детерминизм)"; else bad "B5 golden-снапшот"; fi

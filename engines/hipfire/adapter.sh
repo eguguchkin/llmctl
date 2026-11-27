@@ -9,9 +9,9 @@
 
 ENGINE=hipfire
 ADAPTER_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-# @type /^[\w./-]+:[\w.-]+$/ ENGINE_IMAGE="ghcr.io/warpfront/hipfire:0.4.7"  # a tagged ghcr image; the override — the env LCTL_IMAGE
-ENGINE_IMAGE="${LCTL_IMAGE:-ghcr.io/warpfront/hipfire:0.4.7}"
-ENGINE_VERSION=0.4.7                           # the BUILD version (= the pin; the bench report name, stage 7; verifying the fact — a live-window EXP)
+# @type /^[\w./-]+:[\w.-]+$/ ENGINE_IMAGE="ghcr.io/warpfront/hipfire:0.4.8"  # a tagged ghcr image; the override — the env LCTL_IMAGE
+ENGINE_IMAGE="${LCTL_IMAGE:-ghcr.io/warpfront/hipfire:0.4.8}"
+ENGINE_VERSION=0.4.8                           # the BUILD version (bumped 0.4.7→0.4.8 on 2026-11-27; retired engine — the adapter kept current; the bench report name, stage 7)
 ENGINE_PORT_DEFAULT=11435                     # the PORT default before reading the canon
 ENGINE_CONTAINER=hipfire_hipfire_1            # the server container <project>_<service>_<n>
 ENGINE_POD=pod_hipfire                        # the project pod (the pristine check)

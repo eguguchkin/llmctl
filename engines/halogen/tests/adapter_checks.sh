@@ -46,7 +46,7 @@ scen_h1_registry() {
   [ "$out" = "qwen38-flash-next-v2.hgn|qwen38-flash-next-drafter-r2-ht4.hgn|qwen38-flash-next-vision.hgn" ] || return 1
   # the contract globals: the image pin = the version (not latest), a fail-pattern set
   out=$(LCTL_TEST_ENGINE=halogen hf 'echo "$ENGINE_VERSION|$ENGINE_IMAGE|$ENGINE_HEALTH_PATH|$ENGINE_FAIL_PATTERN"') || return 1
-  [ "$out" = "0.20.7|ghcr.io/peonist-ai/halogen-flash-server:0.20.7|/health|fatal|refusing" ] || return 1
+  [ "$out" = "0.21.0|ghcr.io/peonist-ai/halogen-flash-server:0.21.0|/health|fatal|refusing" ] || return 1
   return 0
 }
 
@@ -94,7 +94,7 @@ scen_h3_compose() {
   # vision off: the sidecar not downloaded → an empty VISION_TOWER (a text-only raise)
   out=$(LCTL_TEST_ENGINE=halogen hf 'set_models_dir flash; halogen_render_compose flash; cat "$STACK_DIR/compose.yml"' 2>&1) || return 1
   printf '%s' "$out" | grep -qF 'name: halogen' || return 1
-  printf '%s' "$out" | grep -qF 'ghcr.io/peonist-ai/halogen-flash-server:0.20.7' || return 1
+  printf '%s' "$out" | grep -qF 'ghcr.io/peonist-ai/halogen-flash-server:0.21.0' || return 1
   printf '%s' "$out" | grep -qF 'HALOGEN_API_PORT: "11435"' || return 1   # fix:halogen-api-port — фронт внутри = внешнему (иначе health ведёт в пустоту)
   printf '%s' "$out" | grep -qF 'HALOGEN_CHECKPOINT: "/models/qwen38-flash-next-v2.hgn"' || return 1
   printf '%s' "$out" | grep -qF 'HALOGEN_MODEL_ID: "qwen3.8-flash-next"' || return 1
@@ -124,7 +124,7 @@ scen_h4_env() {
   printf '%s' "$out" | grep -qF 'LCTL_PROFILE=flash' || return 1
   printf '%s' "$out" | grep -qF 'LCTL_MODEL=qwen38-flash-next-v2.hgn' || return 1
   printf '%s' "$out" | grep -qF 'HALOGEN_MODELS=' || return 1
-  printf '%s' "$out" | grep -qF 'HALOGEN_IMAGE=ghcr.io/peonist-ai/halogen-flash-server:0.20.7' || return 1
+  printf '%s' "$out" | grep -qF 'HALOGEN_IMAGE=ghcr.io/peonist-ai/halogen-flash-server:0.21.0' || return 1
   return 0
 }
 
@@ -136,16 +136,16 @@ scen_h5_health() {
   LCTL_TEST_ENGINE=halogen hf 'printf "" | engine_health_ok' >/dev/null 2>&1 && return 1
   # route-info: the JSON /health + /v1/models + /slots → a line with the version/slots/ctx/vision
   out=$(LCTL_TEST_ENGINE=halogen LCTL_TEST_PATH="$FAUX_HAL:$PATH" hf 'halogen_route_info' 2>&1) || return 1
-  printf '%s' "$out" | grep -qF 'роут: halogen 0.20.7, slots 2, ctx 262144, vision on, вход: text,image' || return 1
-  # a nested version (the live /health 0.20.7: version.engine) — not a dict-repr in the line
-  printf '{"status":"ok","version":{"api":"0.20.7","engine":"0.20.7"},"vision":{"enabled":true}}' > "$TMP/hal-health-nested.json"
+  printf '%s' "$out" | grep -qF 'роут: halogen 0.21.0, slots 2, ctx 262144, vision on, вход: text,image' || return 1
+  # a nested version (the live /health 0.21.0: version.engine) — not a dict-repr in the line
+  printf '{"status":"ok","version":{"api":"0.21.0","engine":"0.21.0"},"vision":{"enabled":true}}' > "$TMP/hal-health-nested.json"
   LCTL_FAUX_HAL_HEALTH_BODY="$TMP/hal-health-nested.json" \
     out=$(LCTL_TEST_ENGINE=halogen LCTL_TEST_PATH="$FAUX_HAL:$PATH" hf 'halogen_route_info' 2>&1) || return 1
-  printf '%s' "$out" | grep -qF 'роут: halogen 0.20.7,' || return 1
+  printf '%s' "$out" | grep -qF 'роут: halogen 0.21.0,' || return 1
   printf '%s' "$out" | grep -qF "'api'" && return 1   # dict-repr не просочился
   # engine_check_route: printing without die
   out=$(LCTL_TEST_ENGINE=halogen LCTL_TEST_PATH="$FAUX_HAL:$PATH" hf 'engine_check_route flash' 2>&1) || return 1
-  printf '%s' "$out" | grep -qF 'роут: halogen 0.20.7' || return 1
+  printf '%s' "$out" | grep -qF 'роут: halogen 0.21.0' || return 1
   # the server not answering → a warn, not die
   out=$(LCTL_TEST_ENGINE=halogen LCTL_FAUX_CURL_FAILALL=1 LCTL_TEST_PATH="$FAUX_HAL:$PATH" hf 'engine_check_route flash' 2>&1); rc=$?
   [ "$rc" = 0 ] && printf '%s' "$out" | grep -qF 'роут недоступен' || return 1
@@ -208,7 +208,7 @@ scen_h7_bench() {
   printf '%s\n' "$out" | python3 -c '
 import json, sys
 d = json.load(sys.stdin)
-assert d["route_spec"] == "halogen 0.20.7", d
+assert d["route_spec"] == "halogen 0.21.0", d
 assert d["slots"] == 2 and d["context"] == 262144, d
 assert d["requests_total"] == 42, d
 assert d["cache_hits_total"] == 30 and d["cache_misses_total"] == 10, d
@@ -392,7 +392,7 @@ ADAPTER_FUNCS+=" halogen_scenarios"
 halogen_scenarios() {
   # on LCTL_HDBG=1 a failed scenario is re-run with an output tail (stderr)
   local _d=${LCTL_HDBG:-}
-  if scen_h1_registry; then ok "H1: реестр halogen — профиль один (flash), алиасы, поля 1-9 (гейт 110, KV_SLOTS 4, ctx 262144, поле 9 '-'), 10 файлов поля 2, канон qwen3.8-flash-next, пины (сумма 120297030276), пин образа = 0.20.7"; else bad "H1 реестр/пины"; [ -n "$_d" ] && scen_h1_registry 2>&1 | tail -20 >&2; fi
+  if scen_h1_registry; then ok "H1: реестр halogen — профиль один (flash), алиасы, поля 1-9 (гейт 110, KV_SLOTS 4, ctx 262144, поле 9 '-'), 10 файлов поля 2, канон qwen3.8-flash-next, пины (сумма 120297030276), пин образа = 0.21.0"; else bad "H1 реестр/пины"; [ -n "$_d" ] && scen_h1_registry 2>&1 | tail -20 >&2; fi
   if scen_h2_pins_download; then ok "H2: доставка — file:// PASS sha, SKIP по размеру, tokenizer/ dirname pre-flight'ом, SHA-MISMATCH с удалением, pull по имени (unknown → die)"; else bad "H2 доставка"; [ -n "$_d" ] && scen_h2_pins_download 2>&1 | tail -15 >&2; fi
   if scen_h3_compose; then ok "H3: compose-золотой — name: halogen, env-литералы (CHECKPOINT/MODEL_ID/KV_SLOTS), порт 11435:11435, /models:ro, vision off→пусто/on→\"1\" (файл на диске), детерминизм, target-каталог (этап 8)"; else bad "H3 compose-рендер"; [ -n "$_d" ] && scen_h3_compose 2>&1 | tail -15 >&2; fi
   if scen_h4_env; then ok "H4: env-рендер — LCTL_* канон + HALOGEN_* display (MODELS/IMAGE)"; else bad "H4 env"; fi

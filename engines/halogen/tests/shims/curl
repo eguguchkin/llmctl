@@ -5,7 +5,7 @@ case "$*" in
   *"/health"*)
     [ "${LCTL_FAUX_CURL_FAILALL:-0}" = 1 ] && exit 7
     if [ -n "${LCTL_FAUX_HAL_HEALTH_BODY:-}" ]; then cat "$LCTL_FAUX_HAL_HEALTH_BODY"; else
-      printf '{"status":"ok","engine_version":"0.20.7","api_version":"0.20.7","vision":{"enabled":true},"max_tokens_default":8192}'
+      printf '{"status":"ok","engine_version":"0.21.0","api_version":"0.21.0","vision":{"enabled":true},"max_tokens_default":8192}'
     fi
     exit 0 ;;
   *"/v1/models"*)
