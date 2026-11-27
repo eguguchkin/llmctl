@@ -1,0 +1,2303 @@
+{
+ "extras": {
+  "cache_pct": 83.32,
+  "device_lost": 0,
+  "gen_avg": 24.51,
+  "gen_last": 44.82,
+  "kv_pct": 0,
+  "kv_peak": 25277,
+  "metrics_note": "cumulative counters since server start; производные «средн» — Σтокены/Σвремя прогона (ratio-of-sums)",
+  "prefill_avg": 501.38,
+  "prefill_last": 64.12,
+  "q_def": 0,
+  "q_proc": 0,
+  "route_ctx": "210000",
+  "route_sessions": "2",
+  "route_spec": "dflash2",
+  "spec_pct": 43.9,
+  "tau": 1.6,
+  "tok_cached": 127264,
+  "tok_pred": 2431,
+  "tok_prompt": 25474
+ },
+ "followup": [
+  {
+   "completion_tokens": 128,
+   "error": null,
+   "k": 25,
+   "prompt_tokens": 25094,
+   "scenario": "followup",
+   "timings": {
+    "cache_disk_enqueue_ms": 6.03659,
+    "cache_n": 0,
+    "cache_restore_ms": 0,
+    "cache_snapshot_ms": 51.024936999999994,
+    "component_cache": {
+     "borrowed_capacity_bytes": 1627389952,
+     "captured_capacity_bytes": 2881159168,
+     "captured_checkpoint_ids": [
+      11731,
+      12500,
+      13269,
+      14038,
+      14807
+     ],
+     "captures": 5,
+     "copied_payload_bytes": 1244468320,
+     "deepest_disk_tokens": 0,
+     "deepest_live_tokens": 0,
+     "deepest_ram_tokens": 0,
+     "global_categories": {
+      "backing_assigned": {
+       "bytes": 1627389952,
+       "peak_bytes": 1627389952,
+       "reserved_bytes": 1627389952
+      },
+      "backing_free": {
+       "bytes": 267911168,
+       "peak_bytes": 2147483648,
+       "reserved_bytes": 0
+      },
+      "backing_materialized": {
+       "bytes": 1342177280,
+       "peak_bytes": 1358954496,
+       "reserved_bytes": 0
+      },
+      "metadata": {
+       "bytes": 1039943002,
+       "peak_bytes": 1042576446,
+       "reserved_bytes": 0
+      },
+      "private_state": {
+       "bytes": 7916748800,
+       "peak_bytes": 10390732800,
+       "reserved_bytes": 0
+      },
+      "private_tail": {
+       "bytes": 260046848,
+       "peak_bytes": 329252864,
+       "reserved_bytes": 0
+      },
+      "transfer_staging": {
+       "bytes": 8388608,
+       "peak_bytes": 8388608,
+       "reserved_bytes": 0
+      }
+     },
+     "global_ledger_bytes": 12462605658,
+     "global_peak_ledger_bytes": 12465239102,
+     "global_peak_persistence_pinned_bytes": 2564685824,
+     "global_peak_ram_bytes": 12456850494,
+     "global_persistence": {
+      "accepted_jobs": 31,
+      "checksum_ms": 1349.872981,
+      "coalesced_jobs": 0,
+      "failed_jobs": 0,
+      "filesystem_ms": 4566.759172,
+      "fsync_ms": 11675.794928,
+      "peak_pending_jobs": 8,
+      "peak_pinned_source_capacity_bytes": 5464653824,
+      "pending_jobs": 0,
+      "pinned_source_capacity_bytes": 0,
+      "published_jobs": 23,
+      "skipped_jobs": 0,
+      "superseded_jobs": 8,
+      "transferred_bytes": 8774075424,
+      "yield_ms": 8805.329653
+     },
+     "global_persistence_pinned_bytes": 0,
+     "global_ram_bytes": 12454217050,
+     "global_spill": {
+      "foreground_bytes": 0,
+      "foreground_copy_ms": 0,
+      "idle_bytes": 1375731712,
+      "idle_copy_ms": 63.060498,
+      "idle_failures": 0,
+      "reassignments": 13,
+      "residual_wait_ms": 2.956965,
+      "stream_wait_ms": 0.447642
+     },
+     "prefilled_tokens": 25094,
+     "remapped_bytes": 0,
+     "restored_bytes": 0,
+     "reuse": "none",
+     "schema": "component-cache-v1",
+     "selected_tokens": 0,
+     "selection_reason": 6,
+     "shared_payload_bytes": 0
+    },
+    "draft_n": 167,
+    "draft_n_accepted": 93,
+    "draft_rounds": 33,
+    "predicted_ms": 3873.7388559999995,
+    "predicted_n": 128,
+    "predicted_per_second": 33.04301212812576,
+    "predicted_per_token_ms": 30.263584812499996,
+    "prompt_ms": 46609.13065,
+    "prompt_n": 25094,
+    "prompt_per_second": 538.3923632568333,
+    "prompt_per_token_ms": 1.8573814716665338
+   },
+   "tok_s": 2.53,
+   "turn": 1,
+   "wall_s": 50.55
+  },
+  {
+   "completion_tokens": 33,
+   "error": null,
+   "k": 25,
+   "prompt_tokens": 25244,
+   "scenario": "followup",
+   "timings": {
+    "cache_disk_enqueue_ms": 0.854232,
+    "cache_n": 25221,
+    "cache_restore_ms": 0,
+    "cache_snapshot_ms": 17.078046,
+    "component_cache": {
+     "borrowed_capacity_bytes": 16777216,
+     "captured_capacity_bytes": 532545536,
+     "captured_checkpoint_ids": [
+      14906,
+      14939
+     ],
+     "captures": 2,
+     "copied_payload_bytes": 511091136,
+     "deepest_disk_tokens": 0,
+     "deepest_live_tokens": 25221,
+     "deepest_ram_tokens": 25087,
+     "global_categories": {
+      "backing_assigned": {
+       "bytes": 1235746816,
+       "peak_bytes": 1627389952,
+       "reserved_bytes": 1235746816
+      },
+      "backing_free": {
+       "bytes": 492240896,
+       "peak_bytes": 2147483648,
+       "reserved_bytes": 0
+      },
+      "backing_materialized": {
+       "bytes": 1750597632,
+       "peak_bytes": 1750597632,
+       "reserved_bytes": 0
+      },
+      "metadata": {
+       "bytes": 1040430880,
+       "peak_bytes": 1042576446,
+       "reserved_bytes": 0
+      },
+      "private_state": {
+       "bytes": 7669350400,
+       "peak_bytes": 10390732800,
+       "reserved_bytes": 0
+      },
+      "private_tail": {
+       "bytes": 266338304,
+       "peak_bytes": 329252864,
+       "reserved_bytes": 0
+      },
+      "transfer_staging": {
+       "bytes": 8388608,
+       "peak_bytes": 8388608,
+       "reserved_bytes": 0
+      }
+     },
+     "global_ledger_bytes": 12463093536,
+     "global_peak_ledger_bytes": 12465239102,
+     "global_peak_persistence_pinned_bytes": 2564685824,
+     "global_peak_ram_bytes": 12456850494,
+     "global_persistence": {
+      "accepted_jobs": 32,
+      "checksum_ms": 1438.239373,
+      "coalesced_jobs": 0,
+      "failed_jobs": 0,
+      "filesystem_ms": 4936.740874,
+      "fsync_ms": 11717.599991,
+      "peak_pending_jobs": 8,
+      "peak_pinned_source_capacity_bytes": 5464653824,
+      "pending_jobs": 0,
+      "pinned_source_capacity_bytes": 0,
+      "published_jobs": 24,
+      "skipped_jobs": 0,
+      "superseded_jobs": 8,
+      "transferred_bytes": 9019626752,
+      "yield_ms": 9302.663143
+     },
+     "global_persistence_pinned_bytes": 0,
+     "global_ram_bytes": 12454704928,
+     "global_spill": {
+      "foreground_bytes": 0,
+      "foreground_copy_ms": 0,
+      "idle_bytes": 1784152064,
+      "idle_copy_ms": 78.553656,
+      "idle_failures": 0,
+      "reassignments": 13,
+      "residual_wait_ms": 2.956965,
+      "stream_wait_ms": 0.557163
+     },
+     "prefilled_tokens": 23,
+     "remapped_bytes": 0,
+     "restored_bytes": 0,
+     "reuse": "live",
+     "schema": "component-cache-v1",
+     "selected_tokens": 25221,
+     "selection_reason": 0,
+     "shared_payload_bytes": 0
+    },
+    "draft_n": 61,
+    "draft_n_accepted": 18,
+    "draft_rounds": 15,
+    "predicted_ms": 1619.3154110000003,
+    "predicted_n": 33,
+    "predicted_per_second": 20.37898223893331,
+    "predicted_per_token_ms": 49.07016396969698,
+    "prompt_ms": 358.675488,
+    "prompt_n": 23,
+    "prompt_per_second": 64.1248169152836,
+    "prompt_per_token_ms": 15.594586434782608
+   },
+   "tok_s": 16.37,
+   "turn": 2,
+   "wall_s": 2.015
+  }
+ ],
+ "meta": {
+  "date": "2026-11-27T20:48:37+0300",
+  "engine": "gufo",
+  "fixture_md5": "253c7ac50857fe6d0e10fb0d2c5e35c0",
+  "model": "qwen3.8-27b",
+  "params": "runs=1, parallel=2,4",
+  "profile": "27b-parallel",
+  "truncated": false,
+  "version": "0.36"
+ },
+ "parallel": [
+  {
+   "agg_tok_s": 29.14,
+   "completion_tokens": 455,
+   "error": null,
+   "fails": 0,
+   "n": 2,
+   "prompt_tokens": null,
+   "scenario": "parallel",
+   "sum_completion_tokens": 455,
+   "timings": null,
+   "tok_s": null,
+   "wall_s": 15.613,
+   "walls_s": [
+    15.61,
+    3.4
+   ]
+  },
+  {
+   "agg_tok_s": 43.14,
+   "completion_tokens": 910,
+   "error": null,
+   "fails": 0,
+   "n": 4,
+   "prompt_tokens": null,
+   "scenario": "parallel",
+   "sum_completion_tokens": 910,
+   "timings": null,
+   "tok_s": null,
+   "wall_s": 21.095,
+   "walls_s": [
+    17.62,
+    21.09,
+    17.62,
+    21.09
+   ]
+  }
+ ],
+ "prose": [
+  {
+   "completion_tokens": 400,
+   "error": null,
+   "prompt_tokens": 25,
+   "run": 1,
+   "scenario": "prose",
+   "timings": {
+    "cache_disk_enqueue_ms": 0.09136,
+    "cache_n": 25,
+    "cache_restore_ms": 61.615658,
+    "cache_snapshot_ms": 45.498763,
+    "component_cache": {
+     "borrowed_capacity_bytes": 0,
+     "captured_capacity_bytes": 249495552,
+     "captured_checkpoint_ids": [
+      9090
+     ],
+     "captures": 1,
+     "copied_payload_bytes": 247189728,
+     "deepest_disk_tokens": 25,
+     "deepest_live_tokens": 0,
+     "deepest_ram_tokens": 0,
+     "global_categories": {
+      "backing_assigned": {
+       "bytes": 0,
+       "peak_bytes": 16777216,
+       "reserved_bytes": 0
+      },
+      "backing_free": {
+       "bytes": 256901120,
+       "peak_bytes": 2147483648,
+       "reserved_bytes": 0
+      },
+      "backing_materialized": {
+       "bytes": 16777216,
+       "peak_bytes": 16777216,
+       "reserved_bytes": 0
+      },
+      "metadata": {
+       "bytes": 1028868482,
+       "peak_bytes": 1029021428,
+       "reserved_bytes": 0
+      },
+      "private_state": {
+       "bytes": 3958374400,
+       "peak_bytes": 3958374400,
+       "reserved_bytes": 0
+      },
+      "private_tail": {
+       "bytes": 62914560,
+       "peak_bytes": 62914560,
+       "reserved_bytes": 0
+      },
+      "transfer_staging": {
+       "bytes": 8388608,
+       "peak_bytes": 8388608,
+       "reserved_bytes": 0
+      }
+     },
+     "global_ledger_bytes": 5332224386,
+     "global_peak_ledger_bytes": 5332377332,
+     "global_peak_persistence_pinned_bytes": 1021050880,
+     "global_peak_ram_bytes": 5323988724,
+     "global_persistence": {
+      "accepted_jobs": 8,
+      "checksum_ms": 254.561469,
+      "coalesced_jobs": 0,
+      "failed_jobs": 0,
+      "filesystem_ms": 596.742445,
+      "fsync_ms": 361.473364,
+      "peak_pending_jobs": 4,
+      "peak_pinned_source_capacity_bytes": 1021050880,
+      "pending_jobs": 0,
+      "pinned_source_capacity_bytes": 0,
+      "published_jobs": 8,
+      "skipped_jobs": 0,
+      "superseded_jobs": 0,
+      "transferred_bytes": 2012055296,
+      "yield_ms": 2228.750947
+     },
+     "global_persistence_pinned_bytes": 0,
+     "global_ram_bytes": 5323835778,
+     "global_spill": {
+      "foreground_bytes": 0,
+      "foreground_copy_ms": 0,
+      "idle_bytes": 16777216,
+      "idle_copy_ms": 2.361361,
+      "idle_failures": 0,
+      "reassignments": 9,
+      "residual_wait_ms": 2.45163,
+      "stream_wait_ms": 0.021761
+     },
+     "prefilled_tokens": 0,
+     "remapped_bytes": 0,
+     "restored_bytes": 247189728,
+     "reuse": "disk",
+     "schema": "component-cache-v1",
+     "selected_tokens": 25,
+     "selection_reason": 2,
+     "shared_payload_bytes": 0
+    },
+    "draft_n": 712,
+    "draft_n_accepted": 185,
+    "draft_rounds": 214,
+    "predicted_ms": 19426.399227,
+    "predicted_n": 400,
+    "predicted_per_second": 20.590537408705956,
+    "predicted_per_token_ms": 48.565998067500004,
+    "prompt_ms": 0,
+    "prompt_n": 0,
+    "prompt_per_second": 0,
+    "prompt_per_token_ms": 0
+   },
+   "tok_s": 20.46,
+   "wall_s": 19.547
+  }
+ ],
+ "session": [
+  {
+   "completion_tokens": 32,
+   "error": null,
+   "prompt_tokens": 6419,
+   "scenario": "session",
+   "timings": {
+    "cache_disk_enqueue_ms": 0.156169,
+    "cache_n": 6419,
+    "cache_restore_ms": 239.813642,
+    "cache_snapshot_ms": 7.450777,
+    "component_cache": {
+     "borrowed_capacity_bytes": 419430400,
+     "captured_capacity_bytes": 668925952,
+     "captured_checkpoint_ids": [
+      9125
+     ],
+     "captures": 1,
+     "copied_payload_bytes": 246796512,
+     "deepest_disk_tokens": 6419,
+     "deepest_live_tokens": 0,
+     "deepest_ram_tokens": 0,
+     "global_categories": {
+      "backing_assigned": {
+       "bytes": 419430400,
+       "peak_bytes": 419430400,
+       "reserved_bytes": 419430400
+      },
+      "backing_free": {
+       "bytes": 116523008,
+       "peak_bytes": 2147483648,
+       "reserved_bytes": 0
+      },
+      "backing_materialized": {
+       "bytes": 33554432,
+       "peak_bytes": 33554432,
+       "reserved_bytes": 0
+      },
+      "metadata": {
+       "bytes": 1029978238,
+       "peak_bytes": 1030163080,
+       "reserved_bytes": 113832
+      },
+      "private_state": {
+       "bytes": 4453171200,
+       "peak_bytes": 4453171200,
+       "reserved_bytes": 0
+      },
+      "private_tail": {
+       "bytes": 77594624,
+       "peak_bytes": 77594624,
+       "reserved_bytes": 0
+      },
+      "transfer_staging": {
+       "bytes": 8388608,
+       "peak_bytes": 8388608,
+       "reserved_bytes": 0
+      }
+     },
+     "global_ledger_bytes": 6138640510,
+     "global_peak_ledger_bytes": 6138825352,
+     "global_peak_persistence_pinned_bytes": 1021050880,
+     "global_peak_ram_bytes": 6130436744,
+     "global_persistence": {
+      "accepted_jobs": 9,
+      "checksum_ms": 254.561469,
+      "coalesced_jobs": 0,
+      "failed_jobs": 0,
+      "filesystem_ms": 596.742445,
+      "fsync_ms": 361.473364,
+      "peak_pending_jobs": 4,
+      "peak_pinned_source_capacity_bytes": 1021050880,
+      "pending_jobs": 1,
+      "pinned_source_capacity_bytes": 276758528,
+      "published_jobs": 8,
+      "skipped_jobs": 0,
+      "superseded_jobs": 0,
+      "transferred_bytes": 2012055296,
+      "yield_ms": 2228.750947
+     },
+     "global_persistence_pinned_bytes": 276758528,
+     "global_ram_bytes": 6130251902,
+     "global_spill": {
+      "foreground_bytes": 0,
+      "foreground_copy_ms": 0,
+      "idle_bytes": 33554432,
+      "idle_copy_ms": 3.17749,
+      "idle_failures": 0,
+      "reassignments": 10,
+      "residual_wait_ms": 2.526558,
+      "stream_wait_ms": 0.029216
+     },
+     "prefilled_tokens": 0,
+     "remapped_bytes": 0,
+     "restored_bytes": 666226912,
+     "reuse": "disk",
+     "schema": "component-cache-v1",
+     "selected_tokens": 6419,
+     "selection_reason": 2,
+     "shared_payload_bytes": 0
+    },
+    "draft_n": 49,
+    "draft_n_accepted": 23,
+    "draft_rounds": 9,
+    "predicted_ms": 975.538901,
+    "predicted_n": 32,
+    "predicted_per_second": 32.802382321399605,
+    "predicted_per_token_ms": 30.48559065625,
+    "prompt_ms": 0,
+    "prompt_n": 0,
+    "prompt_per_second": 0,
+    "prompt_per_token_ms": 0
+   },
+   "tok_s": 25.84,
+   "turn": 1,
+   "wall_s": 1.238
+  },
+  {
+   "completion_tokens": 21,
+   "error": null,
+   "prompt_tokens": 6479,
+   "scenario": "session",
+   "timings": {
+    "cache_disk_enqueue_ms": 0.555599,
+    "cache_n": 6451,
+    "cache_restore_ms": 0,
+    "cache_snapshot_ms": 9.65595,
+    "component_cache": {
+     "borrowed_capacity_bytes": 0,
+     "captured_capacity_bytes": 507379712,
+     "captured_checkpoint_ids": [
+      9927,
+      9928
+     ],
+     "captures": 2,
+     "copied_payload_bytes": 500998592,
+     "deepest_disk_tokens": 6451,
+     "deepest_live_tokens": 6451,
+     "deepest_ram_tokens": 6451,
+     "global_categories": {
+      "backing_assigned": {
+       "bytes": 419430400,
+       "peak_bytes": 419430400,
+       "reserved_bytes": 419430400
+      },
+      "backing_free": {
+       "bytes": 833945600,
+       "peak_bytes": 2147483648,
+       "reserved_bytes": 0
+      },
+      "backing_materialized": {
+       "bytes": 33554432,
+       "peak_bytes": 33554432,
+       "reserved_bytes": 0
+      },
+      "metadata": {
+       "bytes": 1030887496,
+       "peak_bytes": 1031005902,
+       "reserved_bytes": 524544
+      },
+      "private_state": {
+       "bytes": 5195366400,
+       "peak_bytes": 5195366400,
+       "reserved_bytes": 0
+      },
+      "private_tail": {
+       "bytes": 94371840,
+       "peak_bytes": 94371840,
+       "reserved_bytes": 0
+      },
+      "transfer_staging": {
+       "bytes": 8388608,
+       "peak_bytes": 8388608,
+       "reserved_bytes": 0
+      }
+     },
+     "global_ledger_bytes": 7615944776,
+     "global_peak_ledger_bytes": 7616063182,
+     "global_peak_persistence_pinned_bytes": 1021050880,
+     "global_peak_ram_bytes": 7607674574,
+     "global_persistence": {
+      "accepted_jobs": 10,
+      "checksum_ms": 289.088425,
+      "coalesced_jobs": 0,
+      "failed_jobs": 0,
+      "filesystem_ms": 696.937039,
+      "fsync_ms": 1617.124502,
+      "peak_pending_jobs": 4,
+      "peak_pinned_source_capacity_bytes": 1021050880,
+      "pending_jobs": 1,
+      "pinned_source_capacity_bytes": 671023104,
+      "published_jobs": 9,
+      "skipped_jobs": 0,
+      "superseded_jobs": 0,
+      "transferred_bytes": 2285393888,
+      "yield_ms": 2688.838908
+     },
+     "global_persistence_pinned_bytes": 671023104,
+     "global_ram_bytes": 7607556168,
+     "global_spill": {
+      "foreground_bytes": 0,
+      "foreground_copy_ms": 0,
+      "idle_bytes": 33554432,
+      "idle_copy_ms": 3.17749,
+      "idle_failures": 0,
+      "reassignments": 10,
+      "residual_wait_ms": 2.526558,
+      "stream_wait_ms": 0.029216
+     },
+     "prefilled_tokens": 28,
+     "remapped_bytes": 0,
+     "restored_bytes": 0,
+     "reuse": "live",
+     "schema": "component-cache-v1",
+     "selected_tokens": 6451,
+     "selection_reason": 0,
+     "shared_payload_bytes": 0
+    },
+    "draft_n": 36,
+    "draft_n_accepted": 14,
+    "draft_rounds": 7,
+    "predicted_ms": 732.778712,
+    "predicted_n": 21,
+    "predicted_per_second": 28.658037762428883,
+    "predicted_per_token_ms": 34.89422438095238,
+    "prompt_ms": 299.61974899999996,
+    "prompt_n": 28,
+    "prompt_per_second": 93.45178378078144,
+    "prompt_per_token_ms": 10.70070532142857
+   },
+   "tok_s": 18.76,
+   "turn": 2,
+   "wall_s": 1.119
+  },
+  {
+   "completion_tokens": 19,
+   "error": null,
+   "prompt_tokens": 6523,
+   "scenario": "session",
+   "timings": {
+    "cache_disk_enqueue_ms": 0.882444,
+    "cache_n": 6500,
+    "cache_restore_ms": 0,
+    "cache_snapshot_ms": 9.715432,
+    "component_cache": {
+     "borrowed_capacity_bytes": 0,
+     "captured_capacity_bytes": 511574016,
+     "captured_checkpoint_ids": [
+      9930,
+      9931
+     ],
+     "captures": 2,
+     "copied_payload_bytes": 506765760,
+     "deepest_disk_tokens": 6500,
+     "deepest_live_tokens": 6500,
+     "deepest_ram_tokens": 6500,
+     "global_categories": {
+      "backing_assigned": {
+       "bytes": 171966464,
+       "peak_bytes": 419430400,
+       "reserved_bytes": 171966464
+      },
+      "backing_free": {
+       "bytes": 871890944,
+       "peak_bytes": 2147483648,
+       "reserved_bytes": 0
+      },
+      "backing_materialized": {
+       "bytes": 281018368,
+       "peak_bytes": 281018368,
+       "reserved_bytes": 0
+      },
+      "metadata": {
+       "bytes": 1031331242,
+       "peak_bytes": 1031396704,
+       "reserved_bytes": 524544
+      },
+      "private_state": {
+       "bytes": 5937561600,
+       "peak_bytes": 5937561600,
+       "reserved_bytes": 0
+      },
+      "private_tail": {
+       "bytes": 119537664,
+       "peak_bytes": 119537664,
+       "reserved_bytes": 0
+      },
+      "transfer_staging": {
+       "bytes": 8388608,
+       "peak_bytes": 8388608,
+       "reserved_bytes": 0
+      }
+     },
+     "global_ledger_bytes": 8421694890,
+     "global_peak_ledger_bytes": 8421760352,
+     "global_peak_persistence_pinned_bytes": 1021050880,
+     "global_peak_ram_bytes": 8413371744,
+     "global_persistence": {
+      "accepted_jobs": 11,
+      "checksum_ms": 289.088425,
+      "coalesced_jobs": 0,
+      "failed_jobs": 0,
+      "filesystem_ms": 696.937039,
+      "fsync_ms": 1617.124502,
+      "peak_pending_jobs": 4,
+      "peak_pinned_source_capacity_bytes": 1346240512,
+      "pending_jobs": 2,
+      "pinned_source_capacity_bytes": 1346240512,
+      "published_jobs": 9,
+      "skipped_jobs": 0,
+      "superseded_jobs": 0,
+      "transferred_bytes": 2285393888,
+      "yield_ms": 2688.838908
+     },
+     "global_persistence_pinned_bytes": 926810112,
+     "global_ram_bytes": 8413306282,
+     "global_spill": {
+      "foreground_bytes": 0,
+      "foreground_copy_ms": 0,
+      "idle_bytes": 281018368,
+      "idle_copy_ms": 13.397937,
+      "idle_failures": 0,
+      "reassignments": 10,
+      "residual_wait_ms": 2.526558,
+      "stream_wait_ms": 0.106533
+     },
+     "prefilled_tokens": 23,
+     "remapped_bytes": 0,
+     "restored_bytes": 0,
+     "reuse": "live",
+     "schema": "component-cache-v1",
+     "selected_tokens": 6500,
+     "selection_reason": 0,
+     "shared_payload_bytes": 0
+    },
+    "draft_n": 33,
+    "draft_n_accepted": 12,
+    "draft_rounds": 7,
+    "predicted_ms": 702.398654,
+    "predicted_n": 19,
+    "predicted_per_second": 27.05016573109777,
+    "predicted_per_token_ms": 36.96835021052632,
+    "prompt_ms": 289.016405,
+    "prompt_n": 23,
+    "prompt_per_second": 79.58025773658072,
+    "prompt_per_token_ms": 12.565930652173915
+   },
+   "tok_s": 18.65,
+   "turn": 3,
+   "wall_s": 1.019
+  },
+  {
+   "completion_tokens": 24,
+   "error": null,
+   "prompt_tokens": 6572,
+   "scenario": "session",
+   "timings": {
+    "cache_disk_enqueue_ms": 1.212426,
+    "cache_n": 6542,
+    "cache_restore_ms": 0,
+    "cache_snapshot_ms": 10.679746000000002,
+    "component_cache": {
+     "borrowed_capacity_bytes": 0,
+     "captured_capacity_bytes": 519962624,
+     "captured_checkpoint_ids": [
+      9933,
+      9934
+     ],
+     "captures": 2,
+     "copied_payload_bytes": 513188288,
+     "deepest_disk_tokens": 6542,
+     "deepest_live_tokens": 6542,
+     "deepest_ram_tokens": 6542,
+     "global_categories": {
+      "backing_assigned": {
+       "bytes": 0,
+       "peak_bytes": 419430400,
+       "reserved_bytes": 0
+      },
+      "backing_free": {
+       "bytes": 899350528,
+       "peak_bytes": 2147483648,
+       "reserved_bytes": 0
+      },
+      "backing_materialized": {
+       "bytes": 452984832,
+       "peak_bytes": 452984832,
+       "reserved_bytes": 0
+      },
+      "metadata": {
+       "bytes": 1031775784,
+       "peak_bytes": 1031841226,
+       "reserved_bytes": 524544
+      },
+      "private_state": {
+       "bytes": 6679756800,
+       "peak_bytes": 6679756800,
+       "reserved_bytes": 0
+      },
+      "private_tail": {
+       "bytes": 155189248,
+       "peak_bytes": 155189248,
+       "reserved_bytes": 0
+      },
+      "transfer_staging": {
+       "bytes": 8388608,
+       "peak_bytes": 8388608,
+       "reserved_bytes": 0
+      }
+     },
+     "global_ledger_bytes": 9227445800,
+     "global_peak_ledger_bytes": 9227511242,
+     "global_peak_persistence_pinned_bytes": 1184694272,
+     "global_peak_ram_bytes": 9219122634,
+     "global_persistence": {
+      "accepted_jobs": 12,
+      "checksum_ms": 289.088425,
+      "coalesced_jobs": 0,
+      "failed_jobs": 0,
+      "filesystem_ms": 696.937039,
+      "fsync_ms": 1617.124502,
+      "peak_pending_jobs": 4,
+      "peak_pinned_source_capacity_bytes": 2023555072,
+      "pending_jobs": 3,
+      "pinned_source_capacity_bytes": 2023555072,
+      "published_jobs": 9,
+      "skipped_jobs": 0,
+      "superseded_jobs": 0,
+      "transferred_bytes": 2285393888,
+      "yield_ms": 2688.838908
+     },
+     "global_persistence_pinned_bytes": 1184694272,
+     "global_ram_bytes": 9219057192,
+     "global_spill": {
+      "foreground_bytes": 0,
+      "foreground_copy_ms": 0,
+      "idle_bytes": 452984832,
+      "idle_copy_ms": 21.188972,
+      "idle_failures": 0,
+      "reassignments": 10,
+      "residual_wait_ms": 2.526558,
+      "stream_wait_ms": 0.154722
+     },
+     "prefilled_tokens": 30,
+     "remapped_bytes": 0,
+     "restored_bytes": 0,
+     "reuse": "live",
+     "schema": "component-cache-v1",
+     "selected_tokens": 6542,
+     "selection_reason": 0,
+     "shared_payload_bytes": 0
+    },
+    "draft_n": 37,
+    "draft_n_accepted": 17,
+    "draft_rounds": 7,
+    "predicted_ms": 728.7303660000001,
+    "predicted_n": 24,
+    "predicted_per_second": 32.93399193961954,
+    "predicted_per_token_ms": 30.363765250000004,
+    "prompt_ms": 296.289852,
+    "prompt_n": 30,
+    "prompt_per_second": 101.25220218477142,
+    "prompt_per_token_ms": 9.8763284
+   },
+   "tok_s": 22.78,
+   "turn": 4,
+   "wall_s": 1.054
+  },
+  {
+   "completion_tokens": 33,
+   "error": null,
+   "prompt_tokens": 6628,
+   "scenario": "session",
+   "timings": {
+    "cache_disk_enqueue_ms": 1.511158,
+    "cache_n": 6596,
+    "cache_restore_ms": 0,
+    "cache_snapshot_ms": 8.583374,
+    "component_cache": {
+     "borrowed_capacity_bytes": 0,
+     "captured_capacity_bytes": 526254080,
+     "captured_checkpoint_ids": [
+      9936,
+      9937
+     ],
+     "captures": 2,
+     "copied_payload_bytes": 520528320,
+     "deepest_disk_tokens": 6596,
+     "deepest_live_tokens": 6596,
+     "deepest_ram_tokens": 6596,
+     "global_categories": {
+      "backing_assigned": {
+       "bytes": 0,
+       "peak_bytes": 419430400,
+       "reserved_bytes": 0
+      },
+      "backing_free": {
+       "bytes": 916324352,
+       "peak_bytes": 2147483648,
+       "reserved_bytes": 0
+      },
+      "backing_materialized": {
+       "bytes": 452984832,
+       "peak_bytes": 452984832,
+       "reserved_bytes": 0
+      },
+      "metadata": {
+       "bytes": 1032221278,
+       "peak_bytes": 1032286684,
+       "reserved_bytes": 524544
+      },
+      "private_state": {
+       "bytes": 7421952000,
+       "peak_bytes": 7421952000,
+       "reserved_bytes": 0
+      },
+      "private_tail": {
+       "bytes": 201326592,
+       "peak_bytes": 201326592,
+       "reserved_bytes": 0
+      },
+      "transfer_staging": {
+       "bytes": 8388608,
+       "peak_bytes": 8388608,
+       "reserved_bytes": 0
+      }
+     },
+     "global_ledger_bytes": 10033197662,
+     "global_peak_ledger_bytes": 10033263068,
+     "global_peak_persistence_pinned_bytes": 1446772736,
+     "global_peak_ram_bytes": 10024874460,
+     "global_persistence": {
+      "accepted_jobs": 13,
+      "checksum_ms": 289.088425,
+      "coalesced_jobs": 0,
+      "failed_jobs": 0,
+      "filesystem_ms": 696.937039,
+      "fsync_ms": 1617.124502,
+      "peak_pending_jobs": 4,
+      "peak_pinned_source_capacity_bytes": 2705063936,
+      "pending_jobs": 4,
+      "pinned_source_capacity_bytes": 2705063936,
+      "published_jobs": 9,
+      "skipped_jobs": 0,
+      "superseded_jobs": 0,
+      "transferred_bytes": 2285393888,
+      "yield_ms": 2688.838908
+     },
+     "global_persistence_pinned_bytes": 1446772736,
+     "global_ram_bytes": 10024809054,
+     "global_spill": {
+      "foreground_bytes": 0,
+      "foreground_copy_ms": 0,
+      "idle_bytes": 452984832,
+      "idle_copy_ms": 21.188972,
+      "idle_failures": 0,
+      "reassignments": 10,
+      "residual_wait_ms": 2.526558,
+      "stream_wait_ms": 0.154722
+     },
+     "prefilled_tokens": 32,
+     "remapped_bytes": 0,
+     "restored_bytes": 0,
+     "reuse": "live",
+     "schema": "component-cache-v1",
+     "selected_tokens": 6596,
+     "selection_reason": 0,
+     "shared_payload_bytes": 0
+    },
+    "draft_n": 57,
+    "draft_n_accepted": 22,
+    "draft_rounds": 11,
+    "predicted_ms": 1144.696423,
+    "predicted_n": 33,
+    "predicted_per_second": 28.82860410580666,
+    "predicted_per_token_ms": 34.687770393939395,
+    "prompt_ms": 299.305066,
+    "prompt_n": 32,
+    "prompt_per_second": 106.91432800539367,
+    "prompt_per_token_ms": 9.3532833125
+   },
+   "tok_s": 22.45,
+   "turn": 5,
+   "wall_s": 1.47
+  },
+  {
+   "completion_tokens": 20,
+   "error": null,
+   "prompt_tokens": 6687,
+   "scenario": "session",
+   "timings": {
+    "cache_disk_enqueue_ms": 1.813728,
+    "cache_n": 6661,
+    "cache_restore_ms": 0,
+    "cache_snapshot_ms": 8.659234999999999,
+    "component_cache": {
+     "borrowed_capacity_bytes": 0,
+     "captured_capacity_bytes": 498991104,
+     "captured_checkpoint_ids": [
+      9971,
+      9972
+     ],
+     "captures": 2,
+     "copied_payload_bytes": 494707136,
+     "deepest_disk_tokens": 6661,
+     "deepest_live_tokens": 6661,
+     "deepest_ram_tokens": 6661,
+     "global_categories": {
+      "backing_assigned": {
+       "bytes": 0,
+       "peak_bytes": 419430400,
+       "reserved_bytes": 0
+      },
+      "backing_free": {
+       "bytes": 956366848,
+       "peak_bytes": 2147483648,
+       "reserved_bytes": 0
+      },
+      "backing_materialized": {
+       "bytes": 469762048,
+       "peak_bytes": 469762048,
+       "reserved_bytes": 0
+      },
+      "metadata": {
+       "bytes": 1032689460,
+       "peak_bytes": 1032756198,
+       "reserved_bytes": 524544
+      },
+      "private_state": {
+       "bytes": 8164147200,
+       "peak_bytes": 8164147200,
+       "reserved_bytes": 0
+      },
+      "private_tail": {
+       "bytes": 207618048,
+       "peak_bytes": 207618048,
+       "reserved_bytes": 0
+      },
+      "transfer_staging": {
+       "bytes": 8388608,
+       "peak_bytes": 8388608,
+       "reserved_bytes": 0
+      }
+     },
+     "global_ledger_bytes": 10838972212,
+     "global_peak_ledger_bytes": 10839038950,
+     "global_peak_persistence_pinned_bytes": 1713045504,
+     "global_peak_ram_bytes": 10830650342,
+     "global_persistence": {
+      "accepted_jobs": 14,
+      "checksum_ms": 289.088425,
+      "coalesced_jobs": 0,
+      "failed_jobs": 0,
+      "filesystem_ms": 696.937039,
+      "fsync_ms": 1617.124502,
+      "peak_pending_jobs": 5,
+      "peak_pinned_source_capacity_bytes": 3390767104,
+      "pending_jobs": 5,
+      "pinned_source_capacity_bytes": 3390767104,
+      "published_jobs": 9,
+      "skipped_jobs": 0,
+      "superseded_jobs": 0,
+      "transferred_bytes": 2285393888,
+      "yield_ms": 2688.838908
+     },
+     "global_persistence_pinned_bytes": 1713045504,
+     "global_ram_bytes": 10830583604,
+     "global_spill": {
+      "foreground_bytes": 0,
+      "foreground_copy_ms": 0,
+      "idle_bytes": 469762048,
+      "idle_copy_ms": 22.569724,
+      "idle_failures": 0,
+      "reassignments": 10,
+      "residual_wait_ms": 2.526558,
+      "stream_wait_ms": 0.161786
+     },
+     "prefilled_tokens": 26,
+     "remapped_bytes": 0,
+     "restored_bytes": 0,
+     "reuse": "live",
+     "schema": "component-cache-v1",
+     "selected_tokens": 6661,
+     "selection_reason": 0,
+     "shared_payload_bytes": 0
+    },
+    "draft_n": 31,
+    "draft_n_accepted": 14,
+    "draft_rounds": 6,
+    "predicted_ms": 627.8928679999999,
+    "predicted_n": 20,
+    "predicted_per_second": 31.85256756252884,
+    "predicted_per_token_ms": 31.394643399999996,
+    "prompt_ms": 299.712692,
+    "prompt_n": 26,
+    "prompt_per_second": 86.74974632038605,
+    "prompt_per_token_ms": 11.52741123076923
+   },
+   "tok_s": 20.97,
+   "turn": 6,
+   "wall_s": 0.954
+  },
+  {
+   "completion_tokens": 21,
+   "error": null,
+   "prompt_tokens": 6741,
+   "scenario": "session",
+   "timings": {
+    "cache_disk_enqueue_ms": 2.0311209999999997,
+    "cache_n": 6707,
+    "cache_restore_ms": 0,
+    "cache_snapshot_ms": 9.63418,
+    "component_cache": {
+     "borrowed_capacity_bytes": 0,
+     "captured_capacity_bytes": 507379712,
+     "captured_checkpoint_ids": [
+      9974,
+      9975
+     ],
+     "captures": 2,
+     "copied_payload_bytes": 501785024,
+     "deepest_disk_tokens": 6707,
+     "deepest_live_tokens": 6707,
+     "deepest_ram_tokens": 6707,
+     "global_categories": {
+      "backing_assigned": {
+       "bytes": 0,
+       "peak_bytes": 419430400,
+       "reserved_bytes": 0
+      },
+      "backing_free": {
+       "bytes": 868483072,
+       "peak_bytes": 2147483648,
+       "reserved_bytes": 0
+      },
+      "backing_materialized": {
+       "bytes": 469762048,
+       "peak_bytes": 469762048,
+       "reserved_bytes": 0
+      },
+      "metadata": {
+       "bytes": 1033139258,
+       "peak_bytes": 1033205992,
+       "reserved_bytes": 524544
+      },
+      "private_state": {
+       "bytes": 8906342400,
+       "peak_bytes": 8906342400,
+       "reserved_bytes": 0
+      },
+      "private_tail": {
+       "bytes": 224395264,
+       "peak_bytes": 224395264,
+       "reserved_bytes": 0
+      },
+      "transfer_staging": {
+       "bytes": 8388608,
+       "peak_bytes": 8388608,
+       "reserved_bytes": 0
+      }
+     },
+     "global_ledger_bytes": 11510510650,
+     "global_peak_ledger_bytes": 11510577384,
+     "global_peak_persistence_pinned_bytes": 1964638208,
+     "global_peak_ram_bytes": 11502188776,
+     "global_persistence": {
+      "accepted_jobs": 15,
+      "checksum_ms": 289.088425,
+      "coalesced_jobs": 0,
+      "failed_jobs": 0,
+      "filesystem_ms": 696.937039,
+      "fsync_ms": 1617.124502,
+      "peak_pending_jobs": 6,
+      "peak_pinned_source_capacity_bytes": 4078567424,
+      "pending_jobs": 6,
+      "pinned_source_capacity_bytes": 4078567424,
+      "published_jobs": 9,
+      "skipped_jobs": 0,
+      "superseded_jobs": 0,
+      "transferred_bytes": 2285393888,
+      "yield_ms": 2688.838908
+     },
+     "global_persistence_pinned_bytes": 1964638208,
+     "global_ram_bytes": 11502122042,
+     "global_spill": {
+      "foreground_bytes": 0,
+      "foreground_copy_ms": 0,
+      "idle_bytes": 469762048,
+      "idle_copy_ms": 22.569724,
+      "idle_failures": 0,
+      "reassignments": 10,
+      "residual_wait_ms": 2.526558,
+      "stream_wait_ms": 0.161786
+     },
+     "prefilled_tokens": 34,
+     "remapped_bytes": 0,
+     "restored_bytes": 0,
+     "reuse": "live",
+     "schema": "component-cache-v1",
+     "selected_tokens": 6707,
+     "selection_reason": 0,
+     "shared_payload_bytes": 0
+    },
+    "draft_n": 22,
+    "draft_n_accepted": 17,
+    "draft_rounds": 4,
+    "predicted_ms": 427.760228,
+    "predicted_n": 21,
+    "predicted_per_second": 49.0929231503963,
+    "predicted_per_token_ms": 20.369534666666667,
+    "prompt_ms": 304.395573,
+    "prompt_n": 34,
+    "prompt_per_second": 111.69676242301986,
+    "prompt_per_token_ms": 8.952810970588235
+   },
+   "tok_s": 27.58,
+   "turn": 7,
+   "wall_s": 0.761
+  },
+  {
+   "completion_tokens": 12,
+   "error": null,
+   "prompt_tokens": 6787,
+   "scenario": "session",
+   "timings": {
+    "cache_disk_enqueue_ms": 2.413279,
+    "cache_n": 6762,
+    "cache_restore_ms": 0,
+    "cache_snapshot_ms": 10.698651,
+    "component_cache": {
+     "borrowed_capacity_bytes": 0,
+     "captured_capacity_bytes": 513671168,
+     "captured_checkpoint_ids": [
+      9977,
+      9978
+     ],
+     "captures": 2,
+     "copied_payload_bytes": 507814336,
+     "deepest_disk_tokens": 6762,
+     "deepest_live_tokens": 6762,
+     "deepest_ram_tokens": 6762,
+     "global_categories": {
+      "backing_assigned": {
+       "bytes": 0,
+       "peak_bytes": 419430400,
+       "reserved_bytes": 0
+      },
+      "backing_free": {
+       "bytes": 904331264,
+       "peak_bytes": 2147483648,
+       "reserved_bytes": 0
+      },
+      "backing_materialized": {
+       "bytes": 469762048,
+       "peak_bytes": 469762048,
+       "reserved_bytes": 0
+      },
+      "metadata": {
+       "bytes": 1033589760,
+       "peak_bytes": 1033656530,
+       "reserved_bytes": 524544
+      },
+      "private_state": {
+       "bytes": 9648537600,
+       "peak_bytes": 9648537600,
+       "reserved_bytes": 0
+      },
+      "private_tail": {
+       "bytes": 251658240,
+       "peak_bytes": 251658240,
+       "reserved_bytes": 0
+      },
+      "transfer_staging": {
+       "bytes": 8388608,
+       "peak_bytes": 8388608,
+       "reserved_bytes": 0
+      }
+     },
+     "global_ledger_bytes": 12316267520,
+     "global_peak_ledger_bytes": 12316334290,
+     "global_peak_persistence_pinned_bytes": 2220425216,
+     "global_peak_ram_bytes": 12307945682,
+     "global_persistence": {
+      "accepted_jobs": 16,
+      "checksum_ms": 289.088425,
+      "coalesced_jobs": 0,
+      "failed_jobs": 0,
+      "filesystem_ms": 696.937039,
+      "fsync_ms": 1617.124502,
+      "peak_pending_jobs": 7,
+      "peak_pinned_source_capacity_bytes": 4770562048,
+      "pending_jobs": 7,
+      "pinned_source_capacity_bytes": 4770562048,
+      "published_jobs": 9,
+      "skipped_jobs": 0,
+      "superseded_jobs": 0,
+      "transferred_bytes": 2285393888,
+      "yield_ms": 2688.838908
+     },
+     "global_persistence_pinned_bytes": 2220425216,
+     "global_ram_bytes": 12307878912,
+     "global_spill": {
+      "foreground_bytes": 0,
+      "foreground_copy_ms": 0,
+      "idle_bytes": 469762048,
+      "idle_copy_ms": 22.569724,
+      "idle_failures": 0,
+      "reassignments": 10,
+      "residual_wait_ms": 2.526558,
+      "stream_wait_ms": 0.161786
+     },
+     "prefilled_tokens": 25,
+     "remapped_bytes": 0,
+     "restored_bytes": 0,
+     "reuse": "live",
+     "schema": "component-cache-v1",
+     "selected_tokens": 6762,
+     "selection_reason": 0,
+     "shared_payload_bytes": 0
+    },
+    "draft_n": 24,
+    "draft_n_accepted": 7,
+    "draft_rounds": 5,
+    "predicted_ms": 515.141727,
+    "predicted_n": 12,
+    "predicted_per_second": 23.294560256036103,
+    "predicted_per_token_ms": 42.92847724999999,
+    "prompt_ms": 300.20914,
+    "prompt_n": 25,
+    "prompt_per_second": 83.27527936024866,
+    "prompt_per_token_ms": 12.0083656
+   },
+   "tok_s": 14.2,
+   "turn": 8,
+   "wall_s": 0.845
+  },
+  {
+   "completion_tokens": 17,
+   "error": null,
+   "prompt_tokens": 6825,
+   "scenario": "session",
+   "timings": {
+    "cache_disk_enqueue_ms": 2.4939679999999997,
+    "cache_n": 6799,
+    "cache_restore_ms": 0,
+    "cache_snapshot_ms": 8.613851,
+    "component_cache": {
+     "borrowed_capacity_bytes": 0,
+     "captured_capacity_bytes": 519962624,
+     "captured_checkpoint_ids": [
+      9980,
+      9981
+     ],
+     "captures": 2,
+     "copied_payload_bytes": 512795072,
+     "deepest_disk_tokens": 6799,
+     "deepest_live_tokens": 6799,
+     "deepest_ram_tokens": 6799,
+     "global_categories": {
+      "backing_assigned": {
+       "bytes": 0,
+       "peak_bytes": 419430400,
+       "reserved_bytes": 0
+      },
+      "backing_free": {
+       "bytes": 266469376,
+       "peak_bytes": 2147483648,
+       "reserved_bytes": 0
+      },
+      "backing_materialized": {
+       "bytes": 469762048,
+       "peak_bytes": 469762048,
+       "reserved_bytes": 0
+      },
+      "metadata": {
+       "bytes": 1034127794,
+       "peak_bytes": 1034127794,
+       "reserved_bytes": 524936
+      },
+      "private_state": {
+       "bytes": 10390732800,
+       "peak_bytes": 10390732800,
+       "reserved_bytes": 0
+      },
+      "private_tail": {
+       "bytes": 287309824,
+       "peak_bytes": 287309824,
+       "reserved_bytes": 0
+      },
+      "transfer_staging": {
+       "bytes": 8388608,
+       "peak_bytes": 8388608,
+       "reserved_bytes": 0
+      }
+     },
+     "global_ledger_bytes": 12456790450,
+     "global_peak_ledger_bytes": 12456790450,
+     "global_peak_persistence_pinned_bytes": 2478309376,
+     "global_peak_ram_bytes": 12448401842,
+     "global_persistence": {
+      "accepted_jobs": 17,
+      "checksum_ms": 374.729746,
+      "coalesced_jobs": 0,
+      "failed_jobs": 0,
+      "filesystem_ms": 1255.337404,
+      "fsync_ms": 8453.235142,
+      "peak_pending_jobs": 8,
+      "peak_pinned_source_capacity_bytes": 5464653824,
+      "pending_jobs": 7,
+      "pinned_source_capacity_bytes": 4793630720,
+      "published_jobs": 10,
+      "skipped_jobs": 0,
+      "superseded_jobs": 0,
+      "transferred_bytes": 2953717952,
+      "yield_ms": 3128.178591
+     },
+     "global_persistence_pinned_bytes": 2226716672,
+     "global_ram_bytes": 12448401842,
+     "global_spill": {
+      "foreground_bytes": 0,
+      "foreground_copy_ms": 0,
+      "idle_bytes": 469762048,
+      "idle_copy_ms": 22.569724,
+      "idle_failures": 0,
+      "reassignments": 10,
+      "residual_wait_ms": 2.526558,
+      "stream_wait_ms": 0.161786
+     },
+     "prefilled_tokens": 26,
+     "remapped_bytes": 0,
+     "restored_bytes": 0,
+     "reuse": "live",
+     "schema": "component-cache-v1",
+     "selected_tokens": 6799,
+     "selection_reason": 0,
+     "shared_payload_bytes": 0
+    },
+    "draft_n": 30,
+    "draft_n_accepted": 11,
+    "draft_rounds": 6,
+    "predicted_ms": 624.6543009999999,
+    "predicted_n": 17,
+    "predicted_per_second": 27.215053146652394,
+    "predicted_per_token_ms": 36.744370647058815,
+    "prompt_ms": 298.543546,
+    "prompt_n": 26,
+    "prompt_per_second": 87.0894727029202,
+    "prompt_per_token_ms": 11.482444076923077
+   },
+   "tok_s": 17.85,
+   "turn": 9,
+   "wall_s": 0.952
+  },
+  {
+   "completion_tokens": 20,
+   "error": null,
+   "prompt_tokens": 6871,
+   "scenario": "session",
+   "timings": {
+    "cache_disk_enqueue_ms": 2.7624750000000002,
+    "cache_n": 6842,
+    "cache_restore_ms": 0,
+    "cache_snapshot_ms": 10.602433,
+    "component_cache": {
+     "borrowed_capacity_bytes": 0,
+     "captured_capacity_bytes": 524156928,
+     "captured_checkpoint_ids": [
+      9983,
+      9984
+     ],
+     "captures": 2,
+     "copied_payload_bytes": 518824384,
+     "deepest_disk_tokens": 6842,
+     "deepest_live_tokens": 6842,
+     "deepest_ram_tokens": 6842,
+     "global_categories": {
+      "backing_assigned": {
+       "bytes": 0,
+       "peak_bytes": 419430400,
+       "reserved_bytes": 0
+      },
+      "backing_free": {
+       "bytes": 230817792,
+       "peak_bytes": 2147483648,
+       "reserved_bytes": 0
+      },
+      "backing_materialized": {
+       "bytes": 469762048,
+       "peak_bytes": 469762048,
+       "reserved_bytes": 0
+      },
+      "metadata": {
+       "bytes": 1032527166,
+       "peak_bytes": 1034313012,
+       "reserved_bytes": 0
+      },
+      "private_state": {
+       "bytes": 10390732800,
+       "peak_bytes": 10390732800,
+       "reserved_bytes": 0
+      },
+      "private_tail": {
+       "bytes": 322961408,
+       "peak_bytes": 322961408,
+       "reserved_bytes": 0
+      },
+      "transfer_staging": {
+       "bytes": 8388608,
+       "peak_bytes": 8388608,
+       "reserved_bytes": 0
+      }
+     },
+     "global_ledger_bytes": 12455189822,
+     "global_peak_ledger_bytes": 12456975668,
+     "global_peak_persistence_pinned_bytes": 2478309376,
+     "global_peak_ram_bytes": 12448587060,
+     "global_persistence": {
+      "accepted_jobs": 18,
+      "checksum_ms": 459.358015,
+      "coalesced_jobs": 0,
+      "failed_jobs": 0,
+      "filesystem_ms": 1604.566577,
+      "fsync_ms": 8502.259554,
+      "peak_pending_jobs": 8,
+      "peak_pinned_source_capacity_bytes": 5464653824,
+      "pending_jobs": 0,
+      "pinned_source_capacity_bytes": 0,
+      "published_jobs": 11,
+      "skipped_jobs": 0,
+      "superseded_jobs": 7,
+      "transferred_bytes": 3205822880,
+      "yield_ms": 3611.497307
+     },
+     "global_persistence_pinned_bytes": 0,
+     "global_ram_bytes": 12446801214,
+     "global_spill": {
+      "foreground_bytes": 0,
+      "foreground_copy_ms": 0,
+      "idle_bytes": 469762048,
+      "idle_copy_ms": 22.569724,
+      "idle_failures": 0,
+      "reassignments": 10,
+      "residual_wait_ms": 2.526558,
+      "stream_wait_ms": 0.161786
+     },
+     "prefilled_tokens": 29,
+     "remapped_bytes": 0,
+     "restored_bytes": 0,
+     "reuse": "live",
+     "schema": "component-cache-v1",
+     "selected_tokens": 6842,
+     "selection_reason": 0,
+     "shared_payload_bytes": 0
+    },
+    "draft_n": 28,
+    "draft_n_accepted": 14,
+    "draft_rounds": 6,
+    "predicted_ms": 615.8932590000001,
+    "predicted_n": 20,
+    "predicted_per_second": 32.47315944401333,
+    "predicted_per_token_ms": 30.794662950000003,
+    "prompt_ms": 299.013757,
+    "prompt_n": 29,
+    "prompt_per_second": 96.9855042488898,
+    "prompt_per_token_ms": 10.310819206896552
+   },
+   "tok_s": 21.15,
+   "turn": 10,
+   "wall_s": 0.946
+  },
+  {
+   "completion_tokens": 15,
+   "error": null,
+   "prompt_tokens": 6919,
+   "scenario": "session",
+   "timings": {
+    "cache_disk_enqueue_ms": 3.169469,
+    "cache_n": 6912,
+    "cache_restore_ms": 184.329357,
+    "cache_snapshot_ms": 14.384246000000001,
+    "component_cache": {
+     "borrowed_capacity_bytes": 452984832,
+     "captured_capacity_bytes": 949878784,
+     "captured_checkpoint_ids": [
+      9987,
+      10852
+     ],
+     "captures": 2,
+     "copied_payload_bytes": 491561408,
+     "deepest_disk_tokens": 6912,
+     "deepest_live_tokens": 6891,
+     "deepest_ram_tokens": 6891,
+     "global_categories": {
+      "backing_assigned": {
+       "bytes": 452984832,
+       "peak_bytes": 452984832,
+       "reserved_bytes": 452984832
+      },
+      "backing_free": {
+       "bytes": 35717120,
+       "peak_bytes": 2147483648,
+       "reserved_bytes": 0
+      },
+      "backing_materialized": {
+       "bytes": 469762048,
+       "peak_bytes": 469762048,
+       "reserved_bytes": 0
+      },
+      "metadata": {
+       "bytes": 1033425088,
+       "peak_bytes": 1034313012,
+       "reserved_bytes": 0
+      },
+      "private_state": {
+       "bytes": 10143334400,
+       "peak_bytes": 10390732800,
+       "reserved_bytes": 0
+      },
+      "private_tail": {
+       "bytes": 312475648,
+       "peak_bytes": 329252864,
+       "reserved_bytes": 0
+      },
+      "transfer_staging": {
+       "bytes": 8388608,
+       "peak_bytes": 8388608,
+       "reserved_bytes": 0
+      }
+     },
+     "global_ledger_bytes": 12456087744,
+     "global_peak_ledger_bytes": 12456975668,
+     "global_peak_persistence_pinned_bytes": 2478309376,
+     "global_peak_ram_bytes": 12448587060,
+     "global_persistence": {
+      "accepted_jobs": 19,
+      "checksum_ms": 494.527083,
+      "coalesced_jobs": 0,
+      "failed_jobs": 0,
+      "filesystem_ms": 1696.706165,
+      "fsync_ms": 8552.964238,
+      "peak_pending_jobs": 8,
+      "peak_pinned_source_capacity_bytes": 5464653824,
+      "pending_jobs": 0,
+      "pinned_source_capacity_bytes": 0,
+      "published_jobs": 12,
+      "skipped_jobs": 0,
+      "superseded_jobs": 7,
+      "transferred_bytes": 3483552384,
+      "yield_ms": 3953.759468
+     },
+     "global_persistence_pinned_bytes": 0,
+     "global_ram_bytes": 12447699136,
+     "global_spill": {
+      "foreground_bytes": 0,
+      "foreground_copy_ms": 0,
+      "idle_bytes": 469762048,
+      "idle_copy_ms": 22.569724,
+      "idle_failures": 0,
+      "reassignments": 11,
+      "residual_wait_ms": 2.599423,
+      "stream_wait_ms": 0.161786
+     },
+     "prefilled_tokens": 7,
+     "remapped_bytes": 0,
+     "restored_bytes": 698536160,
+     "reuse": "disk",
+     "schema": "component-cache-v1",
+     "selected_tokens": 6912,
+     "selection_reason": 2,
+     "shared_payload_bytes": 0
+    },
+    "draft_n": 20,
+    "draft_n_accepted": 11,
+    "draft_rounds": 4,
+    "predicted_ms": 424.73516500000005,
+    "predicted_n": 15,
+    "predicted_per_second": 35.31612457847703,
+    "predicted_per_token_ms": 28.31567766666667,
+    "prompt_ms": 126.594745,
+    "prompt_n": 7,
+    "prompt_per_second": 55.29455428817365,
+    "prompt_per_token_ms": 18.08496357142857
+   },
+   "tok_s": 19.65,
+   "turn": 11,
+   "wall_s": 0.763
+  },
+  {
+   "completion_tokens": 23,
+   "error": null,
+   "prompt_tokens": 6963,
+   "scenario": "session",
+   "timings": {
+    "cache_disk_enqueue_ms": 1.998391,
+    "cache_n": 6963,
+    "cache_restore_ms": 154.043735,
+    "cache_snapshot_ms": 8.506873,
+    "component_cache": {
+     "borrowed_capacity_bytes": 452984832,
+     "captured_capacity_bytes": 704577536,
+     "captured_checkpoint_ids": [
+      10855
+     ],
+     "captures": 1,
+     "copied_payload_bytes": 248893664,
+     "deepest_disk_tokens": 6963,
+     "deepest_live_tokens": 6934,
+     "deepest_ram_tokens": 6934,
+     "global_categories": {
+      "backing_assigned": {
+       "bytes": 743964672,
+       "peak_bytes": 743964672,
+       "reserved_bytes": 743964672
+      },
+      "backing_free": {
+       "bytes": 123666432,
+       "peak_bytes": 2147483648,
+       "reserved_bytes": 0
+      },
+      "backing_materialized": {
+       "bytes": 614989824,
+       "peak_bytes": 614989824,
+       "reserved_bytes": 0
+      },
+      "metadata": {
+       "bytes": 1034899508,
+       "peak_bytes": 1035096546,
+       "reserved_bytes": 558616
+      },
+      "private_state": {
+       "bytes": 9648537600,
+       "peak_bytes": 10390732800,
+       "reserved_bytes": 0
+      },
+      "private_tail": {
+       "bytes": 283115520,
+       "peak_bytes": 329252864,
+       "reserved_bytes": 0
+      },
+      "transfer_staging": {
+       "bytes": 8388608,
+       "peak_bytes": 8388608,
+       "reserved_bytes": 0
+      }
+     },
+     "global_ledger_bytes": 12457562164,
+     "global_peak_ledger_bytes": 12457759202,
+     "global_peak_persistence_pinned_bytes": 2478309376,
+     "global_peak_ram_bytes": 12449370594,
+     "global_persistence": {
+      "accepted_jobs": 20,
+      "checksum_ms": 494.527083,
+      "coalesced_jobs": 0,
+      "failed_jobs": 0,
+      "filesystem_ms": 1696.706165,
+      "fsync_ms": 8552.964238,
+      "peak_pending_jobs": 8,
+      "peak_pinned_source_capacity_bytes": 5464653824,
+      "pending_jobs": 1,
+      "pinned_source_capacity_bytes": 702480384,
+      "published_jobs": 12,
+      "skipped_jobs": 0,
+      "superseded_jobs": 7,
+      "transferred_bytes": 3483552384,
+      "yield_ms": 3953.759468
+     },
+     "global_persistence_pinned_bytes": 702480384,
+     "global_ram_bytes": 12449173556,
+     "global_spill": {
+      "foreground_bytes": 0,
+      "foreground_copy_ms": 0,
+      "idle_bytes": 631767040,
+      "idle_copy_ms": 29.571984,
+      "idle_failures": 0,
+      "reassignments": 12,
+      "residual_wait_ms": 2.775168,
+      "stream_wait_ms": 0.209575
+     },
+     "prefilled_tokens": 0,
+     "remapped_bytes": 0,
+     "restored_bytes": 701878496,
+     "reuse": "disk",
+     "schema": "component-cache-v1",
+     "selected_tokens": 6963,
+     "selection_reason": 2,
+     "shared_payload_bytes": 0
+    },
+    "draft_n": 37,
+    "draft_n_accepted": 16,
+    "draft_rounds": 7,
+    "predicted_ms": 755.517983,
+    "predicted_n": 23,
+    "predicted_per_second": 30.442690336333133,
+    "predicted_per_token_ms": 32.84860795652174,
+    "prompt_ms": 0,
+    "prompt_n": 0,
+    "prompt_per_second": 0,
+    "prompt_per_token_ms": 0
+   },
+   "tok_s": 24.42,
+   "turn": 12,
+   "wall_s": 0.942
+  },
+  {
+   "completion_tokens": 13,
+   "error": null,
+   "prompt_tokens": 7016,
+   "scenario": "session",
+   "timings": {
+    "cache_disk_enqueue_ms": 3.709179,
+    "cache_n": 6986,
+    "cache_restore_ms": 0,
+    "cache_snapshot_ms": 12.803868999999999,
+    "component_cache": {
+     "borrowed_capacity_bytes": 0,
+     "captured_capacity_bytes": 511574016,
+     "captured_checkpoint_ids": [
+      11721,
+      11722
+     ],
+     "captures": 2,
+     "copied_payload_bytes": 504275392,
+     "deepest_disk_tokens": 6986,
+     "deepest_live_tokens": 6986,
+     "deepest_ram_tokens": 6986,
+     "global_categories": {
+      "backing_assigned": {
+       "bytes": 444071936,
+       "peak_bytes": 743964672,
+       "reserved_bytes": 444071936
+      },
+      "backing_free": {
+       "bytes": 121569280,
+       "peak_bytes": 2147483648,
+       "reserved_bytes": 0
+      },
+      "backing_materialized": {
+       "bytes": 914882560,
+       "peak_bytes": 914882560,
+       "reserved_bytes": 0
+      },
+      "metadata": {
+       "bytes": 1035228464,
+       "peak_bytes": 1035373580,
+       "reserved_bytes": 559032
+      },
+      "private_state": {
+       "bytes": 9648537600,
+       "peak_bytes": 10390732800,
+       "reserved_bytes": 0
+      },
+      "private_tail": {
+       "bytes": 285212672,
+       "peak_bytes": 329252864,
+       "reserved_bytes": 0
+      },
+      "transfer_staging": {
+       "bytes": 8388608,
+       "peak_bytes": 8388608,
+       "reserved_bytes": 0
+      }
+     },
+     "global_ledger_bytes": 12457891120,
+     "global_peak_ledger_bytes": 12458036236,
+     "global_peak_persistence_pinned_bytes": 2478309376,
+     "global_peak_ram_bytes": 12449647628,
+     "global_persistence": {
+      "accepted_jobs": 21,
+      "checksum_ms": 585.793447,
+      "coalesced_jobs": 0,
+      "failed_jobs": 0,
+      "filesystem_ms": 1973.730383,
+      "fsync_ms": 8965.636211,
+      "peak_pending_jobs": 8,
+      "peak_pinned_source_capacity_bytes": 5464653824,
+      "pending_jobs": 1,
+      "pinned_source_capacity_bytes": 706674688,
+      "published_jobs": 13,
+      "skipped_jobs": 0,
+      "superseded_jobs": 7,
+      "transferred_bytes": 4183530336,
+      "yield_ms": 4384.059084
+     },
+     "global_persistence_pinned_bytes": 706674688,
+     "global_ram_bytes": 12449502512,
+     "global_spill": {
+      "foreground_bytes": 0,
+      "foreground_copy_ms": 0,
+      "idle_bytes": 931659776,
+      "idle_copy_ms": 45.582371,
+      "idle_failures": 0,
+      "reassignments": 12,
+      "residual_wait_ms": 2.775168,
+      "stream_wait_ms": 0.322613
+     },
+     "prefilled_tokens": 30,
+     "remapped_bytes": 0,
+     "restored_bytes": 0,
+     "reuse": "live",
+     "schema": "component-cache-v1",
+     "selected_tokens": 6986,
+     "selection_reason": 0,
+     "shared_payload_bytes": 0
+    },
+    "draft_n": 26,
+    "draft_n_accepted": 8,
+    "draft_rounds": 5,
+    "predicted_ms": 533.69151,
+    "predicted_n": 13,
+    "predicted_per_second": 24.358641193299103,
+    "predicted_per_token_ms": 41.05319307692308,
+    "prompt_ms": 302.792905,
+    "prompt_n": 30,
+    "prompt_per_second": 99.07761874407196,
+    "prompt_per_token_ms": 10.093096833333334
+   },
+   "tok_s": 14.88,
+   "turn": 13,
+   "wall_s": 0.874
+  },
+  {
+   "completion_tokens": 22,
+   "error": null,
+   "prompt_tokens": 7058,
+   "scenario": "session",
+   "timings": {
+    "cache_disk_enqueue_ms": 3.741789,
+    "cache_n": 7029,
+    "cache_restore_ms": 0,
+    "cache_snapshot_ms": 12.79284,
+    "component_cache": {
+     "borrowed_capacity_bytes": 0,
+     "captured_capacity_bytes": 515768320,
+     "captured_checkpoint_ids": [
+      11724,
+      11725
+     ],
+     "captures": 2,
+     "copied_payload_bytes": 509780416,
+     "deepest_disk_tokens": 6986,
+     "deepest_live_tokens": 7029,
+     "deepest_ram_tokens": 7029,
+     "global_categories": {
+      "backing_assigned": {
+       "bytes": 245891072,
+       "peak_bytes": 743964672,
+       "reserved_bytes": 245891072
+      },
+      "backing_free": {
+       "bytes": 123666432,
+       "peak_bytes": 2147483648,
+       "reserved_bytes": 0
+      },
+      "backing_materialized": {
+       "bytes": 1113063424,
+       "peak_bytes": 1113063424,
+       "reserved_bytes": 0
+      },
+      "metadata": {
+       "bytes": 1035601592,
+       "peak_bytes": 1035701044,
+       "reserved_bytes": 559376
+      },
+      "private_state": {
+       "bytes": 9648537600,
+       "peak_bytes": 10390732800,
+       "reserved_bytes": 0
+      },
+      "private_tail": {
+       "bytes": 283115520,
+       "peak_bytes": 329252864,
+       "reserved_bytes": 0
+      },
+      "transfer_staging": {
+       "bytes": 8388608,
+       "peak_bytes": 8388608,
+       "reserved_bytes": 0
+      }
+     },
+     "global_ledger_bytes": 12458264248,
+     "global_peak_ledger_bytes": 12458363700,
+     "global_peak_persistence_pinned_bytes": 2478309376,
+     "global_peak_ram_bytes": 12449975092,
+     "global_persistence": {
+      "accepted_jobs": 22,
+      "checksum_ms": 675.57256,
+      "coalesced_jobs": 0,
+      "failed_jobs": 0,
+      "filesystem_ms": 2229.635127,
+      "fsync_ms": 9343.07736,
+      "peak_pending_jobs": 8,
+      "peak_pinned_source_capacity_bytes": 5464653824,
+      "pending_jobs": 1,
+      "pinned_source_capacity_bytes": 708771840,
+      "published_jobs": 14,
+      "skipped_jobs": 0,
+      "superseded_jobs": 7,
+      "transferred_bytes": 4886916160,
+      "yield_ms": 4815.636446
+     },
+     "global_persistence_pinned_bytes": 708771840,
+     "global_ram_bytes": 12449875640,
+     "global_spill": {
+      "foreground_bytes": 0,
+      "foreground_copy_ms": 0,
+      "idle_bytes": 1129840640,
+      "idle_copy_ms": 52.868872,
+      "idle_failures": 0,
+      "reassignments": 12,
+      "residual_wait_ms": 2.775168,
+      "stream_wait_ms": 0.377308
+     },
+     "prefilled_tokens": 29,
+     "remapped_bytes": 0,
+     "restored_bytes": 0,
+     "reuse": "live",
+     "schema": "component-cache-v1",
+     "selected_tokens": 7029,
+     "selection_reason": 0,
+     "shared_payload_bytes": 0
+    },
+    "draft_n": 23,
+    "draft_n_accepted": 18,
+    "draft_rounds": 4,
+    "predicted_ms": 437.865289,
+    "predicted_n": 22,
+    "predicted_per_second": 50.243763442048035,
+    "predicted_per_token_ms": 19.902967681818183,
+    "prompt_ms": 302.579319,
+    "prompt_n": 29,
+    "prompt_per_second": 95.84263754655353,
+    "prompt_per_token_ms": 10.433769620689656
+   },
+   "tok_s": 28.38,
+   "turn": 14,
+   "wall_s": 0.775
+  },
+  {
+   "completion_tokens": 18,
+   "error": null,
+   "prompt_tokens": 7111,
+   "scenario": "session",
+   "timings": {
+    "cache_disk_enqueue_ms": 3.97464,
+    "cache_n": 7080,
+    "cache_restore_ms": 0,
+    "cache_snapshot_ms": 12.771080000000001,
+    "component_cache": {
+     "borrowed_capacity_bytes": 0,
+     "captured_capacity_bytes": 522059776,
+     "captured_checkpoint_ids": [
+      11727,
+      11728
+     ],
+     "captures": 2,
+     "copied_payload_bytes": 516727232,
+     "deepest_disk_tokens": 7080,
+     "deepest_live_tokens": 7080,
+     "deepest_ram_tokens": 7080,
+     "global_categories": {
+      "backing_assigned": {
+       "bytes": 176685056,
+       "peak_bytes": 743964672,
+       "reserved_bytes": 176685056
+      },
+      "backing_free": {
+       "bytes": 108986368,
+       "peak_bytes": 2147483648,
+       "reserved_bytes": 0
+      },
+      "backing_materialized": {
+       "bytes": 1182269440,
+       "peak_bytes": 1182269440,
+       "reserved_bytes": 0
+      },
+      "metadata": {
+       "bytes": 1035118600,
+       "peak_bytes": 1036128220,
+       "reserved_bytes": 0
+      },
+      "private_state": {
+       "bytes": 9648537600,
+       "peak_bytes": 10390732800,
+       "reserved_bytes": 0
+      },
+      "private_tail": {
+       "bytes": 297795584,
+       "peak_bytes": 329252864,
+       "reserved_bytes": 0
+      },
+      "transfer_staging": {
+       "bytes": 8388608,
+       "peak_bytes": 8388608,
+       "reserved_bytes": 0
+      }
+     },
+     "global_ledger_bytes": 12457781256,
+     "global_peak_ledger_bytes": 12458790876,
+     "global_peak_persistence_pinned_bytes": 2478309376,
+     "global_peak_ram_bytes": 12450402268,
+     "global_persistence": {
+      "accepted_jobs": 23,
+      "checksum_ms": 764.605067,
+      "coalesced_jobs": 0,
+      "failed_jobs": 0,
+      "filesystem_ms": 2587.366378,
+      "fsync_ms": 9389.681962,
+      "peak_pending_jobs": 8,
+      "peak_pinned_source_capacity_bytes": 5464653824,
+      "pending_jobs": 0,
+      "pinned_source_capacity_bytes": 0,
+      "published_jobs": 15,
+      "skipped_jobs": 0,
+      "superseded_jobs": 8,
+      "transferred_bytes": 5140135200,
+      "yield_ms": 5314.021199
+     },
+     "global_persistence_pinned_bytes": 0,
+     "global_ram_bytes": 12449392648,
+     "global_spill": {
+      "foreground_bytes": 0,
+      "foreground_copy_ms": 0,
+      "idle_bytes": 1199046656,
+      "idle_copy_ms": 55.673989,
+      "idle_failures": 0,
+      "reassignments": 12,
+      "residual_wait_ms": 2.775168,
+      "stream_wait_ms": 0.398405
+     },
+     "prefilled_tokens": 31,
+     "remapped_bytes": 0,
+     "restored_bytes": 0,
+     "reuse": "live",
+     "schema": "component-cache-v1",
+     "selected_tokens": 7080,
+     "selection_reason": 0,
+     "shared_payload_bytes": 0
+    },
+    "draft_n": 21,
+    "draft_n_accepted": 14,
+    "draft_rounds": 4,
+    "predicted_ms": 429.554248,
+    "predicted_n": 18,
+    "predicted_per_second": 41.90390406754865,
+    "predicted_per_token_ms": 23.864124888888888,
+    "prompt_ms": 304.026018,
+    "prompt_n": 31,
+    "prompt_per_second": 101.96495748597411,
+    "prompt_per_token_ms": 9.807290903225807
+   },
+   "tok_s": 23.4,
+   "turn": 15,
+   "wall_s": 0.769
+  }
+ ],
+ "solo": [
+  {
+   "completion_tokens": 155,
+   "error": null,
+   "prompt_tokens": 56,
+   "run": 1,
+   "scenario": "solo",
+   "timings": {
+    "cache_disk_enqueue_ms": 0.094044,
+    "cache_n": 56,
+    "cache_restore_ms": 73.022802,
+    "cache_snapshot_ms": 6.389282,
+    "component_cache": {
+     "borrowed_capacity_bytes": 0,
+     "captured_capacity_bytes": 251592704,
+     "captured_checkpoint_ids": [
+      9087
+     ],
+     "captures": 1,
+     "copied_payload_bytes": 249221344,
+     "deepest_disk_tokens": 56,
+     "deepest_live_tokens": 0,
+     "deepest_ram_tokens": 0,
+     "global_categories": {
+      "backing_assigned": {
+       "bytes": 0,
+       "peak_bytes": 16777216,
+       "reserved_bytes": 0
+      },
+      "backing_free": {
+       "bytes": 97386496,
+       "peak_bytes": 2147483648,
+       "reserved_bytes": 0
+      },
+      "backing_materialized": {
+       "bytes": 16777216,
+       "peak_bytes": 16777216,
+       "reserved_bytes": 0
+      },
+      "metadata": {
+       "bytes": 1028695490,
+       "peak_bytes": 1028847200,
+       "reserved_bytes": 0
+      },
+      "private_state": {
+       "bytes": 3463577600,
+       "peak_bytes": 3463577600,
+       "reserved_bytes": 0
+      },
+      "private_tail": {
+       "bytes": 46137344,
+       "peak_bytes": 46137344,
+       "reserved_bytes": 0
+      },
+      "transfer_staging": {
+       "bytes": 8388608,
+       "peak_bytes": 8388608,
+       "reserved_bytes": 0
+      }
+     },
+     "global_ledger_bytes": 4660962754,
+     "global_peak_ledger_bytes": 4661114464,
+     "global_peak_persistence_pinned_bytes": 1021050880,
+     "global_peak_ram_bytes": 4652725856,
+     "global_persistence": {
+      "accepted_jobs": 7,
+      "checksum_ms": 221.798924,
+      "coalesced_jobs": 0,
+      "failed_jobs": 0,
+      "filesystem_ms": 510.461799,
+      "fsync_ms": 314.332891,
+      "peak_pending_jobs": 4,
+      "peak_pinned_source_capacity_bytes": 1021050880,
+      "pending_jobs": 0,
+      "pinned_source_capacity_bytes": 0,
+      "published_jobs": 7,
+      "skipped_jobs": 0,
+      "superseded_jobs": 0,
+      "transferred_bytes": 1752675872,
+      "yield_ms": 1740.110876
+     },
+     "global_persistence_pinned_bytes": 0,
+     "global_ram_bytes": 4652574146,
+     "global_spill": {
+      "foreground_bytes": 0,
+      "foreground_copy_ms": 0,
+      "idle_bytes": 16777216,
+      "idle_copy_ms": 2.361361,
+      "idle_failures": 0,
+      "reassignments": 8,
+      "residual_wait_ms": 0.633874,
+      "stream_wait_ms": 0.021761
+     },
+     "prefilled_tokens": 0,
+     "remapped_bytes": 0,
+     "restored_bytes": 249221344,
+     "reuse": "disk",
+     "schema": "component-cache-v1",
+     "selected_tokens": 56,
+     "selection_reason": 2,
+     "shared_payload_bytes": 0
+    },
+    "draft_n": 137,
+    "draft_n_accepted": 135,
+    "draft_rounds": 20,
+    "predicted_ms": 2106.300211,
+    "predicted_n": 155,
+    "predicted_per_second": 73.5887501651112,
+    "predicted_per_token_ms": 13.58903361935484,
+    "prompt_ms": 0,
+    "prompt_n": 0,
+    "prompt_per_second": 0,
+    "prompt_per_token_ms": 0
+   },
+   "tok_s": 69.56,
+   "wall_s": 2.228
+  }
+ ]
+}

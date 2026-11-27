@@ -86,7 +86,10 @@ def main(argv):
             continue
         if key not in combos or date > combos[key][0]:
             combos[key] = (date, data)
-    dates = sorted({d for d, _ in combos.values()})
+    # гранулярность «сеанса» — календарный день: минуты/часы внутри дня
+    # (типичный сеанс матрицы) — это одно сравнение, а не «разнобой дат»;
+    # полные ISO-штампы остаются в meta каждого .json
+    dates = sorted({d[:10] for d, _ in combos.values()})
     out = ["# bench matrix — последние прогоны каждой комбинации", "",
            "- дата(ы) снапшотов: %s" % (", ".join(dates) if dates else "-")]
     if len(dates) > 1:
