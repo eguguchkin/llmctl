@@ -357,7 +357,7 @@ scen_w1h_selfcheck() {
     timeout 120 python3 "$troot/engines/halogen/py/watch.py" 2>&1); rc=$?
   [ "$rc" = 0 ] \
     && printf '%s' "$out" | grep -q 'selfcheck: 104/104 ok' \
-    && printf '%s' "$out" | grep -q 'selfcheck engine: 43/43 ok' || return 1
+    && printf '%s' "$out" | grep -q 'selfcheck engine: 44/44 ok' || return 1
   return 0
 }
 

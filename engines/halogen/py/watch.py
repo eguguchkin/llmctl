@@ -46,8 +46,9 @@
 # Limitations/assumptions: stdlib only, 3.8+; the metric names — from the
 #   0.20.7 /metrics (the emitter, never made up); a missing key → None →
 #   «—» (another revision — a degradation, not a crash); a /cache failure
-#   → None (the cache rows «—», the tick alive); the const model — the
-#   adapter's canon (R6 ok).
+#   → None (the cache rows «—», the tick alive); the model label — the
+#   /health 'model' echo (the per-profile canon), the constant — the
+#   last resort (fix:hal-watch-model).
 import json
 import os
 import re
@@ -63,7 +64,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)),
 
 import watch_frame as wf  # noqa: E402
 
-MODEL_CANON = 'qwen3.8-flash-next'          # the adapter's canon (an engine panel)
+MODEL_CANON = 'qwen3.8-flash-next'          # the last-resort fallback; the live label = the /health 'model' echo (the per-profile canon — 27b ≠ flash)
 
 K_PRED = 'llamacpp:tokens_predicted_total'
 K_PRED_S = 'llamacpp:tokens_predicted_seconds_total'
@@ -132,6 +133,8 @@ class HalogenEng:
         self.hist = {'decode': deque(maxlen=120),
                      'prefill': deque(maxlen=120),
                      'drafts': deque(maxlen=120)}
+        self._model = None    # the /health 'model' echo (the per-profile
+        #                             canon; route_conf's label source)
         self._uptime = None   # from the buffer's first -t stamp (route_conf)
         self._spec = None     # «mtp+ngram K=7» from the boot line (a cache)
         self._last = None     # the last req line (dict|None)
@@ -161,6 +164,8 @@ class HalogenEng:
         #     own «GET /cache» (the user's remark)
         health = json.loads(wf.http_get(
             'http://127.0.0.1:%d/health' % self.port))
+        self._model = health.get('model')   # fix:hal-watch-model — the
+        #     engine echoes HALOGEN_MODEL_ID (the per-profile canon)
         metrics = wf.parse_metrics(wf.http_get(
             'http://127.0.0.1:%d/metrics' % self.port))
         if self._max_entries is None:
@@ -265,7 +270,11 @@ class HalogenEng:
             req = parse_req_line(line)
             if req:
                 self._last = req
-        return ({'model': MODEL_CANON}, {})
+        # fix:hal-watch-model — the pre-27b constant showed
+        #     qwen3.8-flash-next on the 27b profiles' headers; the
+        #     honest source is the engine's own echo, the constant —
+        #     the last resort (health never seen this session)
+        return ({'model': getattr(self, '_model', None) or MODEL_CANON}, {})
 
     def _boot_merge(self, buf):
         # fix:hal-bootlines — the gufo _boot_merge mirror (w38): the boot
@@ -451,8 +460,13 @@ def selfcheck_engine():
     ts_line = '2026-11-26T17:30:00.000000000+03:00 '
     eng = HalogenEng()
     route, conf = eng.route_conf([boot, ts_line + 'serve_api: mtp 3 tok'])
-    ck('route_conf: route канон', route.get('model') == MODEL_CANON
+    ck('route_conf: route канон (резерв без /health)', route.get('model') == MODEL_CANON
        and conf == {})
+    eng = HalogenEng()
+    eng._model = 'halogen-qwen3.8-27b'
+    route, conf = eng.route_conf([boot, ts_line + 'serve_api: mtp 3 tok'])
+    ck('route_conf: модель из /health (пер-профильный канон)',
+       route.get('model') == 'halogen-qwen3.8-27b' and conf == {})
     ck('route_conf: аптайм ≈ now−метка',
        eng._uptime is not None
        and abs(eng._uptime - (ts_now - wf.podman_ts_epoch(
