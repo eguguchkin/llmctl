@@ -26,6 +26,9 @@ services:
       # "1" = vision sidecar beside checkpoint (vision живьём)
       HALOGEN_VISION_TOWER: "__VISION_TOWER__"
       HALOGEN_KV_SLOTS: "__KV_SLOTS__"
+      HALOGEN_CTX: "__CTX__"                    # дефолт образа — 262144; рендерим явно: профиль ≠ дефолта должен поднимать свой ctx
+      HALOGEN_KV_POOL_POSITIONS: "__KV_POOL__"  # 2×CTX — совпадает с авто-выбором движка; иначе KV_POOL_FIT ужал бы до пола (F41)
+      HALOGEN_KV_POOL_FIT: "__KV_POOL_FIT__"    # 1 = авто (дефолт образа); 27b-parallel: 0 — аллокатор отказывает, а не ужимает пул
       HALOGEN_CACHE_DIR: /cache       # диск-тир prompt cache (~27 KiB/токен, LRU 64G дефолт)
       HALOGEN_MODEL_ID: "__MODEL_ID__"  # канон llmctl: /v1/models, /health и эхо ответов
     volumes:

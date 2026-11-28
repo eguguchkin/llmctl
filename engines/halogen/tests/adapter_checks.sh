@@ -22,7 +22,15 @@ scen_h1_registry() {
   [ "$out" = "flash/flash/flash" ] || return 1
   LCTL_TEST_ENGINE=halogen hf 'resolve_profile nope' >/dev/null 2>&1 && return 1   # неизвестный — rc 1
   out=$(LCTL_TEST_ENGINE=halogen hf 'echo "$PROFILE_DEFAULT|$PROFILE_LIST"') || return 1
-  [ "$out" = "flash|flash 27b" ] || return 1   # 27b добавлен 2026-11-28 (27b-ht4)
+  [ "$out" = "flash|flash 27b 27b-parallel" ] || return 1   # 27b + 27b-parallel добавлены 2026-11-28 (27b-ht4)
+  # 27b-parallel: поля (draft '-', гейт 56 = леджер 55.4 EXP-015, 2 слота, ctx 210000),
+  # сет halogen_27b, refs не сняты, канон модели, форс пула FIT=0
+  out=$(LCTL_TEST_ENGINE=halogen hf 'echo "$(resolve_profile 27b-parallel)|$(profile_field 27b-parallel 1)|$(profile_field 27b-parallel 3)|$(profile_field 27b-parallel 4)|$(profile_field 27b-parallel 6)|$(profile_field 27b-parallel 7)|$(profile_field 27b-parallel 9)"') || return 1
+  [ "$out" = "27b-parallel|qwen38-27b-ht4.hgn|-|56|2|210000|-" ] || return 1
+  out=$(LCTL_TEST_ENGINE=halogen hf 'echo "$(profile_field 27b-parallel 2 | wc -w)|$(engine_model_set 27b-parallel)|$(ref_get 27b-parallel session)|$(model_id_canon 27b-parallel)"') || return 1
+  [ "$out" = "8|halogen_27b||halogen-qwen3.8-27b" ] || return 1
+  out=$(LCTL_TEST_ENGINE=halogen hf 'profile_src 27b-parallel; printf %s "${P_KV_POOL_FIT:-1}"') || return 1
+  [ "$out" = "0" ] || return 1
   # 27b: алиас, поля 1–9 (draft '-', gate 85 — оценка до первой калибровки),
   # сет halogen_27b (8 файлов, 14 730 644 964 B), roles (main ht4, mmproj
   # vision, draft НЕ существует), модель-канон из P_MODEL_ID
@@ -117,6 +125,9 @@ scen_h3_compose() {
   printf '%s' "$out" | grep -qF 'HALOGEN_CHECKPOINT: "/models/qwen38-flash-next-v2.hgn"' || return 1
   printf '%s' "$out" | grep -qF 'HALOGEN_MODEL_ID: "qwen3.8-flash-next"' || return 1
   printf '%s' "$out" | grep -qF 'HALOGEN_KV_SLOTS: "4"' || return 1
+  printf '%s' "$out" | grep -qF 'HALOGEN_CTX: "262144"' || return 1            # явный дефолт образа — рендер flash не меняет поведения
+  printf '%s' "$out" | grep -qF 'HALOGEN_KV_POOL_POSITIONS: "524288"' || return 1
+  printf '%s' "$out" | grep -qF 'HALOGEN_KV_POOL_FIT: "1"' || return 1
   printf '%s' "$out" | grep -qF 'HALOGEN_VISION_TOWER: ""' || return 1
   printf '%s' "$out" | grep -qF '__BIND__:__PORT__:__PORT__' && return 1   # плейсхолдер не раскрыт → die-ветка не прошла
   printf '%s' "$out" | grep -qF '11435:11435' || return 1
@@ -130,6 +141,13 @@ scen_h3_compose() {
   mkdir -p "$TMP/h3-target"
   out=$(LCTL_TEST_ENGINE=halogen LCTL_FAUX_TMP="$TMP" hf 'set_models_dir flash; : > "$MODELS_DIR/qwen38-flash-next-vision.hgn"; engine_write_compose "$LCTL_FAUX_TMP/h3-target"; cat "$LCTL_FAUX_TMP/h3-target/compose.yml"' 2>&1) || return 1
   printf '%s' "$out" | grep -qF 'HALOGEN_VISION_TOWER: "1"' || return 1
+  # 27b-parallel: форс пула — ctx 210000, пул 2×CTX, FIT=0 (EXP-015/F41)
+  out=$(LCTL_TEST_ENGINE=halogen hf 'set_models_dir 27b-parallel; halogen_render_compose 27b-parallel; cat "$STACK_DIR/compose.yml"' 2>&1) || return 1
+  printf '%s' "$out" | grep -qF 'HALOGEN_KV_SLOTS: "2"' || return 1
+  printf '%s' "$out" | grep -qF 'HALOGEN_CTX: "210000"' || return 1
+  printf '%s' "$out" | grep -qF 'HALOGEN_KV_POOL_POSITIONS: "420000"' || return 1
+  printf '%s' "$out" | grep -qF 'HALOGEN_KV_POOL_FIT: "0"' || return 1
+  printf '%s' "$out" | grep -qF 'HALOGEN_MODEL_ID: "halogen-qwen3.8-27b"' || return 1
   return 0
 }
 

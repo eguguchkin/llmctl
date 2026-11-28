@@ -53,7 +53,10 @@ halogen_render_compose() {
     CHECKPOINT="/models/$(set_file_role "$(engine_model_set "$prof")" main)" \
     VISION_TOWER="$tower" \
     KV_SLOTS="$(profile_field "$prof" 6)" \
-    MODEL_ID="$(model_id_canon "$prof")"
+    MODEL_ID="$(model_id_canon "$prof")" \
+    CTX="$(profile_field "$prof" 7)" \
+    KV_POOL="$(( $(profile_field "$prof" 7) * 2 ))" \
+    KV_POOL_FIT="$( profile_src "$prof" 2>/dev/null; printf '%s' "${P_KV_POOL_FIT:-1}" )"
 }
 
 # Purpose: the engine_write_compose hook (contract §2.3; called by the core

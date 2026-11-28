@@ -9,10 +9,10 @@
 # (ref_get / profile_ladder). The values and their «why» comments live in
 # the profile file itself.
 #
-# @typedef profile_id: 'flash' | '27b'
+# @typedef profile_id: 'flash' | '27b' | '27b-parallel'
 # @typedef weight_set: 'halogen_flash' | 'halogen_27b'
 
-PROFILE_LIST="flash 27b"
+PROFILE_LIST="flash 27b 27b-parallel"
 # @type profile_id PROFILE_DEFAULT=flash
 PROFILE_DEFAULT=flash
 
@@ -56,6 +56,7 @@ resolve_profile() {
   case "$1" in
     flash|flash-single|solo) echo flash ;;
     27b) echo 27b ;;
+    27b-parallel) echo 27b-parallel ;;
     *) return 1 ;;
   esac
 }

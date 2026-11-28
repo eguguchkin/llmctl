@@ -56,7 +56,7 @@ HALOGEN_MODEL_CANON="qwen3.8-flash-next"
 # @stdout weight_set      # the subdir name under $MODELS_BASE
 engine_model_set() {
   case "$1" in
-    27b) echo halogen_27b ;;
+    27b|27b-parallel) echo halogen_27b ;;
     *)   echo halogen_flash ;;
   esac
 }

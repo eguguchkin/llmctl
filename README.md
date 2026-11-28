@@ -74,7 +74,7 @@ lctl uninstall [--purge]
 | adapter | engine | profiles | note |
 |---|---|---|---|
 | `engines/gufo/` | gufo 0.36 (llama.cpp lineage, DFlash2/MTP speculation) | `27b`, `27b-parallel`, `flash` | the production engine on the 27B machine |
-| `engines/halogen/` | halogen-flash-server 0.21.0 (MTP draft + ngram lookup; 0.21.0+ also serves the 27b ht4 checkpoint) | `flash`, `27b` | the production engine on the flash machine |
+| `engines/halogen/` | halogen-flash-server 0.21.0 (MTP draft + ngram lookup; 0.21.0+ also serves the 27b ht4 checkpoint) | `flash`, `27b`, `27b-parallel` | the production engine on the flash machine; `27b-parallel` — the evo 60 GiB profile |
 | `engines/hipfire/` | hipfire 0.4.7 (VMM batching, mq4-xts quants) | `27b`, `27b-parallel`, `flash` | retired from production, the adapter is kept working |
 
 All engines target the same hardware class: an AMD Strix Halo APU
